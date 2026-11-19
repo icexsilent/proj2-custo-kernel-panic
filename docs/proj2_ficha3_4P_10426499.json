@@ -1,0 +1,1152 @@
+{
+  "A": {
+    "hora": "21:57",
+    "comprovante": "476BC2",
+    "respostas": {
+      "q1": "quanto custa de memoria de vídeo durante um jogo",
+      "q2": "Quando altero a quantidade de VRam",
+      "q3": "Quantos fps alcancaria em uma determinada qualidade de video"
+    }
+  },
+  "F": {
+    "hora": "20:36",
+    "comprovante": "0D3FD6",
+    "respostas": {
+      "frente": "Se perde algo quando fazemos a conexao via vpn? ha uma limitação por conta deste obstaculo?",
+      "mostra": "A viabilidade do projeto e constancia dos testes alem da confiabilidade dos dados capturados."
+    }
+  },
+  "M1": {
+    "hora": "21:33",
+    "comprovante": "B4A710",
+    "respostas": {
+      "metrica": "Tempo total de compilação limpa distribuída",
+      "unidade": "s",
+      "significa": "Representa quantos segundos demora do primeiro ao último arquivo compilado (e base para o cálculo de energia em mWh); quanto menor o número, mais rápida e eficiente é a compilação.",
+      "como": "Medido em segundos com date +%s.%N (e /usr/bin/time -v, linha Elapsed wall clock time) cercando make CC='distcc gcc' -jN no script bench_core.sh.",
+      "condicao": "Variação de 1 a 4 servidores distccd (-j2 a -j8), contenção de CPU em 2º plano (0% a 100% via stress-ng) e porte (8, 24, 48, 103 e 904 arquivos .c).",
+      "distorce": "Arquivos .o prévios, cache de disco frio ou processos externos na CPU; evitamos rodando make clean antes de cada rodada, descartando 1 warm-up e repetindo 3 vezes.",
+      "jev": {
+        "unidade": 0.95,
+        "repetida": 0.8,
+        "como": 0.95,
+        "significa": 0.97
+      }
+    }
+  },
+  "P": {
+    "cand": {
+      "pergunta": "Quanto aceleraria o tempo de compilação de um mesmo projeto, ao compartilhar o processamento entre vários computadores simultaneamente?",
+      "partes": [
+        "conc",
+        "cpu"
+      ],
+      "parte_outro": "",
+      "mecanismo": "Escalonamento de processos, paralelismo e disputa por CPU.",
+      "varia": "Limite de tarefas simultâneas de compilação: make -j1, -j2, -j4 e -j8, mantendo o mesmo projeto, compilador e computador.",
+      "mede": "Tempo total da compilação limpa, em segundos, com três repetições por condição."
+    },
+    "v": 4
+  },
+  "M2": {
+    "dispositivo": "Desktop AMD Ryzen 7 5700X3D (8 núcleos físicos / 16 threads, TDP 105W), 15 GB RAM DDR4, Windows 11 com Ubuntu 26.04 LTS (WSL 2, kernel 6.18.58.1), GCC 15.2.0 e distcc 3.4.",
+    "fixo": "Mesmo computador (Ryzen 7 5700X3D, 15 GB RAM), mesmo compilador GCC 15.2.0 com flags -O2 -Wall, distcc 3.4, compilação limpa (make clean antes de cada rodada) e 1 warm-up descartado.",
+    "condicoes": [
+      {
+        "nome": "Escala: 1 Máquina (-j2) vs 2 Máquinas (-j4)",
+        "valor": "1 nó distccd (2 jobs, make -j2) vs 2 nós distccd (4 jobs, make -j4) em 16 .c"
+      },
+      {
+        "nome": "Escala: 3 Máquinas (-j6) vs 4 Máquinas (-j8)",
+        "valor": "3 nós distccd (6 jobs, make -j6) vs 4 nós distccd (8 jobs, make -j8) em 16 .c"
+      },
+      {
+        "nome": "Contenção de CPU: 0%, 25%, 50% e 100%",
+        "valor": "2 nós (-j8) com stress-ng ocupando 0, 4 (25%), 8 (50%) e 16 threads (100%)"
+      },
+      {
+        "nome": "Porte e Energia: 8, 24 e 48 arquivos .c",
+        "valor": "Solo (-j2, 150W) vs Distribuído 2 nós (-j8, 268.5W) com 8, 24 e 48 arquivos .c"
+      },
+      {
+        "nome": "Projetos Reais: SQLite (103 .c) e Kernel (904 .o)",
+        "valor": "Projetos reais SQLite 3.47.2 e Linux 6.6.72: Solo (-j2) vs Distribuído (-j12)"
+      }
+    ],
+    "carga": "Compilação limpa completa via make CC='distcc gcc' CFLAGS='-O2 -Wall' dos módulos C (CPU-bound), SQLite 3.47.2 (103 arquivos .c) e Kernel Linux 6.6.72 (904 objetos .o).",
+    "repeticoes": "3",
+    "hipotese": "Esperamos que o tempo de compilação e o consumo de energia (mWh e EDP) caiam quando aumentamos o número de máquinas (1 a 4) e de arquivos .c (diluindo a rede), mas que o tempo suba fortemente quando a carga concorrente na CPU chegar a 100%.",
+    "mostra": "Gráficos de barras e linhas com a condição no eixo horizontal (nº de máquinas, % de carga de CPU e nº de arquivos .c) e no eixo vertical o tempo médio (s), speedup (x), energia (mWh) e EDP (mWh·s), comparando Solo vs Distribuído.",
+    "v": 8,
+    "jev": {
+      "condicoes": 1,
+      "repeticoes": 1,
+      "frente": 1,
+      "hipotese": 0.96
+    }
+  },
+  "M3": {
+    "onde": "dispositivo",
+    "cenario": "proprio",
+    "exemplo": "",
+    "colunas": [
+      {
+        "metrica": "Tempo de compilação limpa",
+        "unidade": "s",
+        "nome": "Vinicius Rampazi de Oliveira"
+      },
+      {
+        "metrica": "Speedup / Impacto",
+        "unidade": "x",
+        "nome": "Vinicius Rampazi de Oliveira"
+      },
+      {
+        "metrica": "Energia elétrica consumida",
+        "unidade": "mWh",
+        "nome": "Vinicius Rampazi de Oliveira"
+      },
+      {
+        "metrica": "Produto Energia-Atraso (EDP)",
+        "unidade": "mWh·s",
+        "nome": "Vinicius Rampazi de Oliveira"
+      }
+    ],
+    "linhas": [
+      {
+        "cond": "Escala: 1 Máquina (make -j2, 16 arqs .c)",
+        "celulas": [
+          {
+            "v": "1,99 / 1,96 (méd 1,97 s)",
+            "obs": ""
+          },
+          {
+            "v": "1,00x (efic. 100%)",
+            "obs": ""
+          },
+          {
+            "v": "82,28 mWh (a 150W)",
+            "obs": ""
+          },
+          {
+            "v": "162,49 mWh·s",
+            "obs": ""
+          }
+        ]
+      },
+      {
+        "cond": "Escala: 2 Máquinas (make -j4, 16 arqs .c)",
+        "celulas": [
+          {
+            "v": "1,13 / 1,12 (méd 1,12 s)",
+            "obs": ""
+          },
+          {
+            "v": "1,76x (efic. 88%)",
+            "obs": ""
+          },
+          {
+            "v": "83,90 mWh (a 268,5W)",
+            "obs": ""
+          },
+          {
+            "v": "94,38 mWh·s",
+            "obs": ""
+          }
+        ]
+      },
+      {
+        "cond": "Escala: 3 Máquinas (make -j6, 16 arqs .c)",
+        "celulas": [
+          {
+            "v": "0,91 / 0,87 (méd 0,89 s)",
+            "obs": ""
+          },
+          {
+            "v": "2,22x (efic. 74%)",
+            "obs": ""
+          },
+          {
+            "v": "95,78 mWh",
+            "obs": ""
+          },
+          {
+            "v": "85,34 mWh·s",
+            "obs": ""
+          }
+        ]
+      },
+      {
+        "cond": "Escala: 4 Máquinas (make -j8, 16 arqs .c)",
+        "celulas": [
+          {
+            "v": "0,73 / 0,74 (méd 0,73 s)",
+            "obs": ""
+          },
+          {
+            "v": "2,69x (efic. 67%)",
+            "obs": ""
+          },
+          {
+            "v": "104,60 mWh",
+            "obs": ""
+          },
+          {
+            "v": "76,76 mWh·s",
+            "obs": ""
+          }
+        ]
+      },
+      {
+        "cond": "Contenção CPU: 0% vs 25% vs 50% vs 100%",
+        "celulas": [
+          {
+            "v": "0,75s / 0,82s / 0,95s / 2,60s",
+            "obs": ""
+          },
+          {
+            "v": "+0% / +9% / +27% / +247% lentidão",
+            "obs": ""
+          },
+          {
+            "v": "55,8 / 61,0 / 71,1 / 193,8 mWh",
+            "obs": ""
+          },
+          {
+            "v": "41,8 / 49,9 / 67,7 / 503,4 mWh·s",
+            "obs": ""
+          }
+        ]
+      },
+      {
+        "cond": "Porte: 8 arqs .c (Solo -j2 vs Dist -j8)",
+        "celulas": [
+          {
+            "v": "Solo 0,91s vs Dist 0,46s",
+            "obs": ""
+          },
+          {
+            "v": "1,98x mais rápido (-49,5%)",
+            "obs": ""
+          },
+          {
+            "v": "Solo 37,94 vs Dist 34,28 mWh",
+            "obs": ""
+          },
+          {
+            "v": "Solo 34,54 vs Dist 15,75 mWh·s",
+            "obs": ""
+          }
+        ]
+      },
+      {
+        "cond": "Porte: 24 arqs .c (Solo -j2 vs Dist -j8)",
+        "celulas": [
+          {
+            "v": "Solo 2,37s vs Dist 0,92s",
+            "obs": ""
+          },
+          {
+            "v": "2,59x mais rápido (-61,3%)",
+            "obs": ""
+          },
+          {
+            "v": "Solo 98,95 vs Dist 68,48 mWh",
+            "obs": ""
+          },
+          {
+            "v": "Solo 234,99 vs Dist 62,87 mWh·s",
+            "obs": ""
+          }
+        ]
+      },
+      {
+        "cond": "Porte: 48 arqs .c (Solo -j2 vs Dist -j8)",
+        "celulas": [
+          {
+            "v": "Solo 4,61s vs Dist 1,63s",
+            "obs": ""
+          },
+          {
+            "v": "2,83x mais rápido (-64,7%)",
+            "obs": ""
+          },
+          {
+            "v": "Solo 192,24 vs Dist 121,56 mWh",
+            "obs": ""
+          },
+          {
+            "v": "Solo 886,98 vs Dist 198,11 mWh·s",
+            "obs": ""
+          }
+        ]
+      },
+      {
+        "cond": "SQLite 3.47.2 (103 arqs .c, Solo vs Dist)",
+        "celulas": [
+          {
+            "v": "Solo 14,24s vs Dist 6,72s",
+            "obs": ""
+          },
+          {
+            "v": "2,12x mais rápido (-52,9%)",
+            "obs": ""
+          },
+          {
+            "v": "Solo 593,47 vs Dist 500,83 mWh",
+            "obs": ""
+          },
+          {
+            "v": "Solo 8452,9 vs Dist 3363,1 mWh·s",
+            "obs": ""
+          }
+        ]
+      },
+      {
+        "cond": "Kernel Linux 6.6.72 (904 objs, Solo vs Dist)",
+        "celulas": [
+          {
+            "v": "Solo 171,31s vs Dist 61,20s",
+            "obs": ""
+          },
+          {
+            "v": "2,80x mais rápido (-64,3%)",
+            "obs": ""
+          },
+          {
+            "v": "Solo 7137,8 vs Dist 4564,5 mWh",
+            "obs": ""
+          },
+          {
+            "v": "Solo 1222,8 vs Dist 279,3 Wh·s",
+            "obs": ""
+          }
+        ]
+      }
+    ],
+    "saida": "Comandos executados no Ubuntu 26.04 WSL2 (Ryzen 7 5700X3D):\n$ bash scripts/manage_distccd.sh start 4\n$ bash scripts/run_experiments.sh all\n$ python3 scripts/calc_energy.py\n\nSaída bruta resumida (dados/tempos_compilacao.csv e dados/energia_estimada.csv):\nescala_1_maquina (-j2): 1.9859s / 1.9637s (média 1.9748s, speedup 1.00x, efic 100%)\nescala_2_maquinas (-j4): 1.1306s / 1.1192s (média 1.1249s, speedup 1.76x, efic 88%)\nescala_3_maquinas (-j6): 0.9121s / 0.8698s (média 0.8910s, speedup 2.22x, efic 74%)\nescala_4_maquinas (-j8): 0.7297s / 0.7380s (média 0.7339s, speedup 2.69x, efic 67%)\ncontencao_cpu_0pct (0 threads): 0.7333s / 0.7639s (média 0.7486s)\ncontencao_cpu_25pct (4 threads stress-ng): 0.8253s / 0.8101s (média 0.8177s, +9.2%)\ncontencao_cpu_50pct (8 threads stress-ng): 0.9526s / 0.9533s (média 0.9530s, +27.3%)\ncontencao_cpu_100pct (16 threads stress-ng): 2.2157s / 2.9801s (média 2.5979s, +247.0%)\nporte_8_arqs: Solo 0.9120s/0.9089s (0.9104s) vs Dist 0.4611s/0.4581s (0.4596s) -> Speedup 1.98x | Energia: 37.94 vs 34.28 mWh\nporte_24_arqs: Solo 2.3872s/2.3624s (2.3748s) vs Dist 0.9212s/0.9150s (0.9181s) -> Speedup 2.59x | Energia: 98.95 vs 68.48 mWh\nporte_48_arqs: Solo 4.6296s/4.5981s (4.6138s) vs Dist 1.6375s/1.6221s (1.6298s) -> Speedup 2.83x | Energia: 192.24 vs 121.56 mWh\nprojeto_SQLite (103 .c): Solo 14.2371s/14.2494s (14.2432s) vs Dist 6.6544s/6.7757s (6.7150s) -> Speedup 2.12x | Energia: 593.47 vs 500.83 mWh\nprojeto_Kernel_Linux (904 .o): Solo 173.4631s/169.1517s (171.3074s) vs Dist 65.6213s/56.7788s (61.2001s) -> Speedup 2.80x | Energia: 7.14 Wh vs 4.56 Wh (-36.1%)",
+    "surpreendeu": "Nos testes de contenção de CPU em segundo plano, até 50% de ocupação (8 threads do stress-ng) o tempo de compilação subiu apenas 27% (de 0,75s para 0,95s) porque o escalonador CFS do Linux alocou os 8 threads livres do Ryzen 7 5700X3D (SMT); porém em 100% (16 threads) o tempo disparou +247% (2,60s) por trocas de contexto. Também surpreendeu que 2 máquinas (268,5W) gastam até 36,8% menos energia total (Wh) do que 1 máquina (150W) quando o speedup supera 1,79x (race-to-idle).",
+    "muda": "Desativamos o log detalhado por arquivo (DISTCC_VERBOSE=1) durante a compilação do Kernel Linux (904 objetos), pois a contenção de escrita em /tmp/distcc-client.log adicionava ~65s de atraso artificial, e isolamos o controle de banda (tc qdisc tbf) em par veth com network namespace.",
+    "v": 3,
+    "jev": {
+      "linhas": 1,
+      "surpreendeu": 1
+    }
+  },
+  "F3C": {
+    "hora": "21:33",
+    "comprovante": "1D0338",
+    "respostas": {
+      "itens": [
+        {
+          "metrica": "Tempo de compilação sob escala de nós, contenção de CPU e porte (s)",
+          "onde": "Computador próprio em casa: Desktop AMD Ryzen 7 5700X3D (8 núcleos físicos / 16 threads), 15 GB RAM, com Ubuntu 26.04 LTS no WSL 2.",
+          "ambiente": "pronto",
+          "falta": "",
+          "como": "Script bench_core.sh medindo o tempo real (wall-clock) com date +%s.%N e /usr/bin/time -v ao redor de make CC='distcc gcc' CFLAGS='-O2 -Wall' -jN, usando stress-ng --cpu N para contenção.",
+          "quando": "Quarta-feira (11/11) e quinta-feira (12/11), à tarde.",
+          "registro": "Arquivo dados/tempos_compilacao.csv (e results/tempos_compilacao.csv) com a saída bruta de cada rodada e logs em /tmp/distcc-client.log.",
+          "impede": "Arquivos objeto .o em cache ou processos externos usando a CPU; para evitar, o script roda make clean antes de cada medição, descarta 1 rodada de warm-up e repete 3 vezes.",
+          "jev": {
+            "falta": 1,
+            "como": 0.99,
+            "registro": 0.98,
+            "quando": 0.98
+          }
+        },
+        {
+          "metrica": "Consumo de energia elétrica (mWh) e Produto Energia-Atraso (mWh·s)",
+          "onde": "Computador próprio em casa: Desktop AMD Ryzen 7 5700X3D (TDP 105W, potência em repouso 45W), 15 GB RAM, com Ubuntu 26.04 LTS no WSL 2.",
+          "ambiente": "pronto",
+          "falta": "",
+          "como": "Script Python calc_energy.py que lê os tempos medidos em segundos no CSV bruto e calcula E = P_ativa * t / 3600 (com P_solo = 150W e P_dist = 268,5W) e EDP = E * t.",
+          "quando": "Quarta-feira (11/11) e quinta-feira (12/11), logo após a coleta dos tempos.",
+          "registro": "Arquivo dados/energia_estimada.csv (e results/energia_estimada.csv) guardando potência (W), energia (Wh e mWh) e EDP (mWh·s) de cada condição.",
+          "impede": "Escrita excessiva de logs em disco atrasando o build e inflando o gasto energético; evitamos desativando DISTCC_VERBOSE nos builds longos e usando a média das repetições limpas.",
+          "jev": {
+            "falta": 1,
+            "como": 0.9,
+            "registro": 0.95,
+            "quando": 0.98
+          }
+        }
+      ]
+    }
+  },
+  "F3H": {
+    "hora": "21:33",
+    "comprovante": "BC8E50",
+    "respostas": {
+      "itens": [
+        {
+          "metrica": "Tempo de compilação sob escala de nós, contenção de CPU e porte (s)",
+          "espera": "Espero que o tempo total de compilação caia ao aumentar de 1 para 4 servidores distccd e ao aumentar o número de arquivos .c (de 8 para 48), mas que o tempo suba fortemente quando os processos concorrentes em segundo plano subirem de 0% para 100% da CPU.",
+          "porque": "O tempo cai com mais servidores porque o escalonador do sistema operacional (CFS do Linux) distribui os processos cc1 do GCC em paralelo entre núcleos livres, e mais arquivos .c diluem a sobrecarga de rede TCP/IP. O ganho tem limite na etapa serial de linkedição (ld) e no esgotamento dos 16 threads lógicos (SMT): quando o stress-ng ocupa 100% dos núcleos, os processos disputam a mesma fila de execução (runqueue), gerando trocas de contexto (context switches) e perda de cache L1/L2.",
+          "contraria": "O tempo de compilação com 4 servidores sair igual ou maior do que com 1 servidor, ou o tempo sob 100% de contenção na CPU (16 threads do stress-ng) ficar igual ao tempo sem carga concorrente (0%).",
+          "jev": {
+            "direcao": 0.95,
+            "mecanismo": 0.98,
+            "limite": 0.93,
+            "contraria": 0.97,
+            "nivel": 3
+          }
+        },
+        {
+          "metrica": "Consumo de energia elétrica (mWh) e Produto Energia-Atraso (mWh·s)",
+          "espera": "Espero que o consumo total de energia elétrica (mWh) e o Produto Energia-Atraso (EDP) caiam na compilação distribuída em 2 máquinas em comparação à compilação solo conforme o projeto cresce de 8 para 24, 48, 103 e 904 arquivos .c.",
+          "porque": "Pelo mecanismo de corrida para o repouso (race-to-idle) e gerenciamento de estados de energia da CPU pelo sistema operacional (estados ociosos ACPI C-states e frequência P-states), paralelizar os processos de compilação encerra o trabalho muito antes e devolve os núcleos ao estado ocioso (45W). O limite ocorre quando o speedup obtido é menor que a razão de potência ativa entre 2 máquinas e 1 máquina (268,5W / 150W = 1,79x), pois em projetos minúsculos a latência de sockets TCP e o linker serial ",
+          "contraria": "A compilação distribuída gastar mais energia total (mWh) e apresentar pior EDP do que a compilação solo mesmo em projetos grandes onde o speedup supera 1,80x.",
+          "jev": {
+            "direcao": 0.9,
+            "mecanismo": 0.94,
+            "limite": 0.88,
+            "contraria": 0.96,
+            "nivel": 3
+          }
+        }
+      ]
+    }
+  },
+  "F3M": {
+    "metricas": [
+      {
+        "metrica": "Redução percentual do tempo de compilação",
+        "unidade": "%",
+        "quem": "Gabriel Coelho",
+        "condicao": "Serão compilados pelo menos 2 projetos fixos (mas com num. de arquivos diferente), com dispositivos fixos, sob condições locais e paralelas distintas."
+      },
+      {
+        "metrica": "Tempo total de compilação",
+        "unidade": "s",
+        "quem": "Caroline Lee",
+        "condicao": "Compilação limpa de um mesmo projeto, utilizando as máquinas do grupo individualmente e depois em conjunto com o distcc. Manter fixos o projeto, a quantidade de"
+      },
+      {
+        "metrica": "Percentual de tarefas de compilação por servidor",
+        "unidade": "%",
+        "quem": "Caio Belom",
+        "condicao": "Compilação de um projeto C com make -j8, utilizando dois servidores distccd locais, nas portas 3632 e 3633, com quatro tarefas simultâneas permitidas por servid"
+      },
+      {
+        "metrica": "Tempo de compilação sob limitação de banda de rede",
+        "unidade": "s",
+        "quem": "Fernando Paiva",
+        "condicao": "Compilação distribuída variando a largura de banda da rede entre os nós de 1 Mbps a 1000 Mbps com controle de tráfego tc qdisc tbf."
+      },
+      {
+        "metrica": "Tempo de compilação sob escala de nós, contenção de CPU e porte",
+        "unidade": "s",
+        "quem": "Vinicius Rampazi de Oliveira",
+        "condicao": "Compilação variando de 1 a 4 servidores distccd (-j2 a -j8), contenção de CPU (0% a 100% via stress-ng) e quantidade de arquivos .c (8, 24 e 48)."
+      },
+      {
+        "metrica": "Consumo de energia elétrica e Produto Energia-Atraso (EDP)",
+        "unidade": "mWh",
+        "quem": "Vinicius Rampazi de Oliveira",
+        "condicao": "Compilação solo (150W) vs distribuída em 2 máquinas (268,5W) variando de 8, 24 e 48 arquivos .c até SQLite (103 .c) e Kernel Linux (904 objetos)."
+      }
+    ],
+    "v": 4,
+    "jev": {
+      "unidade": 1,
+      "donos": 1
+    }
+  },
+  "F3L": {
+    "texto": "Definimos a divisão das coletas e hipóteses entre os integrantes para cobrir todas as variáveis sugeridas pelo professor:\n- Caroline Lee: tempo total de compilação comparando as máquinas individualmente (-j4) contra o cluster coletivo (-j8).\n- Caio Belom: percentual de tarefas compiladas por servidor distccd extraído dos logs de execução.\n- Gabriel Coelho: redução percentual do tempo de compilação entre projetos reais de portes diferentes (SQLite 3.47.2 com 103 arquivos .c vs Kernel Linux 6.6.72 com 904 objetos .o).\n- Fernando Paiva: impacto da limitação da largura de banda de rede (1 Mbps a 1000 Mbps com tc qdisc tbf em par veth) no tempo de compilação distribuída.\n- Vinicius Rampazi de Oliveira: escalabilidade variando a quantidade de máquinas disponíveis (1, 2, 3 e 4 nós distccd), impacto de processos concorrentes disputando CPU em segundo plano (0%, 25%, 50% e 100% de carga via stress-ng), variação da complexidade/quantidade de arquivos .c (8, 24 e 48 arquivos vs compilação local) e análise do consumo de energia elétrica (mWh/Wh) e Produto Energia-Atraso (EDP).\n\nAs medições da frente de escalabilidade, contenção de CPU, porte de arquivos .c e consumo energético já foram integralmente executadas no ambiente Ubuntu 26.04 LTS (WSL 2) com processador AMD Ryzen 7 5700X3D, e os arquivos brutos CSV já estão salvos e tabelados.",
+    "v": 1
+  },
+  "frentes2": [
+    {
+      "nome": "Gabriel Coelho",
+      "frente": "Questão 3: Dados dois projetos, um com número de arquivos alto (Linux) e um outro baixo (SQLite), a redução de tempo varia significamente?",
+      "frente1": "Correlação entre tempo de compilação individual e a exclusão seletiva de máquinas na compilação coletiva",
+      "minha": false
+    },
+    {
+      "nome": "Caroline Lee",
+      "frente": "",
+      "frente1": "",
+      "minha": false
+    },
+    {
+      "nome": "Vinicius Rampazi de Oliveira",
+      "frente": "Escalabilidade com o número de máquinas (1 a 4 nós), contenção de processos em segundo plano na CPU (stress-ng 0% a 100%), variação da quantidade de arquivos .c (8 a 904) e eficiência energética (consumo em mWh/Wh e EDP).",
+      "frente1": "Se perde algo quando fazemos a conexao via vpn? ha uma limitação por conta deste obstaculo?",
+      "minha": true
+    },
+    {
+      "nome": "Caio Belom",
+      "frente": "Questão 2: Distribuição percentual das tarefas de compilação entre dois servidores distccd, usando os logs do distcc para verificar o balanceamento de carga.",
+      "frente1": "",
+      "minha": false
+    },
+    {
+      "nome": "Fernando Paiva",
+      "frente": "",
+      "frente1": "",
+      "minha": false
+    }
+  ],
+  "grupo": {
+    "codigo": "KPE-V7L",
+    "nome": "Kernel Panic",
+    "n": 5,
+    "membros": [
+      "Gabriel Coelho",
+      "Caroline Lee",
+      "Vinicius Rampazi de Oliveira",
+      "Caio Belom",
+      "Fernando Paiva"
+    ],
+    "criador": false,
+    "jev_nome": "0.06",
+    "B": {
+      "cands": [
+        {
+          "pergunta": "Quanto aumenta o consumo de memória RAM do Chrome ao abrir 5, 10, 15 e 20 abas de uma lista fixa de sites?",
+          "partes": [
+            "mem"
+          ],
+          "parte_outro": "",
+          "conceito": "Conjunto de trabalho dos processos e pressão de memória.",
+          "varia": "Quantidade de abas abertas: 5, 10, 15 e 20. Manter a mesma ordem de sites, o mesmo computador e a mesma versão do Chrome.",
+          "mede": "Soma da memória de trabalho privada dos processos do Chrome, em MB, medida 60 segundos após abrir as abas."
+        },
+        {
+          "pergunta": "Quanto aceleraria o tempo de compilação de um mesmo projeto, ao compartilhar o processamento entre vários computadores simultaneamente?",
+          "partes": [
+            "conc",
+            "cpu"
+          ],
+          "parte_outro": "",
+          "conceito": "Escalonamento de processos, paralelismo e disputa por CPU.",
+          "varia": "Limite de tarefas simultâneas de compilação: make -j1, -j2, -j4 e -j8, mantendo o mesmo projeto, compilador e computador.",
+          "mede": "Tempo total da compilação limpa, em segundos, com três repetições por condição."
+        },
+        {
+          "pergunta": "Quanto varia a memória VRAM residente do processo de um jogo ao mudar a qualidade das texturas entre baixa, média e alta no mesmo cenário?",
+          "partes": [
+            "mem"
+          ],
+          "parte_outro": "",
+          "conceito": "Gerenciamento de memória virtual e conjunto de trabalho do processo.",
+          "varia": "Qualidade das texturas: baixa, média e alta, mantendo a mesma resolução, o mesmo cenário e o mesmo computador.",
+          "mede": "Memória RAM residente privada do processo do jogo, em MB, medida após 120 segundos no mesmo cenário."
+        }
+      ],
+      "v": 17
+    },
+    "B_por": "Vinicius Rampazi de Oliveira",
+    "B_hora": "22:35",
+    "B_primeiro": "29/10/2026 22:09:16",
+    "jev_B": {
+      "c1": {
+        "parte": 0.88,
+        "conceito": 0.81,
+        "varia": 0.99,
+        "mede": 0.97
+      },
+      "c2": {
+        "parte": 0.89,
+        "conceito": 0.7,
+        "varia": 0.99,
+        "mede": 0.97
+      },
+      "c3": {
+        "parte": 0.79,
+        "conceito": 0.51,
+        "varia": 0.99,
+        "mede": 0.96
+      }
+    },
+    "discordo": {},
+    "D": {
+      "escolha": 2,
+      "cand": {
+        "pergunta": "Quanto aceleraria o tempo de compilação de um mesmo projeto, ao compartilhar o processamento entre vários computadores simultaneamente?",
+        "partes": [
+          "conc",
+          "cpu"
+        ],
+        "parte_outro": "",
+        "conceito": "Escalonamento de processos, paralelismo e disputa por CPU.",
+        "varia": "Limite de tarefas simultâneas de compilação: make -j1, -j2, -j4 e -j8, mantendo o mesmo projeto, compilador e computador.",
+        "mede": "Tempo total da compilação limpa, em segundos, com três repetições por condição."
+      },
+      "v": 3
+    },
+    "D_por": "Gabriel Coelho",
+    "D_hora": "22:46",
+    "jev_D": {
+      "parte": 0.85,
+      "conceito": 0.68,
+      "varia": 0.98,
+      "mede": 0.96
+    },
+    "frentes": [
+      {
+        "nome": "Vinicius Rampazi",
+        "frente": "Se perde algo quando fazemos a conexao via vpn? ha uma limitação por conta deste obstaculo?",
+        "mostra": "A viabilidade do projeto e constancia dos testes alem da confiabilidade dos dados capturados.",
+        "hora": "20:36",
+        "minha": true
+      },
+      {
+        "nome": "Gabriel Coelho",
+        "frente": "Correlação entre tempo de compilação individual e a exclusão seletiva de máquinas na compilação coletiva",
+        "mostra": "Se máquinas que compilam mais rápido individualmente, necessariamente têm impacto maior no tempo de compilação coletivo",
+        "hora": "20:54",
+        "minha": false
+      }
+    ],
+    "travado": true,
+    "resultados": {
+      "votantes": 19,
+      "cands": [
+        {
+          "curiosidade": 4,
+          "investigacao": 2.9,
+          "variavel": 4.6,
+          "metrica": 4.6,
+          "viavel": 4.1,
+          "geral": 4
+        },
+        {
+          "curiosidade": 4.4,
+          "investigacao": 3.5,
+          "variavel": 3.9,
+          "metrica": 4.2,
+          "viavel": 3.6,
+          "geral": 3.9
+        },
+        {
+          "curiosidade": 4,
+          "investigacao": 3.6,
+          "variavel": 4.2,
+          "metrica": 4.2,
+          "viavel": 3.9,
+          "geral": 4
+        }
+      ]
+    },
+    "chat_limite": 15,
+    "P": {
+      "cand": {
+        "pergunta": "Quanto aceleraria o tempo de compilação de um mesmo projeto, ao compartilhar o processamento entre vários computadores simultaneamente?",
+        "partes": [
+          "conc",
+          "cpu"
+        ],
+        "parte_outro": "",
+        "mecanismo": "Escalonamento de processos, paralelismo e disputa por CPU.",
+        "varia": "Limite de tarefas simultâneas de compilação: make -j1, -j2, -j4 e -j8, mantendo o mesmo projeto, compilador e computador.",
+        "mede": "Tempo total da compilação limpa, em segundos, com três repetições por condição."
+      },
+      "v": 4
+    },
+    "P_por": "Vinicius Rampazi",
+    "P_hora": "20:15",
+    "jev_P": {
+      "parte": 0.88,
+      "mecanismo": 0.74,
+      "varia": 0.97,
+      "mede": 0.95,
+      "unidade": 0.92
+    },
+    "veredito_P": "Podem variar o número de máquinas (e portanto núcleos) disponíveis para a distribuição. Vale também variar o número de processos concorrendo pelos processadores enquanto a compilação acontece, e como isso afeta o resultado. Seria interessante também variar a complexidade da compilação: testar com vários arquivos .c e verificar se há vantagem sobre a compilação local.",
+    "L": {
+      "texto": "Nosso grupo investiga na prática o ganho real e os limites da compilação distribuída em C utilizando o distcc 3.4 com GCC 15.2.0 em ambiente Linux Ubuntu 26.04 LTS (WSL 2, kernel 6.18.58.1) sobre um processador AMD Ryzen 7 5700X3D (8 núcleos físicos / 16 threads, TDP 105W, 15 GB RAM).\n\nSeguindo o parecer do professor, estruturamos as medições reais em frentes complementares:\n- Comparação entre compilação individual em cada máquina (-j4) e compilação coletiva (-j8), monitorando a fração exata de arquivos .c compilados por nó via logs do distcc.\n- Compilação de projetos reais de código aberto de diferentes portes: o banco de dados SQLite 3.47.2 desmembrado (USE_AMALGAMATION=0, com 103 arquivos .c independentes) e o Kernel Linux 6.6.72 (904 objetos .o até gerar o vmlinux), comparando o modo Solo (-j2) contra o modo Distribuído em 3 nós (-j12).\n- Impacto da largura de banda da rede (1, 5, 10, 50, 100, 500 e 1000 Mbps) usando par virtual veth isolado em network namespace (ip netns) e controle de tráfego do kernel Linux (tc qdisc tbf).\n- Escalabilidade, contenção de CPU, complexidade de arquivos e eficiência energética (frente de Vinicius Rampazi): escalabilidade variando de 1 a 4 servidores distccd (2, 4, 6 e 8 jobs simultâneos); degradação por contenção de processos em segundo plano disputando CPU (0%, 25%, 50% e 100% dos 16 threads ocupados com stress-ng); variação da complexidade/tamanho do projeto (8, 24 e 48 arquivos .c independentes, além de SQLite com 103 arquivos e Kernel Linux com 904 objetos) comparando compilação local vs distribuída; e cálculo do consumo de energia elétrica (em Wh e mWh) e do Produto Energia-Atraso (EDP, em mWh·s) a partir dos tempos reais medidos e do envelope térmico (P_solo = 150W vs P_dist_2maq = 268,5W), demonstrando em quais cenários compilar mais rápido em paralelo economiza energia total mesmo usando mais máquinas.",
+      "v": 4
+    },
+    "L_por": "Vinicius Rampazi de Oliveira",
+    "L_hora": "21:33",
+    "M2": {
+      "dispositivo": "Desktop AMD Ryzen 7 5700X3D (8 núcleos físicos / 16 threads, TDP 105W), 15 GB RAM DDR4, Windows 11 com Ubuntu 26.04 LTS (WSL 2, kernel 6.18.58.1), GCC 15.2.0 e distcc 3.4.",
+      "fixo": "Mesmo computador (Ryzen 7 5700X3D, 15 GB RAM), mesmo compilador GCC 15.2.0 com flags -O2 -Wall, distcc 3.4, compilação limpa (make clean antes de cada rodada) e 1 warm-up descartado.",
+      "condicoes": [
+        {
+          "nome": "Escala: 1 Máquina (-j2) vs 2 Máquinas (-j4)",
+          "valor": "1 nó distccd (2 jobs, make -j2) vs 2 nós distccd (4 jobs, make -j4) em 16 .c"
+        },
+        {
+          "nome": "Escala: 3 Máquinas (-j6) vs 4 Máquinas (-j8)",
+          "valor": "3 nós distccd (6 jobs, make -j6) vs 4 nós distccd (8 jobs, make -j8) em 16 .c"
+        },
+        {
+          "nome": "Contenção de CPU: 0%, 25%, 50% e 100%",
+          "valor": "2 nós (-j8) com stress-ng ocupando 0, 4 (25%), 8 (50%) e 16 threads (100%)"
+        },
+        {
+          "nome": "Porte e Energia: 8, 24 e 48 arquivos .c",
+          "valor": "Solo (-j2, 150W) vs Distribuído 2 nós (-j8, 268.5W) com 8, 24 e 48 arquivos .c"
+        },
+        {
+          "nome": "Projetos Reais: SQLite (103 .c) e Kernel (904 .o)",
+          "valor": "Projetos reais SQLite 3.47.2 e Linux 6.6.72: Solo (-j2) vs Distribuído (-j12)"
+        }
+      ],
+      "carga": "Compilação limpa completa via make CC='distcc gcc' CFLAGS='-O2 -Wall' dos módulos C (CPU-bound), SQLite 3.47.2 (103 arquivos .c) e Kernel Linux 6.6.72 (904 objetos .o).",
+      "repeticoes": "3",
+      "hipotese": "Esperamos que o tempo de compilação e o consumo de energia (mWh e EDP) caiam quando aumentamos o número de máquinas (1 a 4) e de arquivos .c (diluindo a rede), mas que o tempo suba fortemente quando a carga concorrente na CPU chegar a 100%.",
+      "mostra": "Gráficos de barras e linhas com a condição no eixo horizontal (nº de máquinas, % de carga de CPU e nº de arquivos .c) e no eixo vertical o tempo médio (s), speedup (x), energia (mWh) e EDP (mWh·s), comparando Solo vs Distribuído.",
+      "v": 8,
+      "jev": {
+        "condicoes": 1,
+        "repeticoes": 1,
+        "frente": 1,
+        "hipotese": 0.96
+      }
+    },
+    "M2_por": "Vinicius Rampazi de Oliveira",
+    "M2_hora": "21:33",
+    "M3": {
+      "onde": "dispositivo",
+      "cenario": "proprio",
+      "exemplo": "",
+      "colunas": [
+        {
+          "metrica": "Tempo de compilação limpa",
+          "unidade": "s",
+          "nome": "Vinicius Rampazi de Oliveira"
+        },
+        {
+          "metrica": "Speedup / Impacto",
+          "unidade": "x",
+          "nome": "Vinicius Rampazi de Oliveira"
+        },
+        {
+          "metrica": "Energia elétrica consumida",
+          "unidade": "mWh",
+          "nome": "Vinicius Rampazi de Oliveira"
+        },
+        {
+          "metrica": "Produto Energia-Atraso (EDP)",
+          "unidade": "mWh·s",
+          "nome": "Vinicius Rampazi de Oliveira"
+        }
+      ],
+      "linhas": [
+        {
+          "cond": "Escala: 1 Máquina (make -j2, 16 arqs .c)",
+          "celulas": [
+            {
+              "v": "1,99 / 1,96 (méd 1,97 s)",
+              "obs": ""
+            },
+            {
+              "v": "1,00x (efic. 100%)",
+              "obs": ""
+            },
+            {
+              "v": "82,28 mWh (a 150W)",
+              "obs": ""
+            },
+            {
+              "v": "162,49 mWh·s",
+              "obs": ""
+            }
+          ]
+        },
+        {
+          "cond": "Escala: 2 Máquinas (make -j4, 16 arqs .c)",
+          "celulas": [
+            {
+              "v": "1,13 / 1,12 (méd 1,12 s)",
+              "obs": ""
+            },
+            {
+              "v": "1,76x (efic. 88%)",
+              "obs": ""
+            },
+            {
+              "v": "83,90 mWh (a 268,5W)",
+              "obs": ""
+            },
+            {
+              "v": "94,38 mWh·s",
+              "obs": ""
+            }
+          ]
+        },
+        {
+          "cond": "Escala: 3 Máquinas (make -j6, 16 arqs .c)",
+          "celulas": [
+            {
+              "v": "0,91 / 0,87 (méd 0,89 s)",
+              "obs": ""
+            },
+            {
+              "v": "2,22x (efic. 74%)",
+              "obs": ""
+            },
+            {
+              "v": "95,78 mWh",
+              "obs": ""
+            },
+            {
+              "v": "85,34 mWh·s",
+              "obs": ""
+            }
+          ]
+        },
+        {
+          "cond": "Escala: 4 Máquinas (make -j8, 16 arqs .c)",
+          "celulas": [
+            {
+              "v": "0,73 / 0,74 (méd 0,73 s)",
+              "obs": ""
+            },
+            {
+              "v": "2,69x (efic. 67%)",
+              "obs": ""
+            },
+            {
+              "v": "104,60 mWh",
+              "obs": ""
+            },
+            {
+              "v": "76,76 mWh·s",
+              "obs": ""
+            }
+          ]
+        },
+        {
+          "cond": "Contenção CPU: 0% vs 25% vs 50% vs 100%",
+          "celulas": [
+            {
+              "v": "0,75s / 0,82s / 0,95s / 2,60s",
+              "obs": ""
+            },
+            {
+              "v": "+0% / +9% / +27% / +247% lentidão",
+              "obs": ""
+            },
+            {
+              "v": "55,8 / 61,0 / 71,1 / 193,8 mWh",
+              "obs": ""
+            },
+            {
+              "v": "41,8 / 49,9 / 67,7 / 503,4 mWh·s",
+              "obs": ""
+            }
+          ]
+        },
+        {
+          "cond": "Porte: 8 arqs .c (Solo -j2 vs Dist -j8)",
+          "celulas": [
+            {
+              "v": "Solo 0,91s vs Dist 0,46s",
+              "obs": ""
+            },
+            {
+              "v": "1,98x mais rápido (-49,5%)",
+              "obs": ""
+            },
+            {
+              "v": "Solo 37,94 vs Dist 34,28 mWh",
+              "obs": ""
+            },
+            {
+              "v": "Solo 34,54 vs Dist 15,75 mWh·s",
+              "obs": ""
+            }
+          ]
+        },
+        {
+          "cond": "Porte: 24 arqs .c (Solo -j2 vs Dist -j8)",
+          "celulas": [
+            {
+              "v": "Solo 2,37s vs Dist 0,92s",
+              "obs": ""
+            },
+            {
+              "v": "2,59x mais rápido (-61,3%)",
+              "obs": ""
+            },
+            {
+              "v": "Solo 98,95 vs Dist 68,48 mWh",
+              "obs": ""
+            },
+            {
+              "v": "Solo 234,99 vs Dist 62,87 mWh·s",
+              "obs": ""
+            }
+          ]
+        },
+        {
+          "cond": "Porte: 48 arqs .c (Solo -j2 vs Dist -j8)",
+          "celulas": [
+            {
+              "v": "Solo 4,61s vs Dist 1,63s",
+              "obs": ""
+            },
+            {
+              "v": "2,83x mais rápido (-64,7%)",
+              "obs": ""
+            },
+            {
+              "v": "Solo 192,24 vs Dist 121,56 mWh",
+              "obs": ""
+            },
+            {
+              "v": "Solo 886,98 vs Dist 198,11 mWh·s",
+              "obs": ""
+            }
+          ]
+        },
+        {
+          "cond": "SQLite 3.47.2 (103 arqs .c, Solo vs Dist)",
+          "celulas": [
+            {
+              "v": "Solo 14,24s vs Dist 6,72s",
+              "obs": ""
+            },
+            {
+              "v": "2,12x mais rápido (-52,9%)",
+              "obs": ""
+            },
+            {
+              "v": "Solo 593,47 vs Dist 500,83 mWh",
+              "obs": ""
+            },
+            {
+              "v": "Solo 8452,9 vs Dist 3363,1 mWh·s",
+              "obs": ""
+            }
+          ]
+        },
+        {
+          "cond": "Kernel Linux 6.6.72 (904 objs, Solo vs Dist)",
+          "celulas": [
+            {
+              "v": "Solo 171,31s vs Dist 61,20s",
+              "obs": ""
+            },
+            {
+              "v": "2,80x mais rápido (-64,3%)",
+              "obs": ""
+            },
+            {
+              "v": "Solo 7137,8 vs Dist 4564,5 mWh",
+              "obs": ""
+            },
+            {
+              "v": "Solo 1222,8 vs Dist 279,3 Wh·s",
+              "obs": ""
+            }
+          ]
+        }
+      ],
+      "saida": "Comandos executados no Ubuntu 26.04 WSL2 (Ryzen 7 5700X3D):\n$ bash scripts/manage_distccd.sh start 4\n$ bash scripts/run_experiments.sh all\n$ python3 scripts/calc_energy.py\n\nSaída bruta resumida (dados/tempos_compilacao.csv e dados/energia_estimada.csv):\nescala_1_maquina (-j2): 1.9859s / 1.9637s (média 1.9748s, speedup 1.00x, efic 100%)\nescala_2_maquinas (-j4): 1.1306s / 1.1192s (média 1.1249s, speedup 1.76x, efic 88%)\nescala_3_maquinas (-j6): 0.9121s / 0.8698s (média 0.8910s, speedup 2.22x, efic 74%)\nescala_4_maquinas (-j8): 0.7297s / 0.7380s (média 0.7339s, speedup 2.69x, efic 67%)\ncontencao_cpu_0pct (0 threads): 0.7333s / 0.7639s (média 0.7486s)\ncontencao_cpu_25pct (4 threads stress-ng): 0.8253s / 0.8101s (média 0.8177s, +9.2%)\ncontencao_cpu_50pct (8 threads stress-ng): 0.9526s / 0.9533s (média 0.9530s, +27.3%)\ncontencao_cpu_100pct (16 threads stress-ng): 2.2157s / 2.9801s (média 2.5979s, +247.0%)\nporte_8_arqs: Solo 0.9120s/0.9089s (0.9104s) vs Dist 0.4611s/0.4581s (0.4596s) -> Speedup 1.98x | Energia: 37.94 vs 34.28 mWh\nporte_24_arqs: Solo 2.3872s/2.3624s (2.3748s) vs Dist 0.9212s/0.9150s (0.9181s) -> Speedup 2.59x | Energia: 98.95 vs 68.48 mWh\nporte_48_arqs: Solo 4.6296s/4.5981s (4.6138s) vs Dist 1.6375s/1.6221s (1.6298s) -> Speedup 2.83x | Energia: 192.24 vs 121.56 mWh\nprojeto_SQLite (103 .c): Solo 14.2371s/14.2494s (14.2432s) vs Dist 6.6544s/6.7757s (6.7150s) -> Speedup 2.12x | Energia: 593.47 vs 500.83 mWh\nprojeto_Kernel_Linux (904 .o): Solo 173.4631s/169.1517s (171.3074s) vs Dist 65.6213s/56.7788s (61.2001s) -> Speedup 2.80x | Energia: 7.14 Wh vs 4.56 Wh (-36.1%)",
+      "surpreendeu": "Nos testes de contenção de CPU em segundo plano, até 50% de ocupação (8 threads do stress-ng) o tempo de compilação subiu apenas 27% (de 0,75s para 0,95s) porque o escalonador CFS do Linux alocou os 8 threads livres do Ryzen 7 5700X3D (SMT); porém em 100% (16 threads) o tempo disparou +247% (2,60s) por trocas de contexto. Também surpreendeu que 2 máquinas (268,5W) gastam até 36,8% menos energia total (Wh) do que 1 máquina (150W) quando o speedup supera 1,79x (race-to-idle).",
+      "muda": "Desativamos o log detalhado por arquivo (DISTCC_VERBOSE=1) durante a compilação do Kernel Linux (904 objetos), pois a contenção de escrita em /tmp/distcc-client.log adicionava ~65s de atraso artificial, e isolamos o controle de banda (tc qdisc tbf) em par veth com network namespace.",
+      "v": 3,
+      "jev": {
+        "linhas": 1,
+        "surpreendeu": 1
+      }
+    },
+    "M3_por": "Vinicius Rampazi de Oliveira",
+    "M3_hora": "21:33",
+    "frentes2": [
+      {
+        "nome": "Gabriel Coelho",
+        "frente": "Questão 3: Dados dois projetos, um com número de arquivos alto (Linux) e um outro baixo (SQLite), a redução de tempo varia significamente?",
+        "frente1": "Correlação entre tempo de compilação individual e a exclusão seletiva de máquinas na compilação coletiva",
+        "minha": false
+      },
+      {
+        "nome": "Caroline Lee",
+        "frente": "",
+        "frente1": "",
+        "minha": false
+      },
+      {
+        "nome": "Vinicius Rampazi de Oliveira",
+        "frente": "Escalabilidade com o número de máquinas (1 a 4 nós), contenção de processos em segundo plano na CPU (stress-ng 0% a 100%), variação da quantidade de arquivos .c (8 a 904) e eficiência energética (consumo em mWh/Wh e EDP).",
+        "frente1": "Se perde algo quando fazemos a conexao via vpn? ha uma limitação por conta deste obstaculo?",
+        "minha": true
+      },
+      {
+        "nome": "Caio Belom",
+        "frente": "Questão 2: Distribuição percentual das tarefas de compilação entre dois servidores distccd, usando os logs do distcc para verificar o balanceamento de carga.",
+        "frente1": "",
+        "minha": false
+      },
+      {
+        "nome": "Fernando Paiva",
+        "frente": "",
+        "frente1": "",
+        "minha": false
+      }
+    ],
+    "metricas": [
+      {
+        "nome": "Gabriel Coelho",
+        "minha": false,
+        "metrica": "Redução percentual do tempo de compilação",
+        "unidade": "%",
+        "condicao": "Serão compilados pelo menos 2 projetos fixos (mas com num. de arquivos diferente), com dispositivos fixos, sob condições locais e paralelas distintas.",
+        "jev": null
+      },
+      {
+        "nome": "Caroline Lee",
+        "minha": false,
+        "metrica": "Tempo total de compilação",
+        "unidade": "s (segundos)",
+        "condicao": "Compilação limpa de um mesmo projeto, utilizando as máquinas do grupo individualmente e depois em conjunto com o distcc. Manter fixos o projeto, a quantidade de",
+        "jev": null
+      },
+      {
+        "nome": "Vinicius Rampazi de Oliveira",
+        "minha": true,
+        "metrica": "Tempo total de compilação limpa distribuída",
+        "unidade": "s",
+        "condicao": "Variação de 1 a 4 servidores distccd (-j2 a -j8), contenção de CPU em 2º plano (0% a 100% via stress-ng) e porte (8, 24, 48, 103 e 904 arquivos .c).",
+        "jev": {
+          "unidade": 0.95,
+          "repetida": 0.8,
+          "como": 0.95,
+          "significa": 0.97
+        }
+      },
+      {
+        "nome": "Caio Belom",
+        "minha": false,
+        "metrica": "Percentual de tarefas de compilação por servidor",
+        "unidade": "%",
+        "condicao": "Compilação de um projeto C com make -j8, utilizando dois servidores distccd locais, nas portas 3632 e 3633, com quatro tarefas simultâneas permitidas por servid",
+        "jev": null
+      }
+    ],
+    "F3M": {
+      "metricas": [
+        {
+          "metrica": "Redução percentual do tempo de compilação",
+          "unidade": "%",
+          "quem": "Gabriel Coelho",
+          "condicao": "Serão compilados pelo menos 2 projetos fixos (mas com num. de arquivos diferente), com dispositivos fixos, sob condições locais e paralelas distintas."
+        },
+        {
+          "metrica": "Tempo total de compilação",
+          "unidade": "s",
+          "quem": "Caroline Lee",
+          "condicao": "Compilação limpa de um mesmo projeto, utilizando as máquinas do grupo individualmente e depois em conjunto com o distcc. Manter fixos o projeto, a quantidade de"
+        },
+        {
+          "metrica": "Percentual de tarefas de compilação por servidor",
+          "unidade": "%",
+          "quem": "Caio Belom",
+          "condicao": "Compilação de um projeto C com make -j8, utilizando dois servidores distccd locais, nas portas 3632 e 3633, com quatro tarefas simultâneas permitidas por servid"
+        },
+        {
+          "metrica": "Tempo de compilação sob limitação de banda de rede",
+          "unidade": "s",
+          "quem": "Fernando Paiva",
+          "condicao": "Compilação distribuída variando a largura de banda da rede entre os nós de 1 Mbps a 1000 Mbps com controle de tráfego tc qdisc tbf."
+        },
+        {
+          "metrica": "Tempo de compilação sob escala de nós, contenção de CPU e porte",
+          "unidade": "s",
+          "quem": "Vinicius Rampazi de Oliveira",
+          "condicao": "Compilação variando de 1 a 4 servidores distccd (-j2 a -j8), contenção de CPU (0% a 100% via stress-ng) e quantidade de arquivos .c (8, 24 e 48)."
+        },
+        {
+          "metrica": "Consumo de energia elétrica e Produto Energia-Atraso (EDP)",
+          "unidade": "mWh",
+          "quem": "Vinicius Rampazi de Oliveira",
+          "condicao": "Compilação solo (150W) vs distribuída em 2 máquinas (268,5W) variando de 8, 24 e 48 arquivos .c até SQLite (103 .c) e Kernel Linux (904 objetos)."
+        }
+      ],
+      "v": 4,
+      "jev": {
+        "unidade": 1,
+        "donos": 1
+      }
+    },
+    "F3M_por": "Vinicius Rampazi de Oliveira",
+    "F3M_hora": "21:33",
+    "mesa3": null,
+    "F3L": {
+      "texto": "Definimos a divisão das coletas e hipóteses entre os integrantes para cobrir todas as variáveis sugeridas pelo professor:\n- Caroline Lee: tempo total de compilação comparando as máquinas individualmente (-j4) contra o cluster coletivo (-j8).\n- Caio Belom: percentual de tarefas compiladas por servidor distccd extraído dos logs de execução.\n- Gabriel Coelho: redução percentual do tempo de compilação entre projetos reais de portes diferentes (SQLite 3.47.2 com 103 arquivos .c vs Kernel Linux 6.6.72 com 904 objetos .o).\n- Fernando Paiva: impacto da limitação da largura de banda de rede (1 Mbps a 1000 Mbps com tc qdisc tbf em par veth) no tempo de compilação distribuída.\n- Vinicius Rampazi de Oliveira: escalabilidade variando a quantidade de máquinas disponíveis (1, 2, 3 e 4 nós distccd), impacto de processos concorrentes disputando CPU em segundo plano (0%, 25%, 50% e 100% de carga via stress-ng), variação da complexidade/quantidade de arquivos .c (8, 24 e 48 arquivos vs compilação local) e análise do consumo de energia elétrica (mWh/Wh) e Produto Energia-Atraso (EDP).\n\nAs medições da frente de escalabilidade, contenção de CPU, porte de arquivos .c e consumo energético já foram integralmente executadas no ambiente Ubuntu 26.04 LTS (WSL 2) com processador AMD Ryzen 7 5700X3D, e os arquivos brutos CSV já estão salvos e tabelados.",
+      "v": 1
+    },
+    "F3L_por": "Vinicius Rampazi de Oliveira",
+    "F3L_hora": "21:33",
+    "planos": [
+      {
+        "nome": "Gabriel Coelho",
+        "minha": false,
+        "coleta": null,
+        "hipotese": null
+      },
+      {
+        "nome": "Caroline Lee",
+        "minha": false,
+        "coleta": null,
+        "hipotese": null
+      },
+      {
+        "nome": "Vinicius Rampazi de Oliveira",
+        "minha": true,
+        "coleta": {
+          "metrica": "Tempo de compilação sob escala de nós, contenção de CPU e porte (s)",
+          "onde": "Computador próprio em casa: Desktop AMD Ryzen 7 5700X3D (8 núcleos físicos / 16 threads), 15 GB RAM, com Ubuntu 26.04 LTS no WSL 2.",
+          "ambiente": "pronto",
+          "falta": "",
+          "quando": "Quarta-feira (11/11) e quinta-feira (12/11), à tarde.",
+          "itens": [
+            {
+              "metrica": "Tempo de compilação sob escala de nós, contenção de CPU e porte (s)",
+              "onde": "Computador próprio em casa: Desktop AMD Ryzen 7 5700X3D (8 núcleos físicos / 16 threads), 15 GB RAM, com Ubuntu 26.04 LTS no WSL 2.",
+              "ambiente": "pronto",
+              "falta": "",
+              "quando": "Quarta-feira (11/11) e quinta-feira (12/11), à tarde."
+            },
+            {
+              "metrica": "Consumo de energia elétrica (mWh) e Produto Energia-Atraso (mWh·s)",
+              "onde": "Computador próprio em casa: Desktop AMD Ryzen 7 5700X3D (TDP 105W, potência em repouso 45W), 15 GB RAM, com Ubuntu 26.04 LTS no WSL 2.",
+              "ambiente": "pronto",
+              "falta": "",
+              "quando": "Quarta-feira (11/11) e quinta-feira (12/11), logo após a coleta dos tempos."
+            }
+          ]
+        },
+        "hipotese": {
+          "metrica": "Tempo de compilação sob escala de nós, contenção de CPU e porte (s)",
+          "espera": "Espero que o tempo total de compilação caia ao aumentar de 1 para 4 servidores distccd e ao aumentar o número de arquivos .c (de 8 para 48), mas que o tempo suba fortemente quando os processos concorrentes em segundo plano subirem de 0% para 100% da CPU.",
+          "itens": [
+            {
+              "metrica": "Tempo de compilação sob escala de nós, contenção de CPU e porte (s)",
+              "espera": "Espero que o tempo total de compilação caia ao aumentar de 1 para 4 servidores distccd e ao aumentar o número de arquivos .c (de 8 para 48), mas que o tempo suba fortemente quando os processos concorrentes em segundo plano subirem de 0% para 100% da CPU."
+            },
+            {
+              "metrica": "Consumo de energia elétrica (mWh) e Produto Energia-Atraso (mWh·s)",
+              "espera": "Espero que o consumo total de energia elétrica (mWh) e o Produto Energia-Atraso (EDP) caiam na compilação distribuída em 2 máquinas em comparação à compilação solo conforme o projeto cresce de 8 para 24, 48, 103 e 904 arquivos .c."
+            }
+          ]
+        }
+      },
+      {
+        "nome": "Caio Belom",
+        "minha": false,
+        "coleta": null,
+        "hipotese": null
+      },
+      {
+        "nome": "Fernando Paiva",
+        "minha": false,
+        "coleta": null,
+        "hipotese": null
+      }
+    ]
+  },
+  "L": {
+    "texto": "Nosso grupo investiga na prática o ganho real e os limites da compilação distribuída em C utilizando o distcc 3.4 com GCC 15.2.0 em ambiente Linux Ubuntu 26.04 LTS (WSL 2, kernel 6.18.58.1) sobre um processador AMD Ryzen 7 5700X3D (8 núcleos físicos / 16 threads, TDP 105W, 15 GB RAM).\n\nSeguindo o parecer do professor, estruturamos as medições reais em frentes complementares:\n- Comparação entre compilação individual em cada máquina (-j4) e compilação coletiva (-j8), monitorando a fração exata de arquivos .c compilados por nó via logs do distcc.\n- Compilação de projetos reais de código aberto de diferentes portes: o banco de dados SQLite 3.47.2 desmembrado (USE_AMALGAMATION=0, com 103 arquivos .c independentes) e o Kernel Linux 6.6.72 (904 objetos .o até gerar o vmlinux), comparando o modo Solo (-j2) contra o modo Distribuído em 3 nós (-j12).\n- Impacto da largura de banda da rede (1, 5, 10, 50, 100, 500 e 1000 Mbps) usando par virtual veth isolado em network namespace (ip netns) e controle de tráfego do kernel Linux (tc qdisc tbf).\n- Escalabilidade, contenção de CPU, complexidade de arquivos e eficiência energética (frente de Vinicius Rampazi): escalabilidade variando de 1 a 4 servidores distccd (2, 4, 6 e 8 jobs simultâneos); degradação por contenção de processos em segundo plano disputando CPU (0%, 25%, 50% e 100% dos 16 threads ocupados com stress-ng); variação da complexidade/tamanho do projeto (8, 24 e 48 arquivos .c independentes, além de SQLite com 103 arquivos e Kernel Linux com 904 objetos) comparando compilação local vs distribuída; e cálculo do consumo de energia elétrica (em Wh e mWh) e do Produto Energia-Atraso (EDP, em mWh·s) a partir dos tempos reais medidos e do envelope térmico (P_solo = 150W vs P_dist_2maq = 268,5W), demonstrando em quais cenários compilar mais rápido em paralelo economiza energia total mesmo usando mais máquinas.",
+    "v": 4
+  },
+  "chat_usadas": 0,
+  "chat_limite": 15,
+  "assistente": 1,
+  "ok": true
+}

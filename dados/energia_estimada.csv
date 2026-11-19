@@ -1,0 +1,6 @@
+tipo,projeto_carga,arquivos_c,tempo_solo_s,tempo_dist_2maq_s,potencia_solo_w,potencia_dist_2maq_w,energia_solo_wh,energia_dist_2maq_wh,edp_solo_wh_s,edp_dist_2maq_wh_s
+medido_real,Sintético (8 arqs),8,0.9104,0.4596,150.0,268.5,0.037935,0.034279,0.034538,0.015754
+medido_real,Sintético (24 arqs),24,2.3748,0.9181,150.0,268.5,0.09895,0.068475,0.234986,0.062867
+medido_real,Sintético (48 arqs),48,4.6138,1.6298,150.0,268.5,0.192244,0.121556,0.886984,0.198112
+medido_real,SQLite,103,14.2432,6.715,150.0,268.5,0.593469,0.500831,8.452924,3.363104
+medido_real,Kernel_Linux,913,171.3074,61.2001,150.0,268.5,7.137808,4.564504,1222.759387,279.347856

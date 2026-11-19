@@ -1,0 +1,57 @@
+experimento,projeto,rotulo,modo,hosts,jobs,extra,repeticao,tempo_s,arquivos_compilados
+exp1_individual_coletivo,bench_c,Maquina_1_Individual,distcc,127.0.0.1:3632/4,4,1_maquina,1,1.2354,18
+exp1_individual_coletivo,bench_c,Maquina_1_Individual,distcc,127.0.0.1:3632/4,4,1_maquina,2,1.2421,18
+exp1_individual_coletivo,bench_c,Maquina_2_Individual,distcc,127.0.0.1:3633/4,4,1_maquina,1,1.1828,18
+exp1_individual_coletivo,bench_c,Maquina_2_Individual,distcc,127.0.0.1:3633/4,4,1_maquina,2,1.2332,18
+exp1_individual_coletivo,bench_c,Coletivo_M1_M2,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,coletivo,1,0.8015,18
+exp1_individual_coletivo,bench_c,Coletivo_M1_M2,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,coletivo,2,0.7960,18
+exp5a_escala,bench_c,1_Maquina,distcc,127.0.0.1:3632/2,2,1,1,1.9859,18
+exp5a_escala,bench_c,1_Maquina,distcc,127.0.0.1:3632/2,2,1,2,1.9637,18
+exp5a_escala,bench_c,2_Maquinas,distcc,127.0.0.1:3632/2 127.0.0.1:3633/2,4,2,1,1.1306,18
+exp5a_escala,bench_c,2_Maquinas,distcc,127.0.0.1:3632/2 127.0.0.1:3633/2,4,2,2,1.1192,18
+exp5a_escala,bench_c,3_Maquinas,distcc,127.0.0.1:3632/2 127.0.0.1:3633/2 127.0.0.1:3634/2,6,3,1,0.9121,18
+exp5a_escala,bench_c,3_Maquinas,distcc,127.0.0.1:3632/2 127.0.0.1:3633/2 127.0.0.1:3634/2,6,3,2,0.8698,18
+exp5a_escala,bench_c,4_Maquinas,distcc,127.0.0.1:3632/2 127.0.0.1:3633/2 127.0.0.1:3634/2 127.0.0.1:3635/2,8,4,1,0.7297,18
+exp5a_escala,bench_c,4_Maquinas,distcc,127.0.0.1:3632/2 127.0.0.1:3633/2 127.0.0.1:3634/2 127.0.0.1:3635/2,8,4,2,0.7380,18
+exp5b_stress,bench_c,Carga_0pct,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,0,1,0.7333,18
+exp5b_stress,bench_c,Carga_0pct,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,0,2,0.7639,18
+exp5b_stress,bench_c,Carga_25pct,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,25,1,0.8253,18
+exp5b_stress,bench_c,Carga_25pct,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,25,2,0.8101,18
+exp5b_stress,bench_c,Carga_50pct,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,50,1,0.9526,18
+exp5b_stress,bench_c,Carga_50pct,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,50,2,0.9533,18
+exp5b_stress,bench_c,Carga_100pct,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,100,1,2.2157,18
+exp5b_stress,bench_c,Carga_100pct,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,100,2,2.9801,18
+exp5c_num_arquivos,bench_8c,Solo_8arq,solo,localhost,2,8,1,0.9120,9
+exp5c_num_arquivos,bench_8c,Solo_8arq,solo,localhost,2,8,2,0.9089,9
+exp5c_num_arquivos,bench_8c,Dist_8arq,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,8,1,0.4611,10
+exp5c_num_arquivos,bench_8c,Dist_8arq,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,8,2,0.4581,10
+exp5c_num_arquivos,bench_24c,Solo_24arq,solo,localhost,2,24,1,2.3872,25
+exp5c_num_arquivos,bench_24c,Solo_24arq,solo,localhost,2,24,2,2.3624,25
+exp5c_num_arquivos,bench_24c,Dist_24arq,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,24,1,0.9212,26
+exp5c_num_arquivos,bench_24c,Dist_24arq,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,24,2,0.9150,26
+exp5c_num_arquivos,bench_48c,Solo_48arq,solo,localhost,2,48,1,4.6296,49
+exp5c_num_arquivos,bench_48c,Solo_48arq,solo,localhost,2,48,2,4.5981,49
+exp5c_num_arquivos,bench_48c,Dist_48arq,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,48,1,1.6375,50
+exp5c_num_arquivos,bench_48c,Dist_48arq,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4,8,48,2,1.6221,50
+exp4_rede,bench_c,1_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,1,1,19.2419,10
+exp4_rede,bench_c,1_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,1,2,19.2335,10
+exp4_rede,bench_c,5_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,5,1,4.1203,10
+exp4_rede,bench_c,5_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,5,2,4.1218,10
+exp4_rede,bench_c,10_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,10,1,2.2670,10
+exp4_rede,bench_c,10_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,10,2,2.2407,10
+exp4_rede,bench_c,50_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,50,1,0.8177,10
+exp4_rede,bench_c,50_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,50,2,0.7808,10
+exp4_rede,bench_c,100_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,100,1,0.6428,10
+exp4_rede,bench_c,100_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,100,2,0.5758,10
+exp4_rede,bench_c,500_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,500,1,0.4305,10
+exp4_rede,bench_c,500_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,500,2,0.4767,10
+exp4_rede,bench_c,1000_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,1000,1,0.4420,10
+exp4_rede,bench_c,1000_Mbps,distcc,10.200.1.2:3632/4 10.200.1.2:3633/4,8,1000,2,0.4512,10
+exp3_projetos,SQLite,Solo,solo,localhost,2,sqlite,1,14.2371,103
+exp3_projetos,SQLite,Solo,solo,localhost,2,sqlite,2,14.2494,103
+exp3_projetos,SQLite,Distribuido,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4 127.0.0.1:3634/4,12,sqlite,1,6.6544,103
+exp3_projetos,SQLite,Distribuido,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4 127.0.0.1:3634/4,12,sqlite,2,6.7757,103
+exp3_projetos,Kernel_Linux,Solo,solo,localhost,2,linux,1,173.4631,904
+exp3_projetos,Kernel_Linux,Solo,solo,localhost,2,linux,2,169.1517,904
+exp3_projetos,Kernel_Linux,Distribuido,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4 127.0.0.1:3634/4,12,linux,1,65.6213,913
+exp3_projetos,Kernel_Linux,Distribuido,distcc,127.0.0.1:3632/4 127.0.0.1:3633/4 127.0.0.1:3634/4,12,linux,2,56.7788,904

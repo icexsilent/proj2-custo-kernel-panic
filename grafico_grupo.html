@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gráfico do Grupo Kernel Panic — Projeto 2: Custo da Compilação Distribuída (distcc)</title>
+<style>
+  :root {
+    --azul: #004990;
+    --azul-claro: #2563eb;
+    --verde: #00874A;
+    --vermelho: #D62828;
+    --laranja: #F77F00;
+    --texto: #1e293b;
+    --sec: #475569;
+    --fundo: #f8fafc;
+    --card: #ffffff;
+    --borda: #cbd5e1;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 24px 20px 60px;
+    font-family: "Segoe UI", Montserrat, Roboto, Helvetica, Arial, sans-serif;
+    background: var(--fundo);
+    color: var(--texto);
+    line-height: 1.5;
+  }
+  .container {
+    max-width: 1240px;
+    margin: 0 auto;
+  }
+  header {
+    background: var(--card);
+    border: 2px solid var(--azul);
+    border-radius: 12px;
+    padding: 22px 28px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 12px rgba(0, 73, 144, 0.07);
+  }
+  .tag-topo {
+    display: inline-block;
+    background: #e0f2fe;
+    color: var(--azul);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 4px 12px;
+    border-radius: 999px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  h1 {
+    margin: 0 0 10px 0;
+    font-size: 1.75rem;
+    color: var(--azul);
+    line-height: 1.28;
+  }
+  .subtitulo {
+    margin: 0;
+    font-size: 1.08rem;
+    color: var(--sec);
+    font-weight: 500;
+  }
+  .meta-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 24px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--borda);
+    font-size: 0.95rem;
+    color: var(--sec);
+  }
+  .meta-bar b { color: var(--texto); }
+
+  .controles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 18px;
+    align-items: center;
+  }
+  .controles span {
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--texto);
+    margin-right: 4px;
+  }
+  .btn-aba {
+    font: inherit;
+    font-weight: 700;
+    font-size: 0.98rem;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: 2px solid var(--azul);
+    background: #fff;
+    color: var(--azul);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-aba:hover {
+    background: #eff6ff;
+  }
+  .btn-aba.ativo {
+    background: var(--azul);
+    color: #fff;
+  }
+
+  .grid-paineis {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .painel-grafico {
+    background: var(--card);
+    border: 1.5px solid var(--borda);
+    border-radius: 12px;
+    padding: 24px 26px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+  }
+  .painel-grafico h2 {
+    margin: 0 0 6px 0;
+    font-size: 1.4rem;
+    color: var(--azul);
+  }
+  .painel-grafico .msg-painel {
+    margin: 0 0 16px 0;
+    font-size: 1.05rem;
+    color: var(--sec);
+    font-weight: 500;
+  }
+  .svg-wrap {
+    width: 100%;
+    overflow-x: auto;
+  }
+  svg {
+    width: 100%;
+    height: auto;
+    min-width: 820px;
+    display: block;
+    font-family: "Segoe UI", Montserrat, Roboto, sans-serif;
+  }
+
+  .legenda-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 28px;
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: #f1f5f9;
+    border-radius: 8px;
+    font-size: 0.98rem;
+    font-weight: 600;
+  }
+  .leg-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .swatch {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+  .swatch-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1.5px #0f172a;
+  }
+
+  .tabela-card {
+    background: var(--card);
+    border: 1.5px solid var(--borda);
+    border-radius: 12px;
+    padding: 24px 26px;
+    margin-top: 26px;
+  }
+  .tabela-card h2 {
+    margin: 0 0 8px 0;
+    font-size: 1.35rem;
+    color: var(--azul);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    font-size: 0.98rem;
+  }
+  th, td {
+    border: 1px solid var(--borda);
+    padding: 10px 12px;
+    text-align: left;
+  }
+  th {
+    background: #f1f5f9;
+    color: #0f172a;
+    font-weight: 700;
+  }
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+  .mono {
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 0.92rem;
+  }
+  .oculto {
+    display: none !important;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <span class="tag-topo">Projeto 2 · Custo · Sistemas Operacionais (2026.2) · Grupo Kernel Panic (Turma 4P)</span>
+    <h1>Escalar de 1 para 4 nós distccd corta o tempo de compilação em 63% (1,97 s → 0,73 s) e economiza 36% de energia no Kernel Linux, mas 100% de contenção de CPU triplica o tempo (2,60 s)</h1>
+    <p class="subtitulo">Medições reais com repetições individuais e médias em AMD Ryzen 7 5700X3D (8 núcleos físicos / 16 threads SMT, 15 GB RAM, Ubuntu 26.04 LTS no WSL 2, GCC 15.2.0 e distcc 3.4).</p>
+    <div class="meta-bar">
+      <span><b>Integrantes:</b> Gabriel Coelho, Caroline Lee, Vinicius Rampazi de Oliveira, Caio Belom, Fernando Paiva</span>
+      <span><b>Variável (Eixo Horizontal):</b> Nº de máquinas (1–4), Contenção CPU (0–100%) e Porte (8–904 arqs .c)</span>
+      <span><b>Métricas (Eixo Vertical):</b> Tempo (s), Speedup (x), Energia (mWh) e EDP (mWh·s)</span>
+    </div>
+  </header>
+
+  <div class="controles">
+    <span>Visualizar painel:</span>
+    <button class="btn-aba ativo" onclick="mostrarPainel('todos', this)">Visão Completa (Todas as Condições)</button>
+    <button class="btn-aba" onclick="mostrarPainel('escala', this)">1. Escala (1–4 Nós) e Contenção de CPU (0–100%)</button>
+    <button class="btn-aba" onclick="mostrarPainel('porte', this)">2. Porte do Projeto (8 a 904 arqs .c): Solo vs. Distribuído</button>
+    <button class="btn-aba" onclick="mostrarPainel('energia', this)">3. Energia Elétrica (mWh) e Speedup × Limiar Race-to-Idle (1,79x)</button>
+  </div>
+
+  <div class="grid-paineis">
+    <!-- PAINEL 1: ESCALA DE NÓS E CONTENÇÃO DE CPU -->
+    <section class="painel-grafico" id="painel-escala">
+      <h2>1. Escala de Servidores distccd (1 a 4 Máquinas) e Contenção de CPU em 2º Plano (stress-ng 0% a 100%)</h2>
+      <p class="msg-painel">Com CPU livre, distribuir entre 4 servidores reduz o tempo de 1,97 s para 0,73 s (Speedup 2,69x). Até 50% de carga concorrente (8 threads) o CFS absorve nos 16 threads SMT (+27%), mas em 100% (16 threads) a disputa por fila de CPU dispara o tempo para 2,60 s (+247%).</p>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 1050 470" aria-label="Gráfico de barras de tempo de compilação por escala de máquinas e contenção de CPU">
+          <!-- Fundo e grade (Eixo Y começa em 0.0 s até 3.2 s) -->
+          <!-- Área de plotagem: x=95..980, y=45..355 (altura 310px para 3.2s => 96.875 px por segundo) -->
+          <rect x="95" y="45" width="885" height="310" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+          <!-- Linhas de grade horizontais -->
+          <g stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4">
+            <line x1="95" y1="355" x2="980" y2="355" stroke="#475569" stroke-dasharray="none" stroke-width="2"/>
+            <line x1="95" y1="306.6" x2="980" y2="306.6"/>
+            <line x1="95" y1="258.1" x2="980" y2="258.1"/>
+            <line x1="95" y1="209.7" x2="980" y2="209.7"/>
+            <line x1="95" y1="161.3" x2="980" y2="161.3"/>
+            <line x1="95" y1="112.8" x2="980" y2="112.8"/>
+            <line x1="95" y1="64.4" x2="980" y2="64.4"/>
+          </g>
+          <!-- Rótulos Eixo Y -->
+          <g font-size="15" font-weight="700" fill="#334155" text-anchor="end">
+            <text x="85" y="360">0,0 s</text>
+            <text x="85" y="312">0,5 s</text>
+            <text x="85" y="263">1,0 s</text>
+            <text x="85" y="215">1,5 s</text>
+            <text x="85" y="166">2,0 s</text>
+            <text x="85" y="118">2,5 s</text>
+            <text x="85" y="69">3,0 s</text>
+          </g>
+          <!-- Título Eixo Y -->
+          <text x="26" y="200" transform="rotate(-90 26,200)" font-size="16" font-weight="700" fill="#004990" text-anchor="middle">
+            Tempo de compilação limpa (s) — média e rodadas
+          </text>
+
+          <!-- Linha de Referência 1: Tempo Base 1 Máquina (-j2) = 1,97 s (y = 355 - 1.9748*96.875 = 163.7) -->
+          <line x1="95" y1="163.7" x2="980" y2="163.7" stroke="#004990" stroke-width="2.2" stroke-dasharray="8,5"/>
+          <rect x="520" y="141" width="452" height="22" rx="4" fill="#eff6ff"/>
+          <text x="528" y="157" font-size="13.5" font-weight="700" fill="#004990">
+            Referência base: 1 Máquina (-j2, sem distribuição) = 1,97 s (1,00x)
+          </text>
+
+          <!-- Linha de Referência 2: Tempo sem carga concorrente (2 Nós -j8, 0% stress-ng) = 0,75 s (y = 355 - 0.7486*96.875 = 282.5) -->
+          <line x1="538" y1="282.5" x2="980" y2="282.5" stroke="#00874A" stroke-width="2" stroke-dasharray="6,4"/>
+          <text x="545" y="276" font-size="13" font-weight="700" fill="#00874A">
+            Referência sem carga concorrente (0% CPU): 0,75 s
+          </text>
+
+          <!-- Divisória vertical entre Escala de Nós e Contenção de CPU -->
+          <line x1="538" y1="45" x2="538" y2="355" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+          <text x="315" y="66" font-size="15" font-weight="700" fill="#004990" text-anchor="middle">Série A: Escala de Servidores distccd (16 arqs .c)</text>
+          <text x="760" y="66" font-size="15" font-weight="700" fill="#D62828" text-anchor="middle">Série B: Contenção de CPU via stress-ng (2 Nós, -j8)</text>
+
+          <!-- BARRAS SÉRIE A: Escala 1, 2, 3, 4 Máquinas -->
+          <!-- 1 Máquina: méd 1,97s (R1=1,99s, R2=1,96s) -> y=163.7, h=191.3 -->
+          <g>
+            <rect x="125" y="163.7" width="68" height="191.3" fill="#004990" rx="4"/>
+            <circle cx="147" cy="162.6" r="5.5" fill="#fbbf24" stroke="#0f172a" stroke-width="1.8"/>
+            <circle cx="171" cy="164.8" r="5.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1.8"/>
+            <text x="159" y="138" font-size="15" font-weight="700" fill="#004990" text-anchor="middle">1,97 s</text>
+            <text x="159" y="154" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">(1,99 / 1,96)</text>
+            <text x="159" y="378" font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">1 Máquina</text>
+            <text x="159" y="396" font-size="12.5" fill="#475569" text-anchor="middle">make -j2 (1,00x)</text>
+          </g>
+
+          <!-- 2 Máquinas: méd 1,12s (R1=1,13s, R2=1,12s) -> y=246.0, h=109.0 -->
+          <g>
+            <rect x="233" y="246.0" width="68" height="109.0" fill="#004990" rx="4"/>
+            <circle cx="255" cy="245.5" r="5.5" fill="#fbbf24" stroke="#0f172a" stroke-width="1.8"/>
+            <circle cx="279" cy="246.6" r="5.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1.8"/>
+            <text x="267" y="220" font-size="15" font-weight="700" fill="#004990" text-anchor="middle">1,12 s</text>
+            <text x="267" y="236" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">(1,13 / 1,12)</text>
+            <text x="267" y="378" font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">2 Máquinas</text>
+            <text x="267" y="396" font-size="12.5" fill="#475569" text-anchor="middle">make -j4 (1,76x)</text>
+          </g>
+
+          <!-- 3 Máquinas: méd 0,89s (R1=0,91s, R2=0,87s) -> y=268.7, h=86.3 -->
+          <g>
+            <rect x="341" y="268.7" width="68" height="86.3" fill="#004990" rx="4"/>
+            <circle cx="363" cy="266.6" r="5.5" fill="#fbbf24" stroke="#0f172a" stroke-width="1.8"/>
+            <circle cx="387" cy="270.7" r="5.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1.8"/>
+            <text x="375" y="242" font-size="15" font-weight="700" fill="#004990" text-anchor="middle">0,89 s</text>
+            <text x="375" y="258" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">(0,91 / 0,87)</text>
+            <text x="375" y="378" font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">3 Máquinas</text>
+            <text x="375" y="396" font-size="12.5" fill="#475569" text-anchor="middle">make -j6 (2,22x)</text>
+          </g>
+
+          <!-- 4 Máquinas: méd 0,73s (R1=0,73s, R2=0,74s) -> y=283.9, h=71.1 -->
+          <g>
+            <rect x="449" y="283.9" width="68" height="71.1" fill="#00874A" rx="4"/>
+            <circle cx="471" cy="284.3" r="5.5" fill="#fbbf24" stroke="#0f172a" stroke-width="1.8"/>
+            <circle cx="495" cy="283.5" r="5.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1.8"/>
+            <text x="483" y="258" font-size="15" font-weight="700" fill="#00874A" text-anchor="middle">0,73 s</text>
+            <text x="483" y="274" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">(0,73 / 0,74)</text>
+            <text x="483" y="378" font-size="14" font-weight="700" fill="#00874A" text-anchor="middle">4 Máquinas</text>
+            <text x="483" y="396" font-size="12.5" fill="#00874A" font-weight="700" text-anchor="middle">make -j8 (2,69x)</text>
+          </g>
+
+          <!-- BARRAS SÉRIE B: Contenção de CPU (0%, 25%, 50%, 100%) -->
+          <!-- 0% Carga: méd 0,75s (R1=0,73s, R2=0,76s) -> y=282.5, h=72.5 -->
+          <g>
+            <rect x="565" y="282.5" width="68" height="72.5" fill="#00874A" rx="4"/>
+            <circle cx="587" cy="284.0" r="5.5" fill="#fbbf24" stroke="#0f172a" stroke-width="1.8"/>
+            <circle cx="611" cy="281.0" r="5.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1.8"/>
+            <text x="599" y="242" font-size="15" font-weight="700" fill="#00874A" text-anchor="middle">0,75 s</text>
+            <text x="599" y="258" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">(0,73 / 0,76)</text>
+            <text x="599" y="378" font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">0% CPU</text>
+            <text x="599" y="396" font-size="12.5" fill="#475569" text-anchor="middle">0 threads (+0%)</text>
+          </g>
+
+          <!-- 25% Carga: méd 0,82s (R1=0,83s, R2=0,81s) -> y=275.8, h=79.2 -->
+          <g>
+            <rect x="673" y="275.8" width="68" height="79.2" fill="#F77F00" rx="4"/>
+            <circle cx="695" cy="275.1" r="5.5" fill="#fbbf24" stroke="#0f172a" stroke-width="1.8"/>
+            <circle cx="719" cy="276.5" r="5.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1.8"/>
+            <text x="707" y="236" font-size="15" font-weight="700" fill="#b45309" text-anchor="middle">0,82 s</text>
+            <text x="707" y="252" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">(0,83 / 0,81)</text>
+            <text x="707" y="378" font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">25% CPU</text>
+            <text x="707" y="396" font-size="12.5" fill="#475569" text-anchor="middle">4 threads (+9%)</text>
+          </g>
+
+          <!-- 50% Carga: méd 0,95s (R1=0,95s, R2=0,95s) -> y=262.7, h=92.3 -->
+          <g>
+            <rect x="781" y="262.7" width="68" height="92.3" fill="#F77F00" rx="4"/>
+            <circle cx="803" cy="262.7" r="5.5" fill="#fbbf24" stroke="#0f172a" stroke-width="1.8"/>
+            <circle cx="827" cy="262.7" r="5.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1.8"/>
+            <text x="815" y="224" font-size="15" font-weight="700" fill="#b45309" text-anchor="middle">0,95 s</text>
+            <text x="815" y="240" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">(0,95 / 0,95)</text>
+            <text x="815" y="378" font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">50% CPU</text>
+            <text x="815" y="396" font-size="12.5" fill="#475569" text-anchor="middle">8 threads (+27%)</text>
+          </g>
+
+          <!-- 100% Carga: méd 2,60s (R1=2,22s -> y=140.4, R2=2,98s -> y=66.3) -> y=103.3, h=251.7 -->
+          <g>
+            <rect x="889" y="103.3" width="68" height="251.7" fill="#D62828" rx="4"/>
+            <circle cx="911" cy="140.4" r="5.5" fill="#fbbf24" stroke="#0f172a" stroke-width="1.8"/>
+            <circle cx="935" cy="66.3" r="5.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1.8"/>
+            <text x="923" y="54" font-size="15.5" font-weight="700" fill="#D62828" text-anchor="middle">2,60 s (+247%)</text>
+            <text x="868" y="92" font-size="12" font-weight="700" fill="#475569" text-anchor="end">R1: 2,22s / R2: 2,98s</text>
+            <text x="923" y="378" font-size="14" font-weight="700" fill="#D62828" text-anchor="middle">100% CPU</text>
+            <text x="923" y="396" font-size="12.5" fill="#D62828" font-weight="700" text-anchor="middle">16 threads (Saturação)</text>
+          </g>
+
+          <!-- Título Eixo X -->
+          <text x="538" y="438" font-size="16" font-weight="700" fill="#004990" text-anchor="middle">
+            Condição experimental: Número de servidores distccd (1 a 4) e Carga concorrente na CPU (0% a 100%, 16 threads SMT)
+          </text>
+        </svg>
+      </div>
+      <div class="legenda-box">
+        <div class="leg-item"><span class="swatch" style="background:#004990"></span> Tempo médio — Escala de servidores (1 a 3 nós)</div>
+        <div class="leg-item"><span class="swatch" style="background:#00874A"></span> Melhor desempenho sem contenção (4 nós: 0,73 s | 2 nós 0% CPU: 0,75 s)</div>
+        <div class="leg-item"><span class="swatch" style="background:#F77F00"></span> Contenção moderada absorvida por SMT (25% e 50% CPU)</div>
+        <div class="leg-item"><span class="swatch" style="background:#D62828"></span> Saturação de 16 threads SMT (100% CPU: 2,60 s)</div>
+        <div class="leg-item"><span class="swatch-dot" style="background:#fbbf24"></span> Valor individual da Rodada 1</div>
+        <div class="leg-item"><span class="swatch-dot" style="background:#38bdf8"></span> Valor individual da Rodada 2</div>
+      </div>
+    </section>
+
+    <!-- PAINEL 2: PORTE DO PROJETO (8, 24, 48, 103 E 904 ARQUIVOS .C) -->
+    <section class="painel-grafico" id="painel-porte">
+      <h2>2. Porte do Projeto (8, 24, 48, 103 e 904 Arquivos .c): Compilação Solo vs. Distribuída</h2>
+      <p class="msg-painel">Conforme o projeto cresce de 8 para 48, 103 (SQLite) e 904 arquivos (Kernel Linux), o custo fixo de rede TCP e linkedição serial (ld) se dilui, elevando o Speedup de 1,98x para até 2,83x e economizando 110 segundos no Kernel Linux (171,31 s → 61,20 s).</p>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 1050 450" aria-label="Gráfico comparando compilação Solo vs Distribuída por porte do projeto">
+          <!-- Subgráfico Esquerdo: Tempo de Compilação (8, 24, 48, 103 arqs) e Direito: Kernel Linux (904 objs) -->
+          <!-- Área Esquerda: x=85..650, y=50..340 (escala 0 a 16s => 18.125 px/s) -->
+          <rect x="85" y="50" width="555" height="290" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+          <g stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4">
+            <line x1="85" y1="340" x2="640" y2="340" stroke="#475569" stroke-dasharray="none" stroke-width="2"/>
+            <line x1="85" y1="267.5" x2="640" y2="267.5"/>
+            <line x1="85" y1="195.0" x2="640" y2="195.0"/>
+            <line x1="85" y1="122.5" x2="640" y2="122.5"/>
+            <line x1="85" y1="50.0" x2="640" y2="50.0"/>
+          </g>
+          <g font-size="14" font-weight="700" fill="#334155" text-anchor="end">
+            <text x="77" y="345">0 s</text>
+            <text x="77" y="272">4 s</text>
+            <text x="77" y="200">8 s</text>
+            <text x="77" y="127">12 s</text>
+            <text x="77" y="55">16 s</text>
+          </g>
+          <text x="24" y="195" transform="rotate(-90 24,195)" font-size="15.5" font-weight="700" fill="#004990" text-anchor="middle">
+            Tempo de compilação limpa (s)
+          </text>
+          <text x="362" y="72" font-size="15" font-weight="700" fill="#004990" text-anchor="middle">
+            Projetos de 8 a 103 arquivos .c (Eixo 0 a 16 s)
+          </text>
+
+          <!-- 8 arqs: Solo 0,91s (h=16.5, y=323.5) vs Dist 0,46s (h=8.3, y=331.7) -->
+          <g>
+            <rect x="115" y="323.5" width="42" height="16.5" fill="#64748b" rx="3"/>
+            <circle cx="130" cy="323.5" r="4" fill="#fbbf24" stroke="#0f172a"/>
+            <circle cx="142" cy="323.5" r="4" fill="#38bdf8" stroke="#0f172a"/>
+            <text x="136" y="302" font-size="13" font-weight="700" fill="#475569" text-anchor="middle">Solo</text>
+            <text x="136" y="317" font-size="13.5" font-weight="700" fill="#334155" text-anchor="middle">0,91s</text>
+
+            <rect x="161" y="331.7" width="42" height="8.3" fill="#00874A" rx="3"/>
+            <circle cx="176" cy="331.6" r="4" fill="#fbbf24" stroke="#0f172a"/>
+            <circle cx="188" cy="331.7" r="4" fill="#38bdf8" stroke="#0f172a"/>
+            <text x="182" y="310" font-size="13" font-weight="700" fill="#00874A" text-anchor="middle">Dist</text>
+            <text x="182" y="325" font-size="13.5" font-weight="700" fill="#00874A" text-anchor="middle">0,46s</text>
+
+            <text x="159" y="365" font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">8 arqs .c</text>
+            <text x="159" y="383" font-size="13" font-weight="700" fill="#00874A" text-anchor="middle">1,98x (-49,5%)</text>
+          </g>
+
+          <!-- 24 arqs: Solo 2,37s (h=43.0, y=297.0) vs Dist 0,92s (h=16.6, y=323.4) -->
+          <g>
+            <rect x="245" y="297.0" width="42" height="43.0" fill="#64748b" rx="3"/>
+            <circle cx="260" cy="296.7" r="4" fill="#fbbf24" stroke="#0f172a"/>
+            <circle cx="272" cy="297.2" r="4" fill="#38bdf8" stroke="#0f172a"/>
+            <text x="266" y="290" font-size="13.5" font-weight="700" fill="#334155" text-anchor="middle">2,37s</text>
+
+            <rect x="291" y="323.4" width="42" height="16.6" fill="#00874A" rx="3"/>
+            <circle cx="306" cy="323.3" r="4" fill="#fbbf24" stroke="#0f172a"/>
+            <circle cx="318" cy="323.4" r="4" fill="#38bdf8" stroke="#0f172a"/>
+            <text x="312" y="316" font-size="13.5" font-weight="700" fill="#00874A" text-anchor="middle">0,92s</text>
+
+            <text x="289" y="365" font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">24 arqs .c</text>
+            <text x="289" y="383" font-size="13" font-weight="700" fill="#00874A" text-anchor="middle">2,59x (-61,3%)</text>
+          </g>
+
+          <!-- 48 arqs: Solo 4,61s (h=83.6, y=256.4) vs Dist 1,63s (h=29.5, y=310.5) -->
+          <g>
+            <rect x="375" y="256.4" width="42" height="83.6" fill="#64748b" rx="3"/>
+            <circle cx="390" cy="256.1" r="4" fill="#fbbf24" stroke="#0f172a"/>
+            <circle cx="402" cy="256.7" r="4" fill="#38bdf8" stroke="#0f172a"/>
+            <text x="396" y="248" font-size="13.5" font-weight="700" fill="#334155" text-anchor="middle">4,61s</text>
+
+            <rect x="421" y="310.5" width="42" height="29.5" fill="#00874A" rx="3"/>
+            <circle cx="436" cy="310.3" r="4" fill="#fbbf24" stroke="#0f172a"/>
+            <circle cx="448" cy="310.6" r="4" fill="#38bdf8" stroke="#0f172a"/>
+            <text x="442" y="302" font-size="13.5" font-weight="700" fill="#00874A" text-anchor="middle">1,63s</text>
+
+            <text x="419" y="365" font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">48 arqs .c</text>
+            <text x="419" y="383" font-size="13" font-weight="700" fill="#00874A" text-anchor="middle">2,83x (-64,7%)</text>
+          </g>
+
+          <!-- SQLite 103 arqs: Solo 14,24s (h=258.2, y=81.8) vs Dist 6,72s (h=121.7, y=218.3) -->
+          <g>
+            <rect x="510" y="81.8" width="45" height="258.2" fill="#64748b" rx="3"/>
+            <circle cx="525" cy="81.9" r="4.5" fill="#fbbf24" stroke="#0f172a"/>
+            <circle cx="540" cy="81.7" r="4.5" fill="#38bdf8" stroke="#0f172a"/>
+            <text x="532" y="64" font-size="14" font-weight="700" fill="#334155" text-anchor="middle">Solo: 14,24s</text>
+            <text x="532" y="77" font-size="11.5" fill="#475569" text-anchor="middle">(14,24 / 14,25)</text>
+
+            <rect x="560" y="218.3" width="45" height="121.7" fill="#004990" rx="3"/>
+            <circle cx="575" cy="219.4" r="4.5" fill="#fbbf24" stroke="#0f172a"/>
+            <circle cx="590" cy="217.2" r="4.5" fill="#38bdf8" stroke="#0f172a"/>
+            <text x="582" y="199" font-size="14" font-weight="700" fill="#004990" text-anchor="middle">Dist: 6,72s</text>
+            <text x="582" y="212" font-size="11.5" fill="#475569" text-anchor="middle">(6,65 / 6,78)</text>
+
+            <text x="557" y="365" font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">SQLite (103 .c)</text>
+            <text x="557" y="383" font-size="13" font-weight="700" fill="#004990" text-anchor="middle">2,12x (-52,9%)</text>
+          </g>
+
+          <!-- Subgráfico Direito: Kernel Linux 6.6.72 (904 objetos, escala 0 a 200 s => 1.45 px/s) -->
+          <rect x="715" y="50" width="295" height="290" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+          <g stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4">
+            <line x1="715" y1="340" x2="1010" y2="340" stroke="#475569" stroke-dasharray="none" stroke-width="2"/>
+            <line x1="715" y1="267.5" x2="1010" y2="267.5"/>
+            <line x1="715" y1="195.0" x2="1010" y2="195.0"/>
+            <line x1="715" y1="122.5" x2="1010" y2="122.5"/>
+            <line x1="715" y1="50.0" x2="1010" y2="50.0"/>
+          </g>
+          <g font-size="14" font-weight="700" fill="#334155" text-anchor="end">
+            <text x="707" y="345">0 s</text>
+            <text x="707" y="272">50 s</text>
+            <text x="707" y="200">100 s</text>
+            <text x="707" y="127">150 s</text>
+            <text x="707" y="55">200 s</text>
+          </g>
+          <text x="862" y="72" font-size="15" font-weight="700" fill="#004990" text-anchor="middle">
+            Kernel Linux 6.6.72 (904 objetos .o)
+          </text>
+
+          <!-- Kernel Solo: 171,31s (R1=173,46s, R2=169,15s) -> h=248.4, y=91.6 -->
+          <g>
+            <rect x="770" y="91.6" width="72" height="248.4" fill="#64748b" rx="4"/>
+            <circle cx="792" cy="88.5" r="5.5" fill="#fbbf24" stroke="#0f172a" stroke-width="1.8"/>
+            <circle cx="820" cy="94.7" r="5.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1.8"/>
+            <text x="806" y="114" font-size="13.5" font-weight="700" fill="#ffffff" text-anchor="middle">Referência</text>
+            <text x="806" y="131" font-size="13.5" font-weight="700" fill="#ffffff" text-anchor="middle">Solo (-j2)</text>
+            <text x="806" y="152" font-size="16" font-weight="700" fill="#ffffff" text-anchor="middle">171,31 s</text>
+            <text x="806" y="170" font-size="11.5" fill="#f1f5f9" text-anchor="middle">(173,5 / 169,2)</text>
+          </g>
+
+          <!-- Kernel Distribuído: 61,20s (R1=65,62s, R2=56,78s) -> h=88.7, y=251.3 -->
+          <g>
+            <rect x="880" y="251.3" width="72" height="88.7" fill="#00874A" rx="4"/>
+            <circle cx="902" cy="244.9" r="5.5" fill="#fbbf24" stroke="#0f172a" stroke-width="1.8"/>
+            <circle cx="930" cy="257.7" r="5.5" fill="#38bdf8" stroke="#0f172a" stroke-width="1.8"/>
+            <text x="916" y="218" font-size="15.5" font-weight="700" fill="#00874A" text-anchor="middle">Dist (-j12): 61,20 s</text>
+            <text x="916" y="236" font-size="12" font-weight="600" fill="#475569" text-anchor="middle">(R1: 65,62s / R2: 56,78s)</text>
+          </g>
+
+          <text x="862" y="365" font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">Kernel Linux (904 objs)</text>
+          <text x="862" y="383" font-size="13.5" font-weight="700" fill="#00874A" text-anchor="middle">Speedup 2,80x (-64,3% | -110,1 s)</text>
+
+          <!-- Título Eixo X Geral -->
+          <text x="538" y="425" font-size="16" font-weight="700" fill="#004990" text-anchor="middle">
+            Porte do projeto compilado (quantidade de arquivos .c / objetos .o) — Comparação Solo (-j2) vs. Distribuído (distcc)
+          </text>
+        </svg>
+      </div>
+    </section>
+
+    <!-- PAINEL 3: ENERGIA ELÉTRICA E LIMIAR RACE-TO-IDLE -->
+    <section class="painel-grafico" id="painel-energia">
+      <h2>3. Eficiência Energética (Race-to-Idle): Speedup e Redução de Energia (mWh) e EDP (mWh·s)</h2>
+      <p class="msg-painel">Duas máquinas ativas demandam 1,79x mais potência instantânea (268,5 W vs. 150 W). Como o Speedup superou a linha de referência de 1,79x em todos os portes (1,98x a 2,83x), encerrar o build mais cedo e devolver as CPUs ao estado ocioso (ACPI C-states, 45 W) economizou até 36,8% de energia (mWh) e 77,7% de EDP.</p>
+      <div class="svg-wrap">
+        <svg viewBox="0 0 1050 430" aria-label="Gráfico de linha de Speedup e redução de energia em função do porte do projeto">
+          <!-- Área de plotagem: x=95..960, y=45..330 (Eixo Y: Speedup de 0.0x a 3.5x => 81.43 px por unidade de speedup) -->
+          <rect x="95" y="45" width="865" height="285" fill="#ffffff" stroke="#e2e8f0" stroke-width="1.5"/>
+          <g stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4">
+            <line x1="95" y1="330" x2="960" y2="330" stroke="#475569" stroke-dasharray="none" stroke-width="2"/>
+            <line x1="95" y1="248.6" x2="960" y2="248.6"/>
+            <line x1="95" y1="167.1" x2="960" y2="167.1"/>
+            <line x1="95" y1="85.7" x2="960" y2="85.7"/>
+          </g>
+          <g font-size="14.5" font-weight="700" fill="#334155" text-anchor="end">
+            <text x="85" y="335">0,0x</text>
+            <text x="85" y="254">1,0x</text>
+            <text x="85" y="172">2,0x</text>
+            <text x="85" y="91">3,0x</text>
+          </g>
+          <text x="26" y="188" transform="rotate(-90 26,188)" font-size="15.5" font-weight="700" fill="#004990" text-anchor="middle">
+            Speedup de tempo (T_solo / T_dist) e Razão de EDP
+          </text>
+
+          <!-- Linha de Referência Crítica: Limiar Energético P_dist / P_solo = 268,5W / 150W = 1,79x (y = 330 - 1.79*81.43 = 184.2) -->
+          <line x1="95" y1="184.2" x2="960" y2="184.2" stroke="#D62828" stroke-width="2.5" stroke-dasharray="8,5"/>
+          <rect x="110" y="189" width="590" height="24" rx="4" fill="#fef2f2"/>
+          <text x="118" y="206" font-size="13.5" font-weight="700" fill="#D62828">
+            Referência crítica (Break-even energético): Razão de potência 268,5 W / 150 W = 1,79x (acima = economiza mWh)
+          </text>
+
+          <!-- Linha de Referência Base Solo = 1,00x (y = 248.6) -->
+          <line x1="95" y1="248.6" x2="960" y2="248.6" stroke="#64748b" stroke-width="1.8" stroke-dasharray="4,4"/>
+          <text x="118" y="242" font-size="13" font-weight="700" fill="#64748b">
+            Referência Compilação Solo (1 máquina a 150 W) = 1,00x
+          </text>
+
+          <!-- Pontos X para 5 portes: 8 arqs (x=180), 24 arqs (x=355), 48 arqs (x=530), SQLite 103 arqs (x=705), Kernel 904 objs (x=880) -->
+          <!-- Série 1: Speedup de Tempo (1,98x -> 2,59x -> 2,83x -> 2,12x -> 2,80x) -->
+          <!-- y: 1.98->168.8, 2.59->119.1, 2.83->99.6, 2.12->157.4, 2.80->102.0 -->
+          <polyline fill="none" stroke="#004990" stroke-width="4" points="180,168.8 355,119.1 530,99.6 705,157.4 880,102.0"/>
+
+          <!--Pontos e Rótulos Diretos da Série Speedup e Economia de Energia -->
+          <!-- 8 arqs -->
+          <circle cx="180" cy="168.8" r="7" fill="#004990" stroke="#fff" stroke-width="2"/>
+          <text x="180" y="142" font-size="14.5" font-weight="700" fill="#004990" text-anchor="middle">1,98x</text>
+          <text x="180" y="158" font-size="12.5" font-weight="700" fill="#00874A" text-anchor="middle">-9,6% mWh (37,9→34,3)</text>
+
+          <!-- 24 arqs -->
+          <circle cx="355" cy="119.1" r="7" fill="#004990" stroke="#fff" stroke-width="2"/>
+          <text x="355" y="92" font-size="14.5" font-weight="700" fill="#004990" text-anchor="middle">2,59x</text>
+          <text x="355" y="108" font-size="12.5" font-weight="700" fill="#00874A" text-anchor="middle">-30,8% mWh (99,0→68,5)</text>
+
+          <!-- 48 arqs -->
+          <circle cx="530" cy="99.6" r="7" fill="#004990" stroke="#fff" stroke-width="2"/>
+          <text x="530" y="72" font-size="14.5" font-weight="700" fill="#004990" text-anchor="middle">2,83x</text>
+          <text x="530" y="88" font-size="12.5" font-weight="700" fill="#00874A" text-anchor="middle">-36,8% mWh (192,2→121,6)</text>
+
+          <!-- SQLite 103 arqs -->
+          <circle cx="705" cy="157.4" r="7" fill="#004990" stroke="#fff" stroke-width="2"/>
+          <text x="705" y="130" font-size="14.5" font-weight="700" fill="#004990" text-anchor="middle">2,12x</text>
+          <text x="705" y="146" font-size="12.5" font-weight="700" fill="#00874A" text-anchor="middle">-15,6% mWh (593,5→500,8)</text>
+
+          <!-- Kernel Linux 904 objs -->
+          <circle cx="880" cy="102.0" r="7" fill="#00874A" stroke="#fff" stroke-width="2"/>
+          <text x="880" y="74" font-size="14.5" font-weight="700" fill="#00874A" text-anchor="middle">2,80x (Kernel)</text>
+          <text x="880" y="90" font-size="12.5" font-weight="700" fill="#00874A" text-anchor="middle">-36,1% mWh (7138→4565)</text>
+
+          <!-- Nome da série escrito diretamente ao lado da linha -->
+          <text x="900" y="122" font-size="14" font-weight="700" fill="#004990" text-anchor="end">Série: Speedup (T_solo / T_dist)</text>
+
+          <!-- Rótulos Eixo X -->
+          <g font-size="14" font-weight="700" fill="#1e293b" text-anchor="middle">
+            <text x="180" y="355">8 arqs .c</text>
+            <text x="180" y="373" font-size="12.5" fill="#00874A">EDP 2,19x melhor</text>
+
+            <text x="355" y="355">24 arqs .c</text>
+            <text x="355" y="373" font-size="12.5" fill="#00874A">EDP 3,74x melhor</text>
+
+            <text x="530" y="355">48 arqs .c</text>
+            <text x="530" y="373" font-size="12.5" fill="#00874A">EDP 4,48x melhor</text>
+
+            <text x="705" y="355">SQLite (103 .c)</text>
+            <text x="705" y="373" font-size="12.5" fill="#00874A">EDP 2,51x melhor</text>
+
+            <text x="880" y="355">Kernel Linux (904 .o)</text>
+            <text x="880" y="373" font-size="12.5" fill="#00874A">EDP 4,38x melhor</text>
+          </g>
+
+          <text x="528" y="408" font-size="16" font-weight="700" fill="#004990" text-anchor="middle">
+            Porte do projeto compilado (quantidade de arquivos .c / objetos .o)
+          </text>
+        </svg>
+      </div>
+    </section>
+  </div>
+
+  <!-- TABELA DE CONFERÊNCIA COM OS NÚMEROS DA MEDIÇÃO DO GRUPO -->
+  <section class="tabela-card">
+    <h2>Tabela Completa de Medição do Grupo (Conferência com a Saída Bruta)</h2>
+    <p style="margin:0;color:var(--sec)">Todos os valores abaixo correspondem exatamente à tabela enviada na Ficha 4 e aos arquivos brutos <code class="mono">dados/tempos_compilacao.csv</code> e <code class="mono">dados/energia_estimada.csv</code>.</p>
+    <table>
+      <thead>
+        <tr>
+          <th>Condição Medida</th>
+          <th>Tempo de compilação limpa (s)<br><small>Rodada 1 / Rodada 2 (Média)</small></th>
+          <th>Speedup / Impacto (x)</th>
+          <th>Energia elétrica consumida (mWh)</th>
+          <th>Produto Energia-Atraso — EDP (mWh·s)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><b>Escala: 1 Máquina (make -j2, 16 arqs .c)</b></td>
+          <td class="mono">1,99 / 1,96 (méd 1,97 s)</td>
+          <td class="mono">1,00x (efic. 100%)</td>
+          <td class="mono">82,28 mWh (a 150W)</td>
+          <td class="mono">162,49 mWh·s</td>
+        </tr>
+        <tr>
+          <td><b>Escala: 2 Máquinas (make -j4, 16 arqs .c)</b></td>
+          <td class="mono">1,13 / 1,12 (méd 1,12 s)</td>
+          <td class="mono">1,76x (efic. 88%)</td>
+          <td class="mono">83,90 mWh (a 268,5W)</td>
+          <td class="mono">94,38 mWh·s</td>
+        </tr>
+        <tr>
+          <td><b>Escala: 3 Máquinas (make -j6, 16 arqs .c)</b></td>
+          <td class="mono">0,91 / 0,87 (méd 0,89 s)</td>
+          <td class="mono">2,22x (efic. 74%)</td>
+          <td class="mono">95,78 mWh</td>
+          <td class="mono">85,34 mWh·s</td>
+        </tr>
+        <tr>
+          <td><b>Escala: 4 Máquinas (make -j8, 16 arqs .c)</b></td>
+          <td class="mono">0,73 / 0,74 (méd 0,73 s)</td>
+          <td class="mono">2,69x (efic. 67%)</td>
+          <td class="mono">104,60 mWh</td>
+          <td class="mono">76,76 mWh·s</td>
+        </tr>
+        <tr>
+          <td><b>Contenção CPU: 0% vs 25% vs 50% vs 100%</b></td>
+          <td class="mono">0,75s / 0,82s / 0,95s / 2,60s</td>
+          <td class="mono">+0% / +9% / +27% / +247% lentidão</td>
+          <td class="mono">55,8 / 61,0 / 71,1 / 193,8 mWh</td>
+          <td class="mono">41,8 / 49,9 / 67,7 / 503,4 mWh·s</td>
+        </tr>
+        <tr>
+          <td><b>Porte: 8 arqs .c (Solo -j2 vs Dist -j8)</b></td>
+          <td class="mono">Solo 0,91s vs Dist 0,46s</td>
+          <td class="mono">1,98x mais rápido (-49,5%)</td>
+          <td class="mono">Solo 37,94 vs Dist 34,28 mWh</td>
+          <td class="mono">Solo 34,54 vs Dist 15,75 mWh·s</td>
+        </tr>
+        <tr>
+          <td><b>Porte: 24 arqs .c (Solo -j2 vs Dist -j8)</b></td>
+          <td class="mono">Solo 2,37s vs Dist 0,92s</td>
+          <td class="mono">2,59x mais rápido (-61,3%)</td>
+          <td class="mono">Solo 98,95 vs Dist 68,48 mWh</td>
+          <td class="mono">Solo 234,99 vs Dist 62,87 mWh·s</td>
+        </tr>
+        <tr>
+          <td><b>Porte: 48 arqs .c (Solo -j2 vs Dist -j8)</b></td>
+          <td class="mono">Solo 4,61s vs Dist 1,63s</td>
+          <td class="mono">2,83x mais rápido (-64,7%)</td>
+          <td class="mono">Solo 192,24 vs Dist 121,56 mWh</td>
+          <td class="mono">Solo 886,98 vs Dist 198,11 mWh·s</td>
+        </tr>
+        <tr>
+          <td><b>SQLite 3.47.2 (103 arqs .c, Solo vs Dist)</b></td>
+          <td class="mono">Solo 14,24s vs Dist 6,72s</td>
+          <td class="mono">2,12x mais rápido (-52,9%)</td>
+          <td class="mono">Solo 593,47 vs Dist 500,83 mWh</td>
+          <td class="mono">Solo 8452,9 vs Dist 3363,1 mWh·s</td>
+        </tr>
+        <tr>
+          <td><b>Kernel Linux 6.6.72 (904 objs, Solo vs Dist)</b></td>
+          <td class="mono">Solo 171,31s vs Dist 61,20s</td>
+          <td class="mono">2,80x mais rápido (-64,3%)</td>
+          <td class="mono">Solo 7137,8 vs Dist 4564,5 mWh</td>
+          <td class="mono">Solo 1222,8 vs Dist 279,3 Wh·s</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</div>
+
+<script>
+function mostrarPainel(qual, btn) {
+  document.querySelectorAll('.btn-aba').forEach(function(b) { b.classList.remove('ativo'); });
+  if (btn) btn.classList.add('ativo');
+  var ids = ['escala', 'porte', 'energia'];
+  ids.forEach(function(id) {
+    var el = document.getElementById('painel-' + id);
+    if (!el) return;
+    if (qual === 'todos' || qual === id) {
+      el.classList.remove('oculto');
+    } else {
+      el.classList.add('oculto');
+    }
+  });
+}
+</script>
+</body>
+</html>

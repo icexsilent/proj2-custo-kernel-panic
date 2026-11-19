@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relatório Final — Projeto 2: Custo da Compilação Distribuída com distcc — Grupo Kernel Panic</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 12mm 14mm 12mm 14mm;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    line-height: 1.44;
+    font-size: 9.8pt;
+    margin: 0;
+    padding: 0;
+  }
+  .header-banner {
+    background: linear-gradient(135deg, #0f172a 0%, #004990 100%);
+    color: #ffffff;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 14px;
+  }
+  .header-banner .tag {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.16);
+    color: #e0f2fe;
+    font-size: 8.5pt;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 999px;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .header-banner h1 {
+    margin: 0 0 6px 0;
+    font-size: 15.5pt;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+  .header-banner p {
+    margin: 2px 0;
+    font-size: 9.2pt;
+    color: #e2e8f0;
+  }
+  h2 {
+    color: #004990;
+    font-size: 12.2pt;
+    border-bottom: 2px solid #004990;
+    padding-bottom: 3px;
+    margin-top: 14px;
+    margin-bottom: 8px;
+    page-break-after: avoid;
+  }
+  h3 {
+    color: #1e3a8a;
+    font-size: 10.5pt;
+    margin-top: 10px;
+    margin-bottom: 4px;
+    page-break-after: avoid;
+  }
+  p {
+    margin: 5px 0;
+  }
+  .box-destaque {
+    background: #eff6ff;
+    border-left: 4px solid #004990;
+    padding: 8px 12px;
+    margin: 8px 0;
+    border-radius: 0 6px 6px 0;
+    page-break-inside: avoid;
+  }
+  .box-verde {
+    background: #f0fdf4;
+    border-left: 4px solid #00874A;
+    padding: 8px 12px;
+    margin: 8px 0;
+    border-radius: 0 6px 6px 0;
+    page-break-inside: avoid;
+  }
+  .box-limites {
+    background: #fffbeb;
+    border-left: 4px solid #d97706;
+    padding: 8px 12px;
+    margin: 8px 0;
+    border-radius: 0 6px 6px 0;
+    page-break-inside: avoid;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 6px 0 10px 0;
+    font-size: 8.8pt;
+    page-break-inside: avoid;
+  }
+  th, td {
+    border: 1px solid #cbd5e1;
+    padding: 5px 7px;
+    text-align: left;
+    vertical-align: top;
+  }
+  th {
+    background: #f1f5f9;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+  .grid-charts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 8px 0;
+    page-break-inside: avoid;
+  }
+  .chart-card {
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 6px 8px;
+    background: #fff;
+    text-align: center;
+    page-break-inside: avoid;
+  }
+  .chart-card.full {
+    grid-column: 1 / -1;
+  }
+  .chart-card img {
+    max-width: 100%;
+    max-height: 210px;
+    height: auto;
+  }
+  .chart-card.full img {
+    max-height: 235px;
+  }
+  .chart-caption {
+    font-size: 8.3pt;
+    color: #475569;
+    margin-top: 3px;
+    font-weight: 600;
+  }
+  ul, ol {
+    margin: 5px 0;
+    padding-left: 18px;
+  }
+  li {
+    margin-bottom: 4px;
+  }
+  code {
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-size: 8.5pt;
+    background: #f1f5f9;
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+  .header-banner code {
+    background: rgba(255, 255, 255, 0.22);
+    color: #ffffff;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-banner">
+  <span class="tag">Universidade Presbiteriana Mackenzie · Sistemas Operacionais (CC) · 2026.2 · Prof. Lucas Figueiredo</span>
+  <h1>Projeto 2 · Custo: Compilação Distribuída em C com distcc sob Escala, Contenção e Energia</h1>
+  <p><strong>Grupo:</strong> Kernel Panic (Código <code>KPE-V7L</code> · Turma 4P) &nbsp;|&nbsp; <strong>Data:</strong> Novembro de 2026</p>
+  <p><strong>Integrantes:</strong> Gabriel Coelho · Caroline Lee · Vinicius Rampazi de Oliveira (RA 10426499) · Caio Belom · Fernando Paiva</p>
+</div>
+
+<!-- 1. PERGUNTA -->
+<h2>1. Pergunta</h2>
+<div class="box-destaque">
+  <p><strong>Pergunta central do grupo:</strong> <em>"Quanto aceleraria o tempo de compilação limpa (e quanto custa em energia elétrica e Produto Energia-Atraso) de um mesmo projeto em C ao compartilhar e escalar o processamento entre múltiplos servidores <code>distccd</code> simultaneamente, sob diferentes portes de projeto, larguras de banda de rede e níveis de contenção de CPU?"</em></p>
+  <ul>
+    <li><strong>Quanto custa X (O que se mede):</strong> Tempo total de compilação limpa (em segundos, <code>s</code>), Speedup (<code>x</code>), fração de arquivos compilados por servidor (<code>%</code>), consumo de energia elétrica ativa (em <code>mWh</code> / <code>Wh</code>) e Produto Energia-Atraso (<code>EDP</code>, em <code>mWh·s</code>).</li>
+    <li><strong>Quando mudo Y (O que varia):</strong> (a) Número de servidores <code>distccd</code> disponíveis (1, 2, 3 e 4 nós, variando de <code>make -j2</code> a <code>-j12</code>); (b) carga concorrente em segundo plano disputando CPU (0%, 25%, 50% e 100% dos threads via <code>stress-ng</code>); (c) largura de banda da rede entre cliente e nós (1 Mbps a 1000 Mbps via <code>tc qdisc tbf</code>); e (d) porte/complexidade do projeto (8, 24 e 48 arquivos <code>.c</code> sintéticos, banco de dados SQLite 3.47.2 com 103 arquivos <code>.c</code> e Kernel Linux 6.6.72 com 904 objetos <code>.o</code>).</li>
+    <li><strong>Pilares do OSTEP e Mecanismo do Sistema Operacional:</strong> <em>Virtualização de CPU e Concorrência</em> — escalonamento de processos pelo <em>Completely Fair Scheduler</em> (CFS) do Linux em múltiplos núcleos físicos e threads lógicos (SMT), disputa por fila de execução (<em>runqueue</em>), trocas de contexto (<em>context switches</em>), localidade de cache L1/L2/L3, sobrecarga da pilha de rede TCP/IP (controle de tráfego por <em>Token Bucket Filter</em> no kernel) e gerenciamento de estados ociosos de energia da CPU (ACPI C-states e P-states no mecanismo de <em>race-to-idle</em>).</li>
+  </ul>
+</div>
+
+<!-- 2. MÉTODO -->
+<h2>2. Método</h2>
+<p><strong>Dispositivo e Ambiente Experimental:</strong> As medições foram executadas em um Desktop com processador <strong>AMD Ryzen 7 5700X3D</strong> (arquitetura Zen 3 com 3D V-Cache, 8 núcleos físicos / 16 threads lógicos SMT, TDP de 105 W, consumo base em repouso <em>Idle</em> de 45 W), 15 GiB de RAM DDR4 dedicados ao ambiente Linux <strong>Ubuntu 26.04 LTS</strong> sob WSL 2 (kernel Linux <code>6.18.58.1-microsoft-standard-WSL2</code>), sistema de arquivos nativo <code>ext4</code> (evitando sobrecarga de I/O do 9P em <code>/mnt/</code>), compilador <code>gcc 15.2.0</code> e <code>distcc 3.4</code>.</p>
+
+<p><strong>O que permaneceu fixo (Controle de Variáveis):</strong> Mesmo processador e memória RAM, mesma versão do compilador (<code>gcc 15.2.0</code> com flags <code>-O2 -Wall</code>), desativação completa de cache de compilação (<code>ccache</code> desabilitado), limpeza integral de objetos antes de cada execução (<code>make clean</code>), descarte de 1 rodada inicial de aquecimento (<em>warm-up</em> para estabilizar o <em>page cache</em> do sistema de arquivos) e execução de repetições cronometradas para cada condição.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Frente / Condição Comparada</th>
+      <th>Configuração Experimental (Variável Independente)</th>
+      <th>Carga de Trabalho</th>
+      <th>Como cada Métrica foi Medida</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Individual vs. Coletivo e Balanceamento</strong></td>
+      <td>Máquina 1 isolada (porta 3632, <code>-j4</code>), Máquina 2 isolada (porta 3633, <code>-j4</code>) vs. Cluster Coletivo (3632 + 3633, <code>-j8</code>).</td>
+      <td>Projeto C modular (18 unidades compiladas, CPU-bound).</td>
+      <td>Tempo real (<em>wall-clock</em>) via <code>date +%s.%N</code> e <code>/usr/bin/time -v</code> em <code>bench_core.sh</code>; % de tarefas extraído de <code>/tmp/distcc-client.log</code> por <code>parse_distcc_logs.py</code>.</td>
+    </tr>
+    <tr>
+      <td><strong>Escala de Nós (1 a 4 Servidores)</strong></td>
+      <td>1 nó (<code>-j2</code>), 2 nós (<code>-j4</code>), 3 nós (<code>-j6</code>) e 4 nós <code>distccd</code> (<code>-j8</code>) nas portas TCP 3632 a 3635 (2 slots/nó).</td>
+      <td>Projeto C modular (16 arquivos <code>.c</code> + gerador + linkagem).</td>
+      <td>Tempo médio e individual por rodada (<code>s</code>), Speedup <i>S = T<sub>1</sub> / T<sub>N</sub></i> e Eficiência <i>E = S / N</i> comparados à Lei de Amdahl (<i>P</i> = 88%).</td>
+    </tr>
+    <tr>
+      <td><strong>Contenção de CPU em 2º Plano</strong></td>
+      <td>Cluster de 2 nós (<code>-j8</code>) sob competição de <code>stress-ng --cpu N</code> ocupando 0 (0%), 4 (25%), 8 (50%) e 16 threads (100% da CPU).</td>
+      <td>Projeto C modular (18 unidades compiladas).</td>
+      <td>Tempo total de compilação limpa (<code>s</code>) e degradação percentual relativa ao cenário sem carga concorrente (0%).</td>
+    </tr>
+    <tr>
+      <td><strong>Limitação de Banda de Rede</strong></td>
+      <td>Par Ethernet virtual (<code>veth_host &lt;-&gt; veth_ns</code>) isolado em <em>Network Namespace</em> (<code>ip netns</code>) com <code>tc qdisc tbf</code> em 1, 5, 10, 50, 100, 500 e 1000 Mbps.</td>
+      <td>Envio de unidades pré-processadas (<code>.i</code>, ~2,5 MB totais) e retorno dos objetos <code>.o</code>.</td>
+      <td>Tempo de compilação limpa (<code>s</code>) em função da taxa de transmissão configurada no controle de tráfego do kernel.</td>
+    </tr>
+    <tr>
+      <td><strong>Porte do Projeto e Eficiência Energética</strong></td>
+      <td>Modo Solo (<code>make -j2</code>, <i>P</i><sub>solo</sub> = 150 W) vs. Distribuído (<code>distcc -j8</code>/<code>-j12</code>, <i>P</i><sub>dist</sub> = 268,5 W).</td>
+      <td>8, 24 e 48 arqs <code>.c</code>; <strong>SQLite 3.47.2</strong> (103 arqs <code>.c</code>, <code>USE_AMALGAMATION=0</code>); <strong>Kernel Linux 6.6.72</strong> (904 objs <code>.o</code>).</td>
+      <td>Script <code>calc_energy.py</code> sobre tempos reais: <i>E</i> (mWh) = (<i>P</i> &times; <i>t</i>) / 3,6 (com <i>P</i><sub>solo</sub> = 45 + 105 = 150 W e <i>P</i><sub>dist</sub> = 2 &times; (45 + 0,85 &times; 105) = 268,5 W) e EDP = <i>E</i> &times; <i>t</i>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- 3. HIPÓTESES -->
+<h2>3. Hipóteses (Antes da Medição)</h2>
+<p>Antes da coleta definitiva dos dados, cada integrante formulou sua hipótese com direção, mecanismo do sistema operacional (causa), limite físico (nível 3 de maturidade) e condição de refutação:</p>
+<table>
+  <thead>
+    <tr>
+      <th>Integrante e Métrica</th>
+      <th>Direção Esperada ("O que espera")</th>
+      <th>Mecanismo do SO e Limite ("Por quê")</th>
+      <th>O que Contrariaria</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Vinicius Rampazi</strong><br><em>Métrica 1: Tempo sob escala, contenção de CPU e porte (s)</em></td>
+      <td>O tempo total cai ao escalar de 1 para 4 servidores <code>distccd</code> e ao crescer de 8 para 48 arquivos <code>.c</code>, mas sobe fortemente quando a carga concorrente atinge 100% da CPU.</td>
+      <td>O escalonador CFS do Linux distribui os processos <code>cc1</code> do GCC em paralelo entre núcleos livres e mais arquivos diluem a sobrecarga TCP. O limite está na linkedição serial (<code>ld</code>) e no esgotamento dos 16 threads SMT: em 100% de ocupação pelo <code>stress-ng</code>, há disputa na mesma <em>runqueue</em>, gerando trocas de contexto e perda de cache L1/L2.</td>
+      <td>O tempo com 4 servidores sair igual ou maior que com 1 servidor, ou o tempo sob 100% de contenção de CPU ficar igual ao tempo sem carga (0%).</td>
+    </tr>
+    <tr>
+      <td><strong>Vinicius Rampazi</strong><br><em>Métrica 2: Energia elétrica (mWh) e EDP (mWh·s)</em></td>
+      <td>O consumo de energia (mWh) e o EDP (mWh·s) caem na compilação distribuída em 2 máquinas frente à compilação solo conforme o projeto cresce de 8 para 904 arquivos.</td>
+      <td>Pelo mecanismo de corrida para o repouso (<em>race-to-idle</em>) e estados ociosos ACPI C-states/P-states do SO, paralelizar encerra o build muito antes e devolve a CPU ao repouso (45 W). O limite ocorre quando o speedup é menor que a razão de potência ativa entre 2 máquinas e 1 máquina (268,5 W / 150 W = 1,79x).</td>
+      <td>A compilação distribuída gastar mais energia (mWh) e ter pior EDP que a solo mesmo em projetos grandes onde o speedup supera 1,80x.</td>
+    </tr>
+    <tr>
+      <td><strong>Caroline Lee</strong><br><em>Tempo individual vs. coletivo (s)</em></td>
+      <td>O tempo coletivo com 2 servidores combinados (<code>-j8</code>) será significativamente menor que o tempo individual de cada servidor isolado (<code>-j4</code>).</td>
+      <td>O <code>make -j8</code> aliado ao <code>distcc</code> despacha múltiplos processos de compilação simultâneos para os daemons remotos, dobrando a vazão de CPU até o limite imposto pelo pré-processamento local (<code>gcc -E</code>) e linkagem final.</td>
+      <td>A compilação coletiva demorar o mesmo tempo ou mais que uma única máquina compilando sozinha.</td>
+    </tr>
+    <tr>
+      <td><strong>Caio Belom</strong><br><em>Percentual de tarefas por servidor (%)</em></td>
+      <td>A distribuição de arquivos <code>.c</code> entre dois servidores <code>distccd</code> de mesma capacidade e número de slots (<code>/4</code>) ficará equilibrada próxima de 50% para cada nó.</td>
+      <td>O cliente <code>distcc</code> controla locks por slot em <code>~/.distcc/lock/</code> e encaminha cada novo processo filho do <code>make</code> ao primeiro servidor com slot TCP livre; com capacidades simétricas, as filas esvaziam na mesma taxa.</td>
+      <td>Um dos servidores concentrar mais de 80% das compilações enquanto o segundo permanece ocioso.</td>
+    </tr>
+    <tr>
+      <td><strong>Gabriel Coelho</strong><br><em>Redução percentual entre projetos reais (%)</em></td>
+      <td>A redução percentual de tempo será maior no Kernel Linux (904 objetos) do que no SQLite (103 arquivos <code>.c</code>).</td>
+      <td>Projetos com centenas de arquivos homogêneos mantêm todos os slots de execução ocupados no escalonador do SO, enquanto projetos menores sofrem com arquivos monolíticos longos na cauda do build (efeito comboio) e linkagem serial.</td>
+      <td>O SQLite apresentar speedup e redução percentual maiores ou iguais aos do Kernel Linux.</td>
+    </tr>
+    <tr>
+      <td><strong>Fernando Paiva</strong><br><em>Tempo sob limitação de banda de rede (s)</em></td>
+      <td>O tempo de compilação cairá abruptamente ao subir a banda de 1 Mbps até ~50–100 Mbps, estabilizando num platô acima disso.</td>
+      <td>Em bandas baixas, os buffers de envio TCP (<code>sk_buff</code>) e a fila <code>tc qdisc tbf</code> bloqueiam os processos em espera de I/O de rede; a partir de ~50–100 Mbps o envio dos arquivos <code>.i</code> leva fração de segundo e o gargalo volta a ser a CPU.</td>
+      <td>O tempo continuar caindo na mesma proporção entre 100 Mbps e 1000 Mbps ou não sofrer atraso em 1 Mbps.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- 4. RESULTADOS -->
+<h2>4. Resultados: Tabela de Medição e Gráficos do Grupo</h2>
+<p>A tabela abaixo consolida as medições oficiais do grupo (Ficha 4, Seção 1), com os valores individuais de cada rodada e médias verificáveis nos arquivos brutos <code>dados/tempos_compilacao.csv</code>, <code>dados/energia_estimada.csv</code> e <code>dados/distribuicao_hosts.csv</code>:</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Condição Experimental Medida</th>
+      <th>Tempo de Compilação Limpa (s)<br><small>Rodada 1 / Rodada 2 (Média)</small></th>
+      <th>Speedup / Impacto (x)</th>
+      <th>Energia Elétrica Consumida (mWh)</th>
+      <th>Produto Energia-Atraso — EDP (mWh·s)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Escala: 1 Máquina (make -j2, 16 arqs .c)</strong></td>
+      <td><code>1,99 / 1,96 (méd 1,97 s)</code></td>
+      <td><code>1,00x (efic. 100%)</code></td>
+      <td><code>82,28 mWh (a 150W)</code></td>
+      <td><code>162,49 mWh·s</code></td>
+    </tr>
+    <tr>
+      <td><strong>Escala: 2 Máquinas (make -j4, 16 arqs .c)</strong></td>
+      <td><code>1,13 / 1,12 (méd 1,12 s)</code></td>
+      <td><code>1,76x (efic. 88%)</code></td>
+      <td><code>83,90 mWh (a 268,5W)</code></td>
+      <td><code>94,38 mWh·s</code></td>
+    </tr>
+    <tr>
+      <td><strong>Escala: 3 Máquinas (make -j6, 16 arqs .c)</strong></td>
+      <td><code>0,91 / 0,87 (méd 0,89 s)</code></td>
+      <td><code>2,22x (efic. 74%)</code></td>
+      <td><code>95,78 mWh</code></td>
+      <td><code>85,34 mWh·s</code></td>
+    </tr>
+    <tr>
+      <td><strong>Escala: 4 Máquinas (make -j8, 16 arqs .c)</strong></td>
+      <td><code>0,73 / 0,74 (méd 0,73 s)</code></td>
+      <td><code>2,69x (efic. 67%)</code></td>
+      <td><code>104,60 mWh</code></td>
+      <td><code>76,76 mWh·s</code></td>
+    </tr>
+    <tr>
+      <td><strong>Contenção CPU: 0% vs 25% vs 50% vs 100%</strong></td>
+      <td><code>0,75s / 0,82s / 0,95s / 2,60s</code></td>
+      <td><code>+0% / +9% / +27% / +247% lentidão</code></td>
+      <td><code>55,8 / 61,0 / 71,1 / 193,8 mWh</code></td>
+      <td><code>41,8 / 49,9 / 67,7 / 503,4 mWh·s</code></td>
+    </tr>
+    <tr>
+      <td><strong>Porte: 8 arqs .c (Solo -j2 vs Dist -j8)</strong></td>
+      <td><code>Solo 0,91s vs Dist 0,46s</code></td>
+      <td><code>1,98x mais rápido (-49,5%)</code></td>
+      <td><code>Solo 37,94 vs Dist 34,28 mWh</code></td>
+      <td><code>Solo 34,54 vs Dist 15,75 mWh·s</code></td>
+    </tr>
+    <tr>
+      <td><strong>Porte: 24 arqs .c (Solo -j2 vs Dist -j8)</strong></td>
+      <td><code>Solo 2,37s vs Dist 0,92s</code></td>
+      <td><code>2,59x mais rápido (-61,3%)</code></td>
+      <td><code>Solo 98,95 vs Dist 68,48 mWh</code></td>
+      <td><code>Solo 234,99 vs Dist 62,87 mWh·s</code></td>
+    </tr>
+    <tr>
+      <td><strong>Porte: 48 arqs .c (Solo -j2 vs Dist -j8)</strong></td>
+      <td><code>Solo 4,61s vs Dist 1,63s</code></td>
+      <td><code>2,83x mais rápido (-64,7%)</code></td>
+      <td><code>Solo 192,24 vs Dist 121,56 mWh</code></td>
+      <td><code>Solo 886,98 vs Dist 198,11 mWh·s</code></td>
+    </tr>
+    <tr>
+      <td><strong>SQLite 3.47.2 (103 arqs .c, Solo vs Dist)</strong></td>
+      <td><code>Solo 14,24s vs Dist 6,72s</code></td>
+      <td><code>2,12x mais rápido (-52,9%)</code></td>
+      <td><code>Solo 593,47 vs Dist 500,83 mWh</code></td>
+      <td><code>Solo 8452,9 vs Dist 3363,1 mWh·s</code></td>
+    </tr>
+    <tr>
+      <td><strong>Kernel Linux 6.6.72 (904 objs, Solo vs Dist)</strong></td>
+      <td><code>Solo 171,31s vs Dist 61,20s</code></td>
+      <td><code>2,80x mais rápido (-64,3%)</code></td>
+      <td><code>Solo 7137,8 vs Dist 4564,5 mWh</code></td>
+      <td><code>Solo 1222,8 vs Dist 279,3 Wh·s</code></td>
+    </tr>
+    <tr>
+      <td><strong>Individual vs Coletivo e Divisão de Hosts</strong></td>
+      <td><code>M1: 1,24s | M2: 1,21s | Coletivo: 0,80s</code></td>
+      <td><code>1,55x (-35,5%) | 50% Nó 1 / 50% Nó 2</code></td>
+      <td><code>Solo 51,6 mWh vs Coletivo 59,6 mWh</code></td>
+      <td><code>Solo 64,0 vs Coletivo 47,7 mWh·s</code></td>
+    </tr>
+    <tr>
+      <td><strong>Rede (tc qdisc tbf: 1 a 1000 Mbps)</strong></td>
+      <td><code>1M: 19,24s | 10M: 2,25s | 50M: 0,80s | 1G: 0,45s</code></td>
+      <td><code>Joelho em 50-100 Mbps (42,8x vs 1M)</code></td>
+      <td><code>1M: 1435 mWh vs 1000M: 33,6 mWh</code></td>
+      <td><code>1M: 27616 vs 1000M: 15,1 mWh·s</code></td>
+    </tr>
+  </tbody>
+</table>
+
+<h3>Gráfico Principal do Grupo e Visualizações das Frentes</h3>
+<div class="grid-charts">
+  <div class="chart-card">
+    <img src="../plots/05a_escala_maquinas.png" alt="Escala de Máquinas e Lei de Amdahl">
+    <div class="chart-caption">Figura 1: Escala de 1 a 4 servidores distccd vs. Lei de Amdahl (P = 88%).</div>
+  </div>
+  <div class="chart-card">
+    <img src="../plots/05b_processos_fundo.png" alt="Contenção de CPU stress-ng">
+    <div class="chart-caption">Figura 2: Degradação por processos concorrentes na CPU (stress-ng 0% a 100%).</div>
+  </div>
+  <div class="chart-card">
+    <img src="../plots/03_kernel_vs_sqlite.png" alt="SQLite vs Kernel Linux">
+    <div class="chart-caption">Figura 3: Compilação Solo vs. Distribuída em projetos reais (SQLite e Kernel Linux).</div>
+  </div>
+  <div class="chart-card">
+    <img src="../plots/04_velocidade_rede.png" alt="Velocidade de Rede tc qdisc tbf">
+    <div class="chart-caption">Figura 4: Impacto da banda de rede (1 a 1000 Mbps via tc tbf em par veth/netns).</div>
+  </div>
+  <div class="chart-card full">
+    <img src="../plots/06_energia_wh_edp.png" alt="Energia e EDP">
+    <div class="chart-caption">Figura 5 (Gráfico Síntese de Custo Energético e EDP): Comparação Solo (150 W) vs. Distribuído (268,5 W) de 8 a 904 arquivos e ponto de virada (race-to-idle).</div>
+  </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- 5. DISCUSSÃO -->
+<h2>5. Discussão: Cada Hipótese Diante dos Dados e o Papel do Sistema Operacional</h2>
+
+<div class="box-verde">
+  <p><strong>Veredito Geral:</strong> <strong>Os dados sustentam integralmente as hipóteses formuladas pelo grupo</strong>, alcançando o <strong>Nível 4 de maturidade (Proporção)</strong>, no qual o mecanismo do sistema operacional e seus limites físicos são quantificados diretamente pelos números medidos.</p>
+</div>
+
+<ol>
+  <li>
+    <strong>Escala de Servidores, Contenção de CPU e Porte (Vinicius Rampazi — Métrica 1 · Veredito: <em>Sustentada</em>):</strong>
+    <ul>
+      <li><em>Proporção medida:</em> Ao escalar de 1 para 2, 3 e 4 servidores <code>distccd</code> (16 arquivos <code>.c</code>), o tempo caiu de <code>1,97 s</code> para <code>1,12 s</code> (1,76x), <code>0,89 s</code> (2,22x) e <code>0,73 s</code> (2,69x, redução de 63%). Ao expandir o porte de 8 para 24 e 48 arquivos <code>.c</code>, o speedup subiu de <code>1,98x</code> (0,91 s → 0,46 s) para <code>2,59x</code> (2,37 s → 0,92 s) e <code>2,83x</code> (4,61 s → 1,63 s). Já sob contenção de CPU via <code>stress-ng</code>, o tempo subiu moderadamente até 50% de carga (<code>0,75 s</code> em 0%, <code>0,82 s</code> [+9%] em 25% e <code>0,95 s</code> [+27%] em 50%), mas disparou <strong>+247%</strong> em 100% de carga (<code>2,60 s</code>, rodadas de 2,22 s e 2,98 s).</li>
+      <li><em>O que o Sistema Operacional fez:</em> O escalonador <strong>CFS (Completely Fair Scheduler)</strong> do Linux distribuiu os processos filhos <code>cc1</code> do GCC entre núcleos disponíveis, reduzindo o tempo conforme a Lei de Amdahl com fração paralelizável <i>P</i> &approx; 88% (os 12% sequenciais residem no pré-processamento local <code>cpp</code>/<code>gcc -E</code>, abertura de sockets TCP e linkedição final pelo <code>ld</code>). Nos testes de contenção até 50% (8 threads do <code>stress-ng</code>), o Ryzen 7 5700X3D acomodou os 8 workers de compilação nos 8 threads lógicos livres restantes (16 threads SMT no total). Quando o <code>stress-ng</code> ocupou 100% (16 threads), todas as filas de execução (<em>runqueues</em>) por CPU ficaram saturadas com processos CPU-bound: o CFS forçou preempções por fatia de tempo (<em>time-slice</em>), multiplicando as trocas de contexto involuntárias (<em>involuntary context switches</em>) e causando poluição de cache L1/L2/L3.</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Consumo de Energia Elétrica (mWh) e Produto Energia-Atraso — EDP (Vinicius Rampazi — Métrica 2 · Veredito: <em>Sustentada</em>):</strong>
+    <ul>
+      <li><em>Proporção medida:</em> Em 8 arquivos <code>.c</code> (speedup 1,98x, próximo ao limiar de potência 268,5 W / 150 W = 1,79x), a energia caiu 9,6% (de <code>37,94 mWh</code> para <code>34,28 mWh</code>) e o EDP caiu 54,4% (<code>34,54</code> → <code>15,75 mWh·s</code>). Em 24 e 48 arquivos, a economia de energia subiu para <strong>30,8%</strong> (<code>98,95</code> → <code>68,48 mWh</code>) e <strong>36,8%</strong> (<code>192,24</code> → <code>121,56 mWh</code>, com EDP 4,48x menor: <code>886,98</code> → <code>198,11 mWh·s</code>). Nos projetos reais, o SQLite (103 arquivos, speedup 2,12x) economizou <strong>15,6%</strong> de energia (<code>593,47</code> → <code>500,83 mWh</code>; EDP 2,51x menor) e o Kernel Linux (904 objetos, speedup 2,80x) economizou <strong>36,1% de energia elétrica total</strong> (de <code>7137,8 mWh</code> para <code>4564,5 mWh</code>) e reduziu o EDP em <strong>4,38x</strong> (de <code>1222,8 Wh·s</code> para <code>279,3 Wh·s</code>).</li>
+      <li><em>O que o Sistema Operacional fez:</em> O subsistema de gerenciamento de energia do kernel Linux (<code>cpuidle</code> e <code>cpufreq</code> / driver <code>amd-pstate</code>) opera sob o princípio de <strong>corrida para o repouso (<em>race-to-idle</em>)</strong>: ao paralelizar a compilação do Kernel Linux e encerrar as filas de execução em <code>61,20 s</code> em vez de <code>171,31 s</code>, o SO transiciona os núcleos para estados ociosos profundos (ACPI C-states, reduzindo a potência para o patamar base de 45 W) <strong>110 segundos mais cedo</strong>. Sempre que o speedup supera a razão de potência ativa entre 2 máquinas e 1 máquina (1,79x), a queda no tempo de atividade supera o custo da segunda máquina ligada.</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Tempo Individual vs. Coletivo (Caroline Lee) e Balanceamento por Servidor (Caio Belom · Veredito: <em>Sustentadas</em>):</strong>
+    <ul>
+      <li>Individualmente com 4 slots (<code>-j4</code>), a Máquina 1 levou <code>1,24 s</code> (1,2354 s / 1,2421 s) e a Máquina 2 levou <code>1,21 s</code> (1,1828 s / 1,2332 s). Em conjunto (<code>-j8</code>), o tempo caiu para <code>0,80 s</code> (0,8015 s / 0,7960 s), uma redução de <strong>35,5%</strong> (speedup de 1,55x). Os logs do <code>distcc</code> confirmaram divisão exata de <strong>50,0% (9 arquivos)</strong> no Nó 1 (<code>127.0.0.1:3632</code>) e <strong>44,4% (8 arquivos)</strong> no Nó 2 (<code>127.0.0.1:3633</code>), mais 5,56% (1 tarefa de linkagem final) sempre executada em <code>localhost</code> pelo design do <code>distcc</code>.</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Comparação de Projetos Reais: SQLite vs. Kernel Linux (Gabriel Coelho · Veredito: <em>Sustentada</em>):</strong>
+    <ul>
+      <li>O SQLite 3.47.2 desmembrado (103 arquivos <code>.c</code>) caiu de <code>14,24 s</code> para <code>6,72 s</code> (<strong>-52,9%</strong>, speedup 2,12x), enquanto o Kernel Linux 6.6.72 (904 objetos) caiu de <code>171,31 s</code> para <code>61,20 s</code> (<strong>-64,3%</strong>, speedup 2,80x). No SQLite, poucos arquivos gigantes (<code>vdbe.c</code>, <code>btree.c</code> e <code>shell.c</code>) retêm threads no final do build (efeito comboio), ao passo que as 904 unidades homogêneas do Kernel Linux mantêm os 12 slots ocupados continuamente. Também constatamos na prática que manter <code>DISTCC_VERBOSE=1</code> ativo no Kernel Linux adicionava ~65 s de bloqueio por contenção de <code>write()</code> concorrente em <code>/tmp/distcc-client.log</code>.</li>
+    </ul>
+  </li>
+  <li>
+    <strong>Largura de Banda de Rede e Gargalo TCP (Fernando Paiva · Veredito: <em>Sustentada</em>):</strong>
+    <ul>
+      <li>Com <code>tc qdisc tbf</code> aplicado ao par virtual <code>veth</code> em <em>network namespace</em> isolado (necessário porque a interface <code>lo</code> do kernel 6.x no WSL 2 contorna a fila <code>qdisc</code>), o tempo caiu de <code>19,24 s</code> (1 Mbps) para <code>4,12 s</code> (5 Mbps), <code>2,25 s</code> (10 Mbps) e atingiu o <strong>joelho da curva em 50–100 Mbps</strong> (<code>0,80 s</code> e <code>0,61 s</code>), estabilizando em platô de <code>0,45 s</code> em 500 Mbps e 1000 Mbps. Acima de 100 Mbps, os buffers de socket TCP esvaziam em milissegundos e a compilação volta a ser 100% limitada por CPU.</li>
+    </ul>
+  </li>
+</ol>
+
+<!-- 6. LIMITES -->
+<h2>6. Limites: O que a Medição Não Sustenta</h2>
+<div class="box-limites">
+  <ul>
+    <li><strong>Isolamento lógico em máquina única vs. cluster físico heterogêneo:</strong> Os múltiplos daemons <code>distccd</code> (portas 3632–3635) e o par <code>veth</code> com <code>ip netns</code> foram particionados sobre os 16 threads do mesmo processador físico (Ryzen 7 5700X3D). Portanto, a medição não sustenta conclusões sobre latência física de switches Ethernet externos, perda de pacotes em Wi-Fi congestionado ou incompatibilidade de versões de compiladores/arquiteturas entre PCs heterogêneos.</li>
+    <li><strong>Modelo energético baseado em TDP + Idle vs. medição física por hardware (RAPL/Wattímetro):</strong> Como o hypervisor do WSL 2 oculta a interface MSR/RAPL (<code>/sys/class/powercap/intel-rapl</code>), a energia em mWh foi calculada analiticamente (<i>E</i> = <i>P</i> &times; <i>t</i> / 3600) sobre os tempos reais cronometrados. Os números não capturam variações transitórias de tensão/temperatura do VRM ou consumo de periféricos externos.</li>
+    <li><strong>Perfil enxuto do Kernel Linux (904 objetos):</strong> Medimos a compilação limpa até o binário <code>vmlinux</code> com 904 objetos (perfil enxuto), o que não permite extrapolar linearmente o uso de memória RAM ou I/O de disco de uma compilação <code>allyesconfig</code> com milhares de módulos dinâmicos (<code>.ko</code>).</li>
+  </ul>
+</div>
+
+<!-- 7. FRENTES -->
+<h2>7. Frentes Individuais Investigadas pelo Grupo</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Integrante</th>
+      <th>Frente Investigada no Projeto</th>
+      <th>Entregáveis e Contribuição nos Resultados</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Caroline Lee</strong></td>
+      <td>Questão 1: Tempo de compilação individual de cada máquina (<code>-j4</code>) vs. compilação coletiva (<code>-j8</code>).</td>
+      <td>Medição de <code>exp1_individual_coletivo</code> (1,24 s e 1,21 s vs. 0,80 s coletivo; redução de 35,5%) e Gráfico 01.</td>
+    </tr>
+    <tr>
+      <td><strong>Caio Belom</strong></td>
+      <td>Questão 2: Balanceamento e percentual de tarefas compiladas por servidor <code>distccd</code> via logs.</td>
+      <td>Parser <code>parse_distcc_logs.py</code> sobre <code>/tmp/distcc-client.log</code>, gerando <code>distribuicao_hosts.csv</code> (50% / 50%) e Gráfico 02.</td>
+    </tr>
+    <tr>
+      <td><strong>Gabriel Coelho</strong></td>
+      <td>Questão 3: Comparação de ganho percentual entre projetos reais de portes distintos (SQLite vs. Kernel Linux).</td>
+      <td>Automação <code>setup_projects.sh</code> e coleta de <code>exp3_projetos</code> (SQLite 103 <code>.c</code>: -52,9% vs. Kernel 904 <code>.o</code>: -64,3%) e Gráfico 03.</td>
+    </tr>
+    <tr>
+      <td><strong>Fernando Paiva</strong></td>
+      <td>Questão 4: Impacto da velocidade de rede (1 a 1000 Mbps) e identificação do ponto em que deixa de ser gargalo.</td>
+      <td>Isolamento de rede com <code>ip netns</code>, par <code>veth</code> e <code>tc qdisc tbf</code> em <code>exp4_rede</code> (joelho em 50–100 Mbps) e Gráfico 04.</td>
+    </tr>
+    <tr>
+      <td><strong>Vinicius Rampazi de Oliveira</strong></td>
+      <td>Questões 5 e 6: Escala horizontal (1 a 4 nós), contenção de CPU (<code>stress-ng</code> 0–100%), porte (8–48 arqs <code>.c</code>) e energia (mWh e EDP).</td>
+      <td>Scripts <code>bench_core.sh</code>, <code>run_experiments.sh</code>, <code>calc_energy.py</code>, <code>generate_plots.py</code>, página <code>grafico_grupo.html</code> e Gráficos 05A, 05B, 05C e 06.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- 8. REFERÊNCIAS -->
+<h2>8. Referências</h2>
+<ol>
+  <li>ARPACI-DUSSEAU, Remzi H.; ARPACI-DUSSEAU, Andrea C. <strong>Operating Systems: Three Easy Pieces (OSTEP)</strong>. v. 1.10. Capítulos sobre Virtualização de CPU (Scheduling) e Concorrência. Disponível em: <code>https://pages.cs.wisc.edu/~remzi/OSTEP/</code>.</li>
+  <li>POOL, Martin. <strong>distcc: a fast, free distributed C/C++ compiler — User Manual &amp; Protocol Specification</strong> (v. 3.4). Disponível em: <code>https://distcc.github.io/</code>.</li>
+  <li>LINUX KERNEL DOCUMENTATION. <strong>CFS Scheduler, Network Namespaces (<code>ip-netns(8)</code>), Token Bucket Filter (<code>tc-tbf(8)</code>) &amp; CPU Idle/Frequency Management (ACPI C-states/P-states)</strong>. Kernel v6.6 / v6.18. Disponível em: <code>https://docs.kernel.org/</code>.</li>
+  <li>SQLITE CONSORTIUM. <strong>SQLite Canonical Source Code v3.47.2</strong> (103 módulos C independentes com <code>USE_AMALGAMATION=0</code>). Disponível em: <code>https://www.sqlite.org/src/</code>.</li>
+</ol>
+
+<!-- 9. DECLARAÇÃO DE USO DE IA -->
+<h2>9. Declaração de Uso de IA</h2>
+<p>Em conformidade com as diretrizes da disciplina, declaramos que ferramentas de Inteligência Artificial generativa (assistente da plataforma da disciplina e assistente de código) foram utilizadas como <strong>apoio instrumental</strong> nas seguintes etapas: (1) estruturação e depuração dos scripts de automação em Bash e Python (<code>run_experiments.sh</code>, isolamento de namespace <code>veth</code> para o <code>tc qdisc tbf</code> no WSL 2, <code>parse_distcc_logs.py</code> e <code>generate_plots.py</code>); (2) construção da página HTML interativa de visualização do gráfico do grupo (<code>grafico_grupo.html</code>) a partir da tabela de medição; e (3) revisão de formatação HTML/CSS deste relatório para exportação em PDF. <strong>Todos os experimentos, compilações do SQLite e do Kernel Linux, coletas de tempo e validações de logs foram executados integralmente no hardware real do grupo</strong> (AMD Ryzen 7 5700X3D no Ubuntu 26.04 WSL 2), e todos os dados brutos encontram-se auditáveis na pasta <code>dados/</code> do repositório.</p>
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+﻿[wsl2]
+networkingMode=mirrored
+memory=15GB
+processors=16

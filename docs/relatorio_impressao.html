@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relatório de Experimentos — Compilação Distribuída com distcc no WSL 2</title>
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 14mm 15mm 14mm 15mm;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b;
+    line-height: 1.5;
+    font-size: 10.5pt;
+    margin: 0;
+    padding: 0;
+  }
+  .header-banner {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+    color: #ffffff;
+    padding: 20px 24px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+  }
+  .header-banner h1 {
+    margin: 0 0 6px 0;
+    font-size: 18pt;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+  }
+  .header-banner p {
+    margin: 2px 0;
+    font-size: 10pt;
+    color: #cbd5e1;
+  }
+  h2 {
+    color: #0f172a;
+    font-size: 13.5pt;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 4px;
+    margin-top: 18px;
+    margin-bottom: 10px;
+  }
+  h3 {
+    color: #1e40af;
+    font-size: 11.5pt;
+    margin-top: 12px;
+    margin-bottom: 6px;
+  }
+  .question-card {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    background: #ffffff;
+    page-break-inside: avoid;
+  }
+  .question-box {
+    background: #eff6ff;
+    border-left: 4px solid #2563eb;
+    padding: 8px 12px;
+    margin-bottom: 10px;
+    border-radius: 0 6px 6px 0;
+    font-weight: 600;
+    color: #1e3a8a;
+  }
+  .note-box {
+    background: #f0fdf4;
+    border-left: 4px solid #16a34a;
+    padding: 9px 12px;
+    margin: 10px 0;
+    border-radius: 0 6px 6px 0;
+    font-size: 9.8pt;
+  }
+  .method-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    font-size: 9.8pt;
+  }
+  .chart-container {
+    text-align: center;
+    margin: 10px 0 12px 0;
+  }
+  .chart-container img {
+    max-width: 96%;
+    max-height: 290px;
+    height: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 4px;
+    background: #fff;
+  }
+  .chart-container.wide img {
+    max-width: 100%;
+    max-height: 265px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 12px 0;
+    font-size: 9.5pt;
+  }
+  th, td {
+    border: 1px solid #cbd5e1;
+    padding: 6px 8px;
+    text-align: left;
+  }
+  th {
+    background: #f1f5f9;
+    font-weight: 700;
+    color: #0f172a;
+  }
+  tr:nth-child(even) td {
+    background: #f8fafc;
+  }
+  table.appendix-table {
+    font-size: 7.5pt;
+    table-layout: auto;
+    width: 100%;
+  }
+  table.appendix-table th, table.appendix-table td {
+    padding: 3px 4px;
+    word-break: break-word;
+  }
+  ul.points-list {
+    margin: 6px 0;
+    padding-left: 18px;
+  }
+  ul.points-list li {
+    margin-bottom: 6px;
+  }
+  .formula {
+    background: #f1f5f9;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-family: "Cambria Math", "Consolas", monospace;
+    display: inline-block;
+    margin: 4px 0;
+    font-weight: 600;
+  }
+  .page-break {
+    page-break-before: always;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-banner">
+  <h1>Relatório Técnico de Experimentos: Compilação Distribuída com distcc</h1>
+  <p><strong>Disciplina:</strong> Sistemas Operacionais &nbsp;|&nbsp; <strong>Ambiente:</strong> Windows 11 + WSL 2 (Ubuntu 26.04)</p>
+  <p><strong>Objetivo:</strong> Comparar compilação solo vs. distribuída e medir tempo, contribuição por host, projetos reais (SQLite e Kernel Linux), rede (tc), escala, competição de CPU (stress-ng) e energia (Wh / EDP).</p>
+</div>
+
+<h2>1. Ambiente de Hardware, Metodologia e Integridade dos Dados</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Máquina / Nó</th>
+      <th>Papel no Experimento</th>
+      <th>Processador</th>
+      <th>Núcleos / Threads</th>
+      <th>RAM WSL 2</th>
+      <th>Kernel / Compilador</th>
+      <th>Potência (Idle / Carga)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Máquina Principal (Local)</strong></td>
+      <td>Cliente (<code>make</code>) + Pré-processamento + Link</td>
+      <td>AMD Ryzen 7 5700X3D</td>
+      <td>8 Cores / 16 Threads</td>
+      <td>15 GiB</td>
+      <td>Linux 6.18.58.1-WSL2<br><code>gcc 15.2.0</code> / <code>distcc 3.4</code></td>
+      <td>45 W (Idle)<br>150 W (100% TDP)</td>
+    </tr>
+    <tr>
+      <td><strong>Servidores distccd (Nós 1..4)</strong></td>
+      <td>Daemons de Compilação (Portas 3632..3635 e <code>veth</code>)</td>
+      <td>AMD Ryzen 7 5700X3D (Particionado por slots)</td>
+      <td>2 a 4 jobs por daemon</td>
+      <td>Compartilhada</td>
+      <td><code>distccd 3.4</code> + <code>ip netns</code> (<code>sch_tbf</code>)</td>
+      <td>45 W (Idle/nó)<br>134,25 W (Carga média/nó)</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="method-box">
+  <strong>Garantia de Execução Real pelo Computador:</strong>
+  <ul>
+    <li><strong>Cronometragem física (<code>tempos_compilacao.csv</code>):</strong> Todos os tempos foram medidos diretamente pelo sistema operacional usando timestamps de alta precisão (<code>date +%s.%N</code>) antes e depois de cada comando <code>make</code>, com 1 rodada inicial de aquecimento (<em>warm-up</em> descartado para aquecer o cache de disco) e <code>make clean</code> entre todas as repetições, sem <code>ccache</code>.</li>
+    <li><strong>Contagem de arquivos por servidor (<code>distribuicao_hosts.csv</code>):</strong> Extraída diretamente da análise do arquivo de log real <code>/tmp/distcc-client.log</code> gerado pelo binário <code>distcc</code> em cada compilação.</li>
+    <li><strong>Projetos reais compilados na CPU:</strong> O <strong>SQLite 3.47.2</strong> foi clonado do repositório oficial com seus <strong>103 arquivos <code>.c</code> independentes</strong> (<code>USE_AMALGAMATION=0</code>) e o <strong>Kernel Linux 6.6.72</strong> foi baixado de <code>cdn.kernel.org</code> e compilado até gerar o binário <code>vmlinux</code> (<strong>904 objetos <code>.o</code></strong>).</li>
+  </ul>
+</div>
+
+<!-- QUESTÃO 1 -->
+<div class="question-card">
+  <h2>Questão 1 — Tempo Individual vs. Coletivo</h2>
+  <div class="question-box">
+    Pergunta 1: "Quão díspares são os tempos individuais vs. o coletivo? (barras: uma coluna por máquina + uma coluna coletiva)"
+  </div>
+
+  <div class="chart-container">
+    <img src="../plots/01_individual_vs_coletivo.png" alt="Gráfico Questão 1">
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Ponto / Configuração</th>
+        <th>Hosts Configurados (DISTCC_HOSTS)</th>
+        <th>Jobs (-j)</th>
+        <th>Tempo Médio ± DP</th>
+        <th>Ganho Relativo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Ponto 1: Máquina 1 (Individual)</strong></td>
+        <td><code>127.0.0.1:3632/4</code></td>
+        <td><code>-j4</code></td>
+        <td><strong>1,24s ± 0,00s</strong></td>
+        <td>Referência (1,00x)</td>
+      </tr>
+      <tr>
+        <td><strong>Ponto 2: Máquina 2 (Individual)</strong></td>
+        <td><code>127.0.0.1:3633/4</code></td>
+        <td><code>-j4</code></td>
+        <td><strong>1,21s ± 0,04s</strong></td>
+        <td>~Idêntico (1,02x)</td>
+      </tr>
+      <tr>
+        <td><strong>Ponto 3: Coletivo (Máq. 1 + Máq. 2)</strong></td>
+        <td><code>127.0.0.1:3632/4 127.0.0.1:3633/4</code></td>
+        <td><code>-j8</code></td>
+        <td><strong>0,80s ± 0,00s</strong></td>
+        <td><strong>Redução de 35,5% (Speedup 1,55x)</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Explicação de cada ponto medido:</h3>
+  <ul class="points-list">
+    <li><strong>Ponto 1 (Máquina 1 Individual — 1,24s):</strong> Apenas o daemon da porta 3632 (limitado a 4 slots simultâneos) recebeu os 17 arquivos <code>.c</code> do projeto de benchmark. Foram necessários ~4 ciclos sucessivos de compilação mais a linkagem final.</li>
+    <li><strong>Ponto 2 (Máquina 2 Individual — 1,21s):</strong> Apenas o daemon da porta 3633 (também com 4 slots) realizou todo o trabalho. O tempo empata estatisticamente com o Ponto 1 pois ambos operam sob a mesma CPU e limite de concorrência.</li>
+    <li><strong>Ponto 3 (Coletivo Máq. 1 + Máq. 2 — 0,80s):</strong> Com os dois servidores somados (8 slots simultâneos no <code>make -j8</code>), o tempo caiu <strong>35,5%</strong> (Speedup de <strong>1,55x</strong>). O ganho não chega a 2,00x porque o pré-processamento (<code>gcc -E</code>) e a linkagem final (<code>gcc -o app</code>) continuam sendo executados localmente no cliente (fração sequencial da Lei de Amdahl).</li>
+  </ul>
+</div>
+
+<div class="page-break"></div>
+
+<!-- QUESTÃO 2 -->
+<div class="question-card">
+  <h2>Questão 2 — Percentual de Compilação por Máquina</h2>
+  <div class="question-box">
+    Pergunta 2: "Qual o percentual de compilação que cada máquina contribui? (setores: arquivos compilados por máquina / total)"
+  </div>
+
+  <div class="chart-container">
+    <img src="../plots/02_percentual_por_maquina.png" alt="Gráfico Questão 2">
+  </div>
+
+  <h3>Explicação de cada ponto (fatia) medido nos logs:</h3>
+  <ul class="points-list">
+    <li><strong>Fatia 1 — Máquina 1 (<code>127.0.0.1:3632</code>): 50,0% (9 de 18 tarefas concluídas):</strong> O cliente <code>distcc</code> verifica a disponibilidade de slots em <code>~/.distcc/lock/</code> na ordem declarada em <code>DISTCC_HOSTS</code>. Quando os 4 slots da Máquina 1 estão ocupados, os próximos processos filhos do <code>make -j8</code> são despachados imediatamente para a Máquina 2.</li>
+    <li><strong>Fatia 2 — Máquina 2 (<code>127.0.0.1:3633</code>): 50,0% (9 de 18 tarefas concluídas):</strong> Como ambos os servidores possuem o mesmo número de slots (<code>/4</code>) e mesma velocidade de processamento por arquivo, o balanceamento de carga foi perfeitamente simétrico (50% / 50%). Em um cluster heterogêneo (máquinas com CPUs diferentes), a máquina mais rápida libera seus slots antes e absorve automaticamente um percentual maior de arquivos.</li>
+  </ul>
+</div>
+
+<!-- QUESTÃO 3 -->
+<div class="question-card">
+  <h2>Questão 3 — Comparação de Projetos Reais: SQLite vs. Kernel Linux</h2>
+  <div class="question-box">
+    Pergunta 3: "Entre kernel Linux e SQLite, a redução é significativa? (barras agrupadas por projeto, solo vs. distribuído)"
+  </div>
+
+  <div class="chart-container">
+    <img src="../plots/03_kernel_vs_sqlite.png" alt="Gráfico Questão 3">
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Projeto Real</th>
+        <th>Arquivos / Objetos</th>
+        <th>Solo (make -j2)</th>
+        <th>Distribuído (distcc -j12)</th>
+        <th>Redução (%)</th>
+        <th>Speedup</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>SQLite 3.47.2 (Fonte Completo)</strong></td>
+        <td>103 arquivos <code>.c</code> (<code>USE_AMALGAMATION=0</code>)</td>
+        <td>14,24s ± 0,01s</td>
+        <td>6,72s ± 0,09s</td>
+        <td><strong>-52,9%</strong></td>
+        <td><strong>2,12x</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Kernel Linux 6.6.72 (<code>vmlinux</code>)</strong></td>
+        <td>904 objetos <code>.o</code> compilados</td>
+        <td>171,31s ± 3,05s</td>
+        <td>61,20s ± 6,25s</td>
+        <td><strong>-64,3% (-110s)</strong></td>
+        <td><strong>2,80x</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Explicação de cada ponto medido:</h3>
+  <ul class="points-list">
+    <li><strong>Grupo SQLite (Solo 14,24s vs. Distribuído 6,72s — Speedup 2,12x):</strong> Usamos o repositório canônico do SQLite com <strong>103 arquivos <code>.c</code> separados</strong> (e não o <em>amalgamation</em> <code>sqlite3.c</code>). Ainda assim, o SQLite possui poucos arquivos extremamente pesados (como <code>shell.c</code>, <code>vdbe.c</code> e <code>btree.c</code>) que demoram vários segundos sozinhos. No final do build, 11 threads ficam ociosas esperando <code>shell.c</code> terminar para executar a linkagem de <code>sqlite3</code>, limitando o ganho.</li>
+    <li><strong>Grupo Kernel Linux (Solo 171,31s vs. Distribuído 61,20s — Speedup 2,80x):</strong> O Kernel Linux possui <strong>904 arquivos <code>.c</code> independentes</strong> com tempos de compilação muito mais bem distribuídos entre os diretórios (<code>kernel/</code>, <code>mm/</code>, <code>fs/</code>, <code>net/</code>). Isso mantém todos os 12 slots do <code>distcc</code> ocupados do início ao fim, reduzindo o tempo de quase 3 minutos para 1 minuto.</li>
+  </ul>
+</div>
+
+<div class="page-break"></div>
+
+<!-- QUESTÃO 4 -->
+<div class="question-card">
+  <h2>Questão 4 — Impacto da Velocidade de Rede e Gargalo (tc tbf)</h2>
+  <div class="question-box">
+    Pergunta 4: "Quanto a velocidade de rede afeta? Em que ponto deixa de ser gargalo? (linhas: velocidade × tempo)"
+  </div>
+
+  <div class="chart-container">
+    <img src="../plots/04_velocidade_rede.png" alt="Gráfico Questão 4">
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Banda Limitada (tc tbf)</th>
+        <th>Tempo Médio ± DP</th>
+        <th>Comportamento Físico na Rede e CPU</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Ponto 1: 1 Mbit/s</strong></td>
+        <td><strong>19,24s ± 0,01s</strong></td>
+        <td><strong>Gargalo severo de rede:</strong> O envio de ~2,5 MB de código pré-processado (<code>.i</code>) a 1 Mbit/s (~125 KB/s) consome ~19s só em trânsito TCP; CPUs dos servidores ficam ociosas esperando pacotes.</td>
+      </tr>
+      <tr>
+        <td><strong>Ponto 2: 5 Mbit/s</strong></td>
+        <td><strong>4,12s ± 0,00s</strong></td>
+        <td>Queda de 4,67x no tempo ao multiplicar a banda por 5x — confirma que entre 1 e 5 Mbit/s o tempo total é quase 100% ditado pela taxa de transmissão da rede.</td>
+      </tr>
+      <tr>
+        <td><strong>Ponto 3: 10 Mbit/s</strong></td>
+        <td><strong>2,25s ± 0,02s</strong></td>
+        <td>A transferência de rede cai para ~1,8s; o tempo de compilação no GCC começa a dividir importância com a rede.</td>
+      </tr>
+      <tr>
+        <td><strong>Ponto 4: 50 Mbit/s (Joelho)</strong></td>
+        <td><strong>0,80s ± 0,03s</strong></td>
+        <td><strong>Joelho da curva:</strong> A transferência leva apenas ~0,35s; a partir daqui a inclinação da curva achata drasticamente.</td>
+      </tr>
+      <tr>
+        <td><strong>Ponto 5: 100 Mbit/s</strong></td>
+        <td><strong>0,61s ± 0,05s</strong></td>
+        <td>Ganho marginal pequeno (0,19s de redução em relação a 50 Mbit/s); CPU já é o fator limitante.</td>
+      </tr>
+      <tr>
+        <td><strong>Pontos 6 e 7: 500 e 1000 Mbit/s</strong></td>
+        <td><strong>0,45s ± 0,02s</strong></td>
+        <td><strong>Platô horizontal:</strong> Dobrar a rede de 500 para 1000 Mbit/s produz exatamente o mesmo tempo (0,45s). A rede deixou totalmente de ser gargalo.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- QUESTÃO 5A -->
+<div class="question-card">
+  <h2>Questão 5A — Escalabilidade Horizontal: Número de Máquinas × Tempo</h2>
+  <div class="question-box">
+    Pergunta 5 (Parte A): "Adicionais: número de máquinas × tempo; calcule speedup (T₁/Tₙ) e eficiência (speedup/n); compare com o ideal (Lei de Amdahl)."
+  </div>
+
+  <div class="chart-container wide">
+    <img src="../plots/05a_escala_maquinas.png" alt="Gráfico Questão 5A">
+  </div>
+
+  <ul class="points-list">
+    <li><strong>Ponto 1 Máquina (-j2): 1,97s | Speedup = 1,00x | Eficiência = 100%:</strong> Tempo base T<sub>1</sub> com um único servidor de 2 slots.</li>
+    <li><strong>Ponto 2 Máquinas (-j4): 1,12s | Speedup = 1,76x | Eficiência = 88%:</strong> Redução expressiva; os 12% abaixo do ideal linear (2,00x) devem-se à fração sequencial do cliente.</li>
+    <li><strong>Ponto 3 Máquinas (-j6): 0,89s | Speedup = 2,22x | Eficiência = 74%:</strong> Segue de perto a curva teórica da <strong>Lei de Amdahl com fração paralelizável P = 88%</strong> (1 &minus; P = 12% sequencial de pré-processamento e linkagem).</li>
+    <li><strong>Ponto 4 Máquinas (-j8): 0,73s | Speedup = 2,69x | Eficiência = 67%:</strong> Demonstra o efeito de retornos decrescentes previsto por Amdahl conforme N cresce.</li>
+  </ul>
+</div>
+
+<!-- QUESTÃO 5B -->
+<div class="question-card">
+  <h2>Questão 5B — Processos de Fundo Competindo (stress-ng)</h2>
+  <div class="question-box">
+    Pergunta 5 (Parte B): "Processos de fundo competindo: stress-ng nos servidores durante o build; varie a carga (0%, 25%, 50%, 100% dos núcleos)."
+  </div>
+
+  <div class="chart-container">
+    <img src="../plots/05b_processos_fundo.png" alt="Gráfico Questão 5B">
+  </div>
+
+  <ul class="points-list">
+    <li><strong>Ponto 0% Carga (0,75s ± 0,02s):</strong> Servidores dedicados exclusivamente ao <code>distccd</code>; todos os ciclos de CPU vão para o <code>gcc</code>.</li>
+    <li><strong>Ponto 25% Carga — 4 threads <code>stress-ng</code> (0,82s ± 0,01s | +9%):</strong> Degradação pequena porque as 12 threads livres restantes ainda absorvem os 8 workers de compilação.</li>
+    <li><strong>Ponto 50% Carga — 8 threads <code>stress-ng</code> (0,95s ± 0,00s | +27%):</strong> Os processos de fundo passam a disputar os 8 núcleos físicos (unidades de execução e cache L3) com os processos do <code>gcc</code>.</li>
+    <li><strong>Ponto 100% Carga — 16 threads <code>stress-ng</code> (2,60s ± 0,54s | +247%):</strong> Com 100% das threads saturadas, o escalonador CFS do Linux divide o tempo de CPU igualmente entre o <code>stress-ng</code> e o <code>distccd</code>, mais do que triplicando o tempo de build.</li>
+  </ul>
+</div>
+
+<!-- QUESTÃO 5C -->
+<div class="question-card">
+  <h2>Questão 5C — Número de Arquivos .c × Paralelização (Speedup)</h2>
+  <div class="question-box">
+    Pergunta 5 (Parte C): "Nº de arquivos C × paralelização: use projetos ou subconjuntos de tamanhos diferentes e plote speedup × número de arquivos .c."
+  </div>
+
+  <div class="chart-container">
+    <img src="../plots/05c_arquivos_vs_speedup.png" alt="Gráfico Questão 5C">
+  </div>
+
+  <ul class="points-list">
+    <li><strong>Ponto 8 arquivos .c (Solo 0,91s vs. Dist 0,46s -> Speedup = 1,98x):</strong> Em projetos pequenos, o tempo fixo de criação de processos do <code>make</code>, conexões TCP e linkagem final representa uma fatia grande do tempo total, limitando o speedup.</li>
+    <li><strong>Ponto 24 arquivos .c (Solo 2,37s vs. Dist 0,92s -> Speedup = 2,59x):</strong> Com 24 arquivos, o pipeline de compilação distribuída permanece cheio por mais tempo, diluindo o custo fixo da linkagem.</li>
+    <li><strong>Ponto 48 arquivos .c (Solo 4,61s vs. Dist 1,63s -> Speedup = 2,83x):</strong> Quanto maior o número de arquivos <code>.c</code> independentes, mais a fração paralelizável P se aproxima de 100% e maior é o ganho obtido pelo <code>distcc</code>.</li>
+  </ul>
+</div>
+
+<!-- QUESTÃO 6 -->
+<div class="question-card">
+  <h2>Questão 6 — Consumo de Energia (Wh) e Eficiência Conjunta (EDP)</h2>
+  <div class="question-box">
+    Pergunta 6: "Energia: um computador potente por mais tempo vs. várias máquinas em paralelo; a partir de que escala a computação distribuída compensa."
+  </div>
+
+  <div class="chart-container wide">
+    <img src="../plots/06_energia_wh_edp.png" alt="Gráfico Questão 6">
+  </div>
+
+  <div class="note-box">
+    <strong>Como a métrica de Energia foi obtida (Seção 4.6 do Roteiro):</strong><br>
+    Como o hypervisor do WSL 2 não expõe os contadores físicos RAPL (<code>/sys/class/powercap/intel-rapl</code>), aplicamos a metodologia explícita do roteiro (<em>"estime com TDP × tempo e considere a potência ociosa (idle): várias máquinas somam várias vezes o consumo base"</em>) diretamente sobre os <strong>5 tempos reais de compilação cronometrados pelo computador</strong>:<br>
+    • <strong>Potência Solo (1 máquina):</strong> <span class="formula">P_solo = P_idle (45 W) + P_TDP (105 W) = 150,0 W</span><br>
+    • <strong>Potência Distribuída (2 máquinas somando 2× o consumo base Idle + 85% de TDP médio por nó):</strong> <span class="formula">P_dist = 2 × (45 W + 0,85 × 105 W) = 268,5 W</span><br>
+    • <strong>Fórmulas:</strong> <span class="formula">Energia (Wh) = (P × Tempo_Medido) / 3600</span> &nbsp;|&nbsp; <span class="formula">EDP (Wh·s) = Energia (Wh) × Tempo_Medido (s)</span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Ponto Medido (Carga Real)</th>
+        <th>Arquivos</th>
+        <th>Tempo Solo / Dist (s)</th>
+        <th>Energia Solo (mWh)</th>
+        <th>Energia Dist 2 Máq. (mWh)</th>
+        <th>EDP Solo (mWh·s)</th>
+        <th>EDP Dist (mWh·s)</th>
+        <th>Vantagem EDP</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Ponto 1: Sintético 8 arqs</strong></td>
+        <td>8</td>
+        <td>0,91s / 0,46s</td>
+        <td>37,94 mWh</td>
+        <td>34,28 mWh</td>
+        <td>34,54</td>
+        <td>15,75</td>
+        <td><strong>2,19x melhor</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Ponto 2: Sintético 24 arqs</strong></td>
+        <td>24</td>
+        <td>2,37s / 0,92s</td>
+        <td>98,95 mWh</td>
+        <td>68,48 mWh</td>
+        <td>234,99</td>
+        <td>62,87</td>
+        <td><strong>3,74x melhor</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Ponto 3: Sintético 48 arqs</strong></td>
+        <td>48</td>
+        <td>4,61s / 1,63s</td>
+        <td>192,24 mWh</td>
+        <td>121,56 mWh</td>
+        <td>886,98</td>
+        <td>198,11</td>
+        <td><strong>4,48x melhor</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Ponto 4: SQLite Real</strong></td>
+        <td>103</td>
+        <td>14,24s / 6,72s</td>
+        <td>593,47 mWh</td>
+        <td>500,83 mWh</td>
+        <td>8.452,92</td>
+        <td>3.363,10</td>
+        <td><strong>2,51x melhor</strong></td>
+      </tr>
+      <tr>
+        <td><strong>Ponto 5: Kernel Linux Real</strong></td>
+        <td>913</td>
+        <td>171,31s / 61,20s</td>
+        <td><strong>7.137,81 mWh</strong></td>
+        <td><strong>4.564,50 mWh (-36%)</strong></td>
+        <td><strong>1.222.759,39</strong></td>
+        <td><strong>279.347,86</strong></td>
+        <td><strong>4,38x melhor</strong></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>Explicação de cada ponto e conclusão energética:</h3>
+  <ul class="points-list">
+    <li><strong>Regra física do Ponto de Virada:</strong> Como 2 máquinas ligadas consomem <strong>1,79x mais potência instantânea</strong> (268,5 W / 150 W = 1,79) por somarem duas vezes a potência ociosa (2 &times; 45 W = 90 W), a compilação distribuída só economiza energia absoluta (Wh) quando o <strong>Speedup de tempo supera 1,79x</strong> (ou seja, quando o build termina rápido o suficiente para compensar a segunda máquina ligada).</li>
+    <li><strong>Ponto 1 (8 arquivos):</strong> O ganho de energia pura é mínimo (37,9 vs 34,3 mWh, diferença de apenas 3,6 mWh). Se o projeto tivesse menos de 5 arquivos ou rede lenta, o modo distribuído gastaria <strong>mais energia</strong> que 1 máquina sozinha.</li>
+    <li><strong>Ponto 4 (SQLite — 103 arquivos):</strong> Como o arquivo <code>shell.c</code> segura o final da compilação (Speedup de 2,12x, próximo de 1,79x), a economia de energia em mWh é moderada (15,6%), mas no <strong>EDP (Energia × Tempo)</strong> a compilação distribuída já é <strong>2,51x superior</strong>.</li>
+    <li><strong>Ponto 5 (Kernel Linux — 913 objetos):</strong> Com Speedup de <strong>2,80x</strong> (muito acima da razão de potência de 1,79x), terminar o build em 61s em vez de 171s economiza <strong>36% de energia elétrica total</strong> (4,56 Wh vs. 7,14 Wh) e reduz o <strong>EDP em 4,38x</strong>.</li>
+  </ul>
+</div>
+
+
+<!-- ANEXO_RESULTADOS_BRUTOS -->
+<div class="page-break"></div>
+<h2>Anexo — Todos os Resultados Brutos dos Testes Executados (CSVs Completos)</h2>
+<p>Abaixo estão incluídos todos os registros brutos gerados pelos testes executados no computador (AMD Ryzen 7 5700X3D no WSL 2).</p>
+
+<h3>A.1 Especificações de Hardware Coletadas (<code>hardware_specs.csv</code> — 2 linhas)</h3>
+<table class="appendix-table"><thead><tr><th>maquina</th><th>papel</th><th>cpu_modelo</th><th>nucleos_fisicos</th><th>threads_logicas</th><th>ram_gb</th><th>sistema_kernel</th><th>compilador</th><th>tdp_w</th><th>idle_w</th></tr></thead><tbody><tr><td>Maquina_1_Local</td><td>Cliente + Servidor Node1</td><td>AMD Ryzen 7 5700X3D 8-Core Processor</td><td>8</td><td>16</td><td>15</td><td>Ubuntu WSL2 (6.18.58.1-microsoft-standard-WSL2)</td><td>gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0</td><td>105</td><td>45</td></tr><tr><td>Node_2_Worker</td><td>Servidor Node2</td><td>AMD Ryzen 7 5700X3D 8-Core Processor</td><td>8</td><td>16</td><td>15</td><td>Ubuntu WSL2 (6.18.58.1-microsoft-standard-WSL2)</td><td>gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0</td><td>105</td><td>45</td></tr></tbody></table>
+
+<h3>A.2 Todas as Medições de Tempo de Compilação (<code>tempos_compilacao.csv</code> — 56 execuções)</h3>
+<table class="appendix-table"><thead><tr><th>experimento</th><th>projeto</th><th>rotulo</th><th>modo</th><th>hosts</th><th>jobs</th><th>extra</th><th>repeticao</th><th>tempo_s</th><th>arquivos_compilados</th></tr></thead><tbody><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Maquina_1_Individual</td><td>distcc</td><td>127.0.0.1:3632/4</td><td>4</td><td>1_maquina</td><td>1</td><td>1.2354</td><td>18</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Maquina_1_Individual</td><td>distcc</td><td>127.0.0.1:3632/4</td><td>4</td><td>1_maquina</td><td>2</td><td>1.2421</td><td>18</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Maquina_2_Individual</td><td>distcc</td><td>127.0.0.1:3633/4</td><td>4</td><td>1_maquina</td><td>1</td><td>1.1828</td><td>18</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Maquina_2_Individual</td><td>distcc</td><td>127.0.0.1:3633/4</td><td>4</td><td>1_maquina</td><td>2</td><td>1.2332</td><td>18</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Coletivo_M1_M2</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>coletivo</td><td>1</td><td>0.8015</td><td>18</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Coletivo_M1_M2</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>coletivo</td><td>2</td><td>0.796</td><td>18</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>1_Maquina</td><td>distcc</td><td>127.0.0.1:3632/2</td><td>2</td><td>1</td><td>1</td><td>1.9859</td><td>18</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>1_Maquina</td><td>distcc</td><td>127.0.0.1:3632/2</td><td>2</td><td>1</td><td>2</td><td>1.9637</td><td>18</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>2_Maquinas</td><td>distcc</td><td>127.0.0.1:3632/2 127.0.0.1:3633/2</td><td>4</td><td>2</td><td>1</td><td>1.1306</td><td>18</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>2_Maquinas</td><td>distcc</td><td>127.0.0.1:3632/2 127.0.0.1:3633/2</td><td>4</td><td>2</td><td>2</td><td>1.1192</td><td>18</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>3_Maquinas</td><td>distcc</td><td>127.0.0.1:3632/2 127.0.0.1:3633/2 127.0.0.1:3634/2</td><td>6</td><td>3</td><td>1</td><td>0.9121</td><td>18</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>3_Maquinas</td><td>distcc</td><td>127.0.0.1:3632/2 127.0.0.1:3633/2 127.0.0.1:3634/2</td><td>6</td><td>3</td><td>2</td><td>0.8698</td><td>18</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>4_Maquinas</td><td>distcc</td><td>127.0.0.1:3632/2 127.0.0.1:3633/2 127.0.0.1:3634/2 127.0.0.1:3635/2</td><td>8</td><td>4</td><td>1</td><td>0.7297</td><td>18</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>4_Maquinas</td><td>distcc</td><td>127.0.0.1:3632/2 127.0.0.1:3633/2 127.0.0.1:3634/2 127.0.0.1:3635/2</td><td>8</td><td>4</td><td>2</td><td>0.738</td><td>18</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_0pct</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>0</td><td>1</td><td>0.7333</td><td>18</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_0pct</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>0</td><td>2</td><td>0.7639</td><td>18</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_25pct</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>25</td><td>1</td><td>0.8253</td><td>18</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_25pct</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>25</td><td>2</td><td>0.8101</td><td>18</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_50pct</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>50</td><td>1</td><td>0.9526</td><td>18</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_50pct</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>50</td><td>2</td><td>0.9533</td><td>18</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_100pct</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>100</td><td>1</td><td>2.2157</td><td>18</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_100pct</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>100</td><td>2</td><td>2.9801</td><td>18</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_8c</td><td>Solo_8arq</td><td>solo</td><td>localhost</td><td>2</td><td>8</td><td>1</td><td>0.912</td><td>9</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_8c</td><td>Solo_8arq</td><td>solo</td><td>localhost</td><td>2</td><td>8</td><td>2</td><td>0.9089</td><td>9</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_8c</td><td>Dist_8arq</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>8</td><td>1</td><td>0.4611</td><td>10</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_8c</td><td>Dist_8arq</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>8</td><td>2</td><td>0.4581</td><td>10</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_24c</td><td>Solo_24arq</td><td>solo</td><td>localhost</td><td>2</td><td>24</td><td>1</td><td>2.3872</td><td>25</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_24c</td><td>Solo_24arq</td><td>solo</td><td>localhost</td><td>2</td><td>24</td><td>2</td><td>2.3624</td><td>25</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_24c</td><td>Dist_24arq</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>24</td><td>1</td><td>0.9212</td><td>26</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_24c</td><td>Dist_24arq</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>24</td><td>2</td><td>0.915</td><td>26</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_48c</td><td>Solo_48arq</td><td>solo</td><td>localhost</td><td>2</td><td>48</td><td>1</td><td>4.6296</td><td>49</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_48c</td><td>Solo_48arq</td><td>solo</td><td>localhost</td><td>2</td><td>48</td><td>2</td><td>4.5981</td><td>49</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_48c</td><td>Dist_48arq</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>48</td><td>1</td><td>1.6375</td><td>50</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_48c</td><td>Dist_48arq</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4</td><td>8</td><td>48</td><td>2</td><td>1.6221</td><td>50</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>1</td><td>1</td><td>19.2419</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>1</td><td>2</td><td>19.2335</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>5</td><td>1</td><td>4.1203</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>5</td><td>2</td><td>4.1218</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>10</td><td>1</td><td>2.267</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>10</td><td>2</td><td>2.2407</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>50</td><td>1</td><td>0.8177</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>50</td><td>2</td><td>0.7808</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>100</td><td>1</td><td>0.6428</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>100</td><td>2</td><td>0.5758</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>500</td><td>1</td><td>0.4305</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>500</td><td>2</td><td>0.4767</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>1000</td><td>1</td><td>0.442</td><td>10</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>distcc</td><td>10.200.1.2:3632/4 10.200.1.2:3633/4</td><td>8</td><td>1000</td><td>2</td><td>0.4512</td><td>10</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Solo</td><td>solo</td><td>localhost</td><td>2</td><td>sqlite</td><td>1</td><td>14.2371</td><td>103</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Solo</td><td>solo</td><td>localhost</td><td>2</td><td>sqlite</td><td>2</td><td>14.2494</td><td>103</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4 127.0.0.1:3634/4</td><td>12</td><td>sqlite</td><td>1</td><td>6.6544</td><td>103</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4 127.0.0.1:3634/4</td><td>12</td><td>sqlite</td><td>2</td><td>6.7757</td><td>103</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Solo</td><td>solo</td><td>localhost</td><td>2</td><td>linux</td><td>1</td><td>173.4631</td><td>904</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Solo</td><td>solo</td><td>localhost</td><td>2</td><td>linux</td><td>2</td><td>169.1517</td><td>904</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4 127.0.0.1:3634/4</td><td>12</td><td>linux</td><td>1</td><td>65.6213</td><td>913</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>distcc</td><td>127.0.0.1:3632/4 127.0.0.1:3633/4 127.0.0.1:3634/4</td><td>12</td><td>linux</td><td>2</td><td>56.7788</td><td>904</td></tr></tbody></table>
+
+<div class="page-break"></div>
+<h3>A.3 Todos os Registros de Distribuição por Servidor (<code>distribuicao_hosts.csv</code> — 216 linhas)</h3>
+<table class="appendix-table"><thead><tr><th>experimento</th><th>projeto</th><th>rotulo</th><th>repeticao</th><th>host</th><th>arquivos_compilados</th><th>total_arquivos</th><th>percentual</th></tr></thead><tbody><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Maquina_1_Individual</td><td>1</td><td>127.0.0.1:3632</td><td>17</td><td>18</td><td>94.44</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Maquina_1_Individual</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Maquina_1_Individual</td><td>2</td><td>127.0.0.1:3632</td><td>17</td><td>18</td><td>94.44</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Maquina_1_Individual</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Maquina_2_Individual</td><td>1</td><td>127.0.0.1:3633</td><td>17</td><td>18</td><td>94.44</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Maquina_2_Individual</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Maquina_2_Individual</td><td>2</td><td>127.0.0.1:3633</td><td>17</td><td>18</td><td>94.44</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Maquina_2_Individual</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Coletivo_M1_M2</td><td>1</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Coletivo_M1_M2</td><td>1</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Coletivo_M1_M2</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Coletivo_M1_M2</td><td>2</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Coletivo_M1_M2</td><td>2</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp1_individual_coletivo</td><td>bench_c</td><td>Coletivo_M1_M2</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>1</td><td>127.0.0.1:3632</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>1</td><td>127.0.0.1:3633</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>1</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>2</td><td>127.0.0.1:3632</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>2</td><td>127.0.0.1:3633</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>2</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>1</td><td>127.0.0.1:3632</td><td>41</td><td>82</td><td>50.0</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>1</td><td>127.0.0.1:3633</td><td>40</td><td>82</td><td>48.78</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>1</td><td>localhost</td><td>1</td><td>82</td><td>1.22</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>2</td><td>127.0.0.1:3632</td><td>41</td><td>82</td><td>50.0</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>2</td><td>127.0.0.1:3633</td><td>40</td><td>82</td><td>48.78</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>2</td><td>localhost</td><td>1</td><td>82</td><td>1.22</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>1</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>1</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>2</td><td>127.0.0.1:3632</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>2</td><td>127.0.0.1:3633</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>1</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>1</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>2</td><td>127.0.0.1:3632</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>2</td><td>127.0.0.1:3633</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>1</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>1</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>2</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>2</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>1</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>1</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>2</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>2</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>1_Maquina</td><td>1</td><td>127.0.0.1:3632</td><td>17</td><td>18</td><td>94.44</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>1_Maquina</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>1_Maquina</td><td>2</td><td>127.0.0.1:3632</td><td>17</td><td>18</td><td>94.44</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>1_Maquina</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>2_Maquinas</td><td>1</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>2_Maquinas</td><td>1</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>2_Maquinas</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>2_Maquinas</td><td>2</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>2_Maquinas</td><td>2</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>2_Maquinas</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>3_Maquinas</td><td>1</td><td>127.0.0.1:3632</td><td>6</td><td>18</td><td>33.33</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>3_Maquinas</td><td>1</td><td>127.0.0.1:3633</td><td>6</td><td>18</td><td>33.33</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>3_Maquinas</td><td>1</td><td>127.0.0.1:3634</td><td>5</td><td>18</td><td>27.78</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>3_Maquinas</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>3_Maquinas</td><td>2</td><td>127.0.0.1:3632</td><td>6</td><td>18</td><td>33.33</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>3_Maquinas</td><td>2</td><td>127.0.0.1:3633</td><td>5</td><td>18</td><td>27.78</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>3_Maquinas</td><td>2</td><td>127.0.0.1:3634</td><td>6</td><td>18</td><td>33.33</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>3_Maquinas</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>4_Maquinas</td><td>1</td><td>127.0.0.1:3632</td><td>5</td><td>18</td><td>27.78</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>4_Maquinas</td><td>1</td><td>127.0.0.1:3633</td><td>4</td><td>18</td><td>22.22</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>4_Maquinas</td><td>1</td><td>127.0.0.1:3634</td><td>4</td><td>18</td><td>22.22</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>4_Maquinas</td><td>1</td><td>127.0.0.1:3635</td><td>4</td><td>18</td><td>22.22</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>4_Maquinas</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>4_Maquinas</td><td>2</td><td>127.0.0.1:3632</td><td>5</td><td>18</td><td>27.78</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>4_Maquinas</td><td>2</td><td>127.0.0.1:3633</td><td>4</td><td>18</td><td>22.22</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>4_Maquinas</td><td>2</td><td>127.0.0.1:3634</td><td>4</td><td>18</td><td>22.22</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>4_Maquinas</td><td>2</td><td>127.0.0.1:3635</td><td>4</td><td>18</td><td>22.22</td></tr><tr><td>exp5a_escala</td><td>bench_c</td><td>4_Maquinas</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_0pct</td><td>1</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_0pct</td><td>1</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_0pct</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_0pct</td><td>2</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_0pct</td><td>2</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_0pct</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_25pct</td><td>1</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_25pct</td><td>1</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_25pct</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_25pct</td><td>2</td><td>127.0.0.1:3632</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_25pct</td><td>2</td><td>127.0.0.1:3633</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_25pct</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_50pct</td><td>1</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_50pct</td><td>1</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_50pct</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_50pct</td><td>2</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_50pct</td><td>2</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_50pct</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_100pct</td><td>1</td><td>127.0.0.1:3632</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_100pct</td><td>1</td><td>127.0.0.1:3633</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_100pct</td><td>1</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_100pct</td><td>2</td><td>127.0.0.1:3632</td><td>9</td><td>18</td><td>50.0</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_100pct</td><td>2</td><td>127.0.0.1:3633</td><td>8</td><td>18</td><td>44.44</td></tr><tr><td>exp5b_stress</td><td>bench_c</td><td>Carga_100pct</td><td>2</td><td>localhost</td><td>1</td><td>18</td><td>5.56</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_8c</td><td>Dist_8arq</td><td>1</td><td>127.0.0.1:3632</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_8c</td><td>Dist_8arq</td><td>1</td><td>127.0.0.1:3633</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_8c</td><td>Dist_8arq</td><td>1</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_8c</td><td>Dist_8arq</td><td>2</td><td>127.0.0.1:3632</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_8c</td><td>Dist_8arq</td><td>2</td><td>127.0.0.1:3633</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_8c</td><td>Dist_8arq</td><td>2</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_24c</td><td>Dist_24arq</td><td>1</td><td>127.0.0.1:3632</td><td>13</td><td>26</td><td>50.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_24c</td><td>Dist_24arq</td><td>1</td><td>127.0.0.1:3633</td><td>12</td><td>26</td><td>46.15</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_24c</td><td>Dist_24arq</td><td>1</td><td>localhost</td><td>1</td><td>26</td><td>3.85</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_24c</td><td>Dist_24arq</td><td>2</td><td>127.0.0.1:3632</td><td>13</td><td>26</td><td>50.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_24c</td><td>Dist_24arq</td><td>2</td><td>127.0.0.1:3633</td><td>12</td><td>26</td><td>46.15</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_24c</td><td>Dist_24arq</td><td>2</td><td>localhost</td><td>1</td><td>26</td><td>3.85</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_48c</td><td>Dist_48arq</td><td>1</td><td>127.0.0.1:3632</td><td>25</td><td>50</td><td>50.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_48c</td><td>Dist_48arq</td><td>1</td><td>127.0.0.1:3633</td><td>24</td><td>50</td><td>48.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_48c</td><td>Dist_48arq</td><td>1</td><td>localhost</td><td>1</td><td>50</td><td>2.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_48c</td><td>Dist_48arq</td><td>2</td><td>127.0.0.1:3632</td><td>25</td><td>50</td><td>50.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_48c</td><td>Dist_48arq</td><td>2</td><td>127.0.0.1:3633</td><td>24</td><td>50</td><td>48.0</td></tr><tr><td>exp5c_num_arquivos</td><td>bench_48c</td><td>Dist_48arq</td><td>2</td><td>localhost</td><td>1</td><td>50</td><td>2.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>1</td><td>127.0.0.1:3632</td><td>8</td><td>14</td><td>57.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>1</td><td>127.0.0.1:3633</td><td>5</td><td>14</td><td>35.71</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>2</td><td>127.0.0.1:3632</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>2</td><td>127.0.0.1:3633</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>1</td><td>127.0.0.1:3632</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>1</td><td>127.0.0.1:3633</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>2</td><td>127.0.0.1:3632</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>2</td><td>127.0.0.1:3633</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>1</td><td>127.0.0.1:3632</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>1</td><td>127.0.0.1:3633</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>2</td><td>127.0.0.1:3632</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>2</td><td>127.0.0.1:3633</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>1</td><td>127.0.0.1:3632</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>1</td><td>127.0.0.1:3633</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>2</td><td>127.0.0.1:3632</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>2</td><td>127.0.0.1:3633</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>1</td><td>127.0.0.1:3632</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>1</td><td>127.0.0.1:3633</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>2</td><td>127.0.0.1:3632</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>2</td><td>127.0.0.1:3633</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>1</td><td>127.0.0.1:3632</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>1</td><td>127.0.0.1:3633</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>2</td><td>127.0.0.1:3632</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>2</td><td>127.0.0.1:3633</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>1</td><td>127.0.0.1:3632</td><td>8</td><td>14</td><td>57.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>1</td><td>127.0.0.1:3633</td><td>5</td><td>14</td><td>35.71</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>2</td><td>127.0.0.1:3632</td><td>6</td><td>14</td><td>42.86</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>2</td><td>127.0.0.1:3633</td><td>7</td><td>14</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>14</td><td>7.14</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>1</td><td>10.200.1.2:3632</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>1</td><td>10.200.1.2:3633</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>2</td><td>10.200.1.2:3632</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>2</td><td>10.200.1.2:3633</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>1</td><td>10.200.1.2:3632</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>1</td><td>10.200.1.2:3633</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>2</td><td>10.200.1.2:3632</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>2</td><td>10.200.1.2:3633</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>5_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>1</td><td>10.200.1.2:3632</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>1</td><td>10.200.1.2:3633</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>2</td><td>10.200.1.2:3632</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>2</td><td>10.200.1.2:3633</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>10_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>1</td><td>10.200.1.2:3632</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>1</td><td>10.200.1.2:3633</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>2</td><td>10.200.1.2:3632</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>2</td><td>10.200.1.2:3633</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>50_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>1</td><td>10.200.1.2:3632</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>1</td><td>10.200.1.2:3633</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>2</td><td>10.200.1.2:3632</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>2</td><td>10.200.1.2:3633</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>100_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>1</td><td>10.200.1.2:3632</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>1</td><td>10.200.1.2:3633</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>2</td><td>10.200.1.2:3632</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>2</td><td>10.200.1.2:3633</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>500_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>1</td><td>10.200.1.2:3632</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>1</td><td>10.200.1.2:3633</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>1</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>2</td><td>10.200.1.2:3632</td><td>4</td><td>10</td><td>40.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>2</td><td>10.200.1.2:3633</td><td>5</td><td>10</td><td>50.0</td></tr><tr><td>exp4_rede</td><td>bench_c</td><td>1000_Mbps</td><td>2</td><td>localhost</td><td>1</td><td>10</td><td>10.0</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>1</td><td>127.0.0.1:3632</td><td>49</td><td>104</td><td>47.12</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>1</td><td>127.0.0.1:3633</td><td>54</td><td>104</td><td>51.92</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>1</td><td>localhost</td><td>1</td><td>104</td><td>0.96</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>2</td><td>127.0.0.1:3632</td><td>63</td><td>104</td><td>60.58</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>2</td><td>127.0.0.1:3633</td><td>40</td><td>104</td><td>38.46</td></tr><tr><td>exp3_projetos</td><td>SQLite</td><td>Distribuido</td><td>2</td><td>localhost</td><td>1</td><td>104</td><td>0.96</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>1</td><td>127.0.0.1:3632</td><td>734</td><td>1096</td><td>66.97</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>1</td><td>127.0.0.1:3633</td><td>149</td><td>1096</td><td>13.59</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>1</td><td>localhost</td><td>213</td><td>1096</td><td>19.43</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>2</td><td>127.0.0.1:3632</td><td>719</td><td>973</td><td>73.9</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>2</td><td>127.0.0.1:3633</td><td>155</td><td>973</td><td>15.93</td></tr><tr><td>exp3_projetos</td><td>Kernel_Linux</td><td>Distribuido</td><td>2</td><td>localhost</td><td>99</td><td>973</td><td>10.17</td></tr></tbody></table>
+
+<h3>A.4 Todos os Cálculos de Energia e EDP sobre Tempos Reais (<code>energia_estimada.csv</code> — 5 linhas)</h3>
+<table class="appendix-table"><thead><tr><th>tipo</th><th>projeto_carga</th><th>arquivos_c</th><th>tempo_solo_s</th><th>tempo_dist_2maq_s</th><th>potencia_solo_w</th><th>potencia_dist_2maq_w</th><th>energia_solo_wh</th><th>energia_dist_2maq_wh</th><th>edp_solo_wh_s</th><th>edp_dist_2maq_wh_s</th></tr></thead><tbody><tr><td>medido_real</td><td>Sintético (8 arqs)</td><td>8</td><td>0.9104</td><td>0.4596</td><td>150.0</td><td>268.5</td><td>0.037935</td><td>0.034279</td><td>0.034538</td><td>0.015754</td></tr><tr><td>medido_real</td><td>Sintético (24 arqs)</td><td>24</td><td>2.3748</td><td>0.9181</td><td>150.0</td><td>268.5</td><td>0.09895</td><td>0.068475</td><td>0.234986</td><td>0.062867</td></tr><tr><td>medido_real</td><td>Sintético (48 arqs)</td><td>48</td><td>4.6138</td><td>1.6298</td><td>150.0</td><td>268.5</td><td>0.192244</td><td>0.121556</td><td>0.886984</td><td>0.198112</td></tr><tr><td>medido_real</td><td>SQLite</td><td>103</td><td>14.2432</td><td>6.715</td><td>150.0</td><td>268.5</td><td>0.593469</td><td>0.500831</td><td>8.452924</td><td>3.363104</td></tr><tr><td>medido_real</td><td>Kernel_Linux</td><td>913</td><td>171.3074</td><td>61.2001</td><td>150.0</td><td>268.5</td><td>7.137808</td><td>4.564504</td><td>1222.759387</td><td>279.347856</td></tr></tbody></table>
+
+</body>
+</html>
