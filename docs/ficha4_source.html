@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Projeto 2: Custo - Ficha 4 - SO 2026.2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--titulo:#495057;--texto:#212529;--sec:#6C757D;--red:#E63946;--blue:#004990;--blue2:#003B71;--card:#F8F9FA;--borda:#DEE2E6;--verde:#00874A;--amarelo:#FFF3CD;--amarelob:#E0A800;--chip:#E8EEF7;--laranja:#F77F00;--roxo:#4A3AA7;--rosa:#C0407A}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;font-family:Montserrat,Verdana,"DejaVu Sans",sans-serif;font-weight:500;color:var(--texto);background:#fff;line-height:1.5}
+main{max-width:1000px;margin:0 auto;padding:20px 16px 60px}
+h1{color:var(--blue);font-size:1.45rem;margin:0 0 2px;font-weight:700;line-height:1.25}
+.sub{color:var(--sec);font-size:.88rem;margin:0 0 14px}
+h2{color:var(--blue);font-size:1.15rem;margin:30px 0 8px;font-weight:700}
+h3{font-size:1rem;margin:0 0 8px;font-weight:700;color:var(--titulo)}
+h4{font-size:.92rem;margin:10px 0 4px;font-weight:700;color:var(--titulo)}
+p{margin:6px 0}
+ul.lista{margin:6px 0;padding-left:20px} ul.lista li{margin:4px 0}
+.card{background:var(--card);border:1px solid var(--borda);border-radius:8px;padding:14px 16px;margin:10px 0}
+.regras{border-color:var(--blue);border-width:1.5px}
+.aviso{background:var(--amarelo);border:1.5px solid var(--amarelob);border-radius:8px;padding:10px 14px;margin:10px 0;font-size:.92rem}
+.mono{font-family:"JetBrains Mono",Consolas,monospace}
+b,strong{font-weight:700} .sec{color:var(--sec)} .peq{font-size:.86rem} .oculto{display:none !important}
+.lado{display:grid;grid-template-columns:1fr 1fr;gap:12px 24px} @media (max-width:760px){.lado{grid-template-columns:1fr}}
+.status{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;font-size:.85rem;color:var(--sec);margin:4px 0 10px}
+.pill{display:inline-block;background:#fff;border:1px solid var(--borda);border-radius:999px;padding:2px 10px;font-weight:600}
+.pill.ok{border-color:var(--verde);color:var(--verde)}
+input[type=text],textarea,select{font:inherit;font-weight:500;padding:7px 9px;border:1px solid #ADB5BD;border-radius:6px;background:#fff;color:var(--texto)}
+input[type=text]{width:100%;max-width:300px}
+input.cod{font-family:"JetBrains Mono",monospace;text-transform:uppercase;letter-spacing:.06em}
+input.larga{max-width:100%}
+textarea{width:100%;min-height:48px;resize:vertical}
+input:focus,textarea:focus,select:focus{outline:2px solid #B8CCE8;border-color:var(--blue)}
+.linha{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;margin:6px 0} .linha label{font-size:.92rem}
+.campo{margin:8px 0} .campo>label,.campo>.rot{display:block;font-size:.88rem;font-weight:600;color:var(--titulo);margin-bottom:3px}
+.campo input[type=text],.campo select,.campo textarea{width:100%;max-width:100%}
+.campo .ph{font-size:.8rem;color:var(--sec);margin-top:2px}
+button{font:inherit;font-weight:600;padding:8px 14px;border-radius:6px;border:1.5px solid var(--blue);background:#fff;color:var(--blue);cursor:pointer}
+button:hover{background:#EEF3F9} button.primario{background:var(--blue);color:#fff} button.primario:hover{background:var(--blue2)}
+button.mini{padding:3px 9px;font-size:.8rem;border-color:#ADB5BD;color:var(--sec)} button:disabled{opacity:.5;cursor:not-allowed}
+.botoes{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px;align-items:center}
+.fb{font-size:.9rem;margin-top:6px;min-height:1.2em} .fb.ok{color:var(--verde);font-weight:600} .fb.erro{color:var(--red);font-weight:600} .fb.info{color:var(--blue);font-weight:600}
+.comp{font-family:"JetBrains Mono",monospace;font-weight:700;letter-spacing:.08em;color:var(--blue)}
+.ex-head{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:baseline}
+.ex-head .tag{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--sec);font-weight:600}
+.cand{border:1px solid var(--borda);border-radius:8px;padding:10px 12px;margin:10px 0;background:#fff}
+.cand h4{margin:0 0 4px;color:var(--blue)}
+.grid5{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px} @media (max-width:700px){.grid5{grid-template-columns:1fr}}
+.grid5 .campo.cheio{grid-column:1 / -1}
+.jev{margin:6px 0 0;padding:0;list-style:none} .jev li{font-size:.86rem;margin:3px 0;padding:4px 8px;border-left:3px solid var(--amarelob);background:var(--amarelo);border-radius:0 4px 4px 0;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.jev li.ok{border-color:var(--verde);background:#E6F4EC;color:var(--verde)}
+.var-g{font-size:.86rem;margin:4px 0} .ex-cond{background:#fff;border:1px dashed var(--borda);border-radius:8px;padding:8px 12px;margin:6px 0;font-size:.86rem;line-height:1.4} .ex-cond p{margin:3px 0} .ex-cond b{color:var(--titulo)}
+.overlay details{border-top:1px solid var(--borda);padding:6px 0} .overlay summary{cursor:pointer;font-weight:700;color:var(--titulo)} .overlay p{font-size:.92rem;margin:6px 0} .overlay h4{margin:12px 0 4px;color:var(--titulo);font-size:.95rem}
+body.escuro .parecer,body.escuro .ex-cond{background:#1d232b}
+.parecer{background:#fff;border:1px solid var(--borda);border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:10px 14px;margin:6px 0 12px} .parecer .pt{display:flex;align-items:center;gap:6px;font-weight:700;font-size:.92rem;color:var(--blue)} .parecer p{margin:4px 0 0;font-size:.95rem;overflow-wrap:anywhere}
+.jev label{font-size:.8rem;white-space:nowrap;margin-left:auto}
+.partes{display:flex;flex-wrap:wrap;gap:4px 12px} .partes label{font-size:.86rem;display:flex;gap:5px;align-items:center;background:#fff;border:1px solid var(--borda);border-radius:6px;padding:3px 8px} .partes label.on{border-color:var(--blue)}
+.codigo-grande{font-family:"JetBrains Mono",monospace;font-size:1.6rem;font-weight:700;letter-spacing:.1em;color:var(--blue);background:#fff;border:2px solid var(--blue);border-radius:8px;padding:4px 14px;display:inline-block}
+.membros{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0} .membros span{background:#fff;border:1px solid var(--borda);border-radius:999px;padding:2px 10px;font-size:.86rem}
+.versao{font-size:.84rem;color:var(--sec);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin:6px 0}
+.votos .cand{background:var(--card)}
+.likert{margin:8px 0 2px;padding-top:6px;border-top:1px dashed var(--borda)} .likert .lk-rot{font-size:.88rem;font-weight:600;color:var(--titulo)}
+.lk-esc{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;margin-top:3px;font-size:.78rem;color:var(--sec)} .lk-esc label{display:flex;align-items:center;gap:3px;font-size:.9rem;color:var(--texto);border:1px solid var(--borda);border-radius:6px;padding:2px 7px;background:#fff;cursor:pointer} .lk-esc label.on{border-color:var(--blue);font-weight:700} .lk-anc{max-width:150px}
+table.res{border-collapse:collapse;width:100%;font-size:.86rem;margin:6px 0} table.res th,table.res td{border-bottom:1px solid var(--borda);padding:5px 6px;text-align:center;vertical-align:top} table.res th{color:var(--sec);font-weight:600} table.res td.p{text-align:left} table.res td.n{font-family:"JetBrains Mono",monospace;font-weight:700} table.res th[data-ord]{cursor:pointer;text-decoration:underline dotted} table.res th.on{color:var(--blue)} table.res td.top{color:var(--verde)}
+.escolha label{display:flex;gap:8px;align-items:flex-start;font-size:.92rem;margin:4px 0}
+.frentes li{font-size:.88rem;margin:3px 0}
+.defs{font-size:.86rem;color:var(--sec)}
+/* bloqueio */
+.bloq{position:relative} .bloq > .conteudo{filter:blur(2.5px);pointer-events:none;user-select:none;opacity:.6}
+.cadeado{display:none}
+.bloq > .cadeado{display:block;position:absolute;top:40px;left:0;right:0;margin:0 auto;max-width:520px;text-align:center;font-weight:600;color:var(--titulo);background:#fff;border:1.5px solid var(--borda);border-radius:8px;padding:12px 14px;z-index:2}
+.cadeado .linha{justify-content:center}
+.refs li{margin:5px 0} a{color:var(--blue)}
+footer{margin-top:40px;color:var(--sec);font-size:.78rem;border-top:1px solid var(--borda);padding-top:10px}
+@media print{
+  body{font-size:10.5pt} main{max-width:none;padding:0}
+  .no-print,#gate,.botoes,.cadeado,button{display:none !important}
+  .bloq > .conteudo{filter:none;opacity:1} .card{break-inside:avoid;background:#fff}
+  input,textarea,select{border:0;border-bottom:1px solid #999;border-radius:0} #impressao{display:block !important}
+}
+#impressao{display:none;font-size:.9rem;margin-bottom:10px}
+body.escuro{--texto:#E6E8EB;--sec:#A4ACB5;--titulo:#D9DEE3;--blue:#8BBBE8;--blue2:#A9CBEE;--card:#1d232b;--borda:#343c47;--amarelo:#3a3217;--amarelob:#b08a00;--chip:#243246;background:#15191f;color:#E6E8EB}
+body.escuro .cand,body.escuro .cadeado,body.escuro .pill,body.escuro button,body.escuro input[type=text],body.escuro textarea,body.escuro select,body.escuro .membros span,body.escuro .lk-esc label,body.escuro .codigo-grande{background:#1d232b;color:#E6E8EB}
+body.escuro button.primario{background:#2f6fb0;color:#fff} body.escuro .jev li.ok{background:#17301f}
+
+/* ficha 2 */
+.ic{display:inline-flex;width:1.15em;height:1.15em;vertical-align:-.2em;flex:none} .ic svg{width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.bl-head{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;margin-bottom:6px}
+.bl-head .tt{flex:1 1 220px;min-width:0} .bl-head .tag{display:block;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--sec);font-weight:600} .bl-head h3{margin:0;display:flex;gap:7px;align-items:center;color:var(--blue)}
+.bl-head .acoes{display:flex;gap:6px;align-items:center}
+button.bt-ic{display:inline-flex;gap:6px;align-items:center;padding:5px 10px;font-size:.84rem}
+button.primario .ic,button .ic{margin-right:0}
+.btnl{display:inline-flex;gap:6px;align-items:center}
+.lk-f1{font-size:.88rem;font-weight:600;display:inline-flex;gap:5px;align-items:center}
+.cab-g{font-size:.92rem;margin:2px 0} .cab-frase{font-size:.92rem;color:var(--titulo);margin:4px 0 10px}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.overlay.on{display:flex}
+.overlay .cx{background:#fff;color:var(--texto);border-radius:10px;max-width:640px;width:100%;max-height:85vh;overflow:auto;padding:16px 18px;position:relative}
+.overlay h3{margin:0 34px 8px 0;color:var(--blue)} .overlay dl{margin:0} .overlay dt{font-weight:700;font-size:.86rem;color:var(--titulo);margin-top:8px} .overlay dd{margin:0;font-size:.92rem}
+.overlay .fechar{position:absolute;top:10px;right:10px;padding:4px 6px;border-color:transparent}
+table.tab-ex{border-collapse:collapse;width:100%;font-size:.88rem;margin:6px 0} table.tab-ex th,table.tab-ex td{border-bottom:1px solid var(--borda);padding:5px 6px;text-align:left}
+.cand-b{border:1px solid var(--borda);border-radius:8px;padding:8px 10px;margin:6px 0;background:#fff;display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap} .cand-b .tx{flex:1 1 240px;font-size:.9rem} .cand-b .tx small{display:block;color:var(--sec)}
+.cond-l{display:grid;grid-template-columns:1fr 1fr auto;gap:6px;margin:4px 0} @media (max-width:520px){.cond-l{grid-template-columns:1fr 1fr 30px}}
+.frente-l{margin:6px 0} .frente-l label{display:block;font-size:.86rem;font-weight:600;color:var(--titulo)} .frente-l input:disabled{background:var(--card);color:var(--sec)}
+.tab-wrap{overflow-x:auto;margin:6px 0}
+table.med{border-collapse:collapse;font-size:.86rem;min-width:100%} table.med th,table.med td{border:1px solid var(--borda);padding:4px 5px;vertical-align:top;text-align:left} table.med th{background:var(--card);font-weight:600} table.med th small{display:block;color:var(--sec);font-weight:500}
+table.med input{width:100%;min-width:82px;max-width:none;padding:4px 6px} table.med input.obs{font-size:.76rem;margin-top:3px;padding:2px 5px;border-color:var(--borda);font-weight:400} .col-l{display:flex;gap:3px;align-items:center} .col-l button{flex:none;padding:2px 3px;border-color:transparent}
+.op-l{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.9rem;margin:2px 0} .op-l label{display:flex;gap:5px;align-items:center}
+.met-lista{margin:6px 0;padding:0;list-style:none} .met-lista li{font-size:.88rem;padding:3px 0;border-bottom:1px dashed var(--borda)}
+#gaveta{position:fixed;top:0;right:0;bottom:0;width:360px;max-width:100vw;background:#fff;border-left:1.5px solid var(--borda);z-index:40;display:none;flex-direction:column;box-shadow:-4px 0 14px rgba(0,0,0,.12)}
+#gaveta.on{display:flex}
+@media (min-width:1100px){body.gav main{margin-right:376px;margin-left:auto}}
+@media (max-width:700px){#gaveta{top:auto;left:0;right:0;width:auto;height:72vh;border-left:0;border-top:1.5px solid var(--borda);border-radius:12px 12px 0 0}}
+#gaveta .g-top{display:flex;align-items:center;gap:8px;padding:10px 12px;border-bottom:1px solid var(--borda)} #gaveta .g-top b{display:flex;gap:6px;align-items:center;color:var(--blue)} #gaveta .g-top .cont{margin-left:auto;font-size:.82rem;color:var(--sec);white-space:nowrap}
+#gaveta .g-bloco{font-size:.8rem;color:var(--sec);padding:4px 12px 0}
+#gMsgs{flex:1;overflow-y:auto;padding:8px 12px;display:flex;flex-direction:column;gap:7px}
+#gMsgs .m{font-size:.9rem;padding:6px 9px;border-radius:8px;max-width:92%;white-space:pre-wrap;word-break:break-word} #gMsgs .m.eu{align-self:flex-end;background:var(--chip)} #gMsgs .m.ela{align-self:flex-start;background:var(--card);border:1px solid var(--borda)} #gMsgs .m.sis{align-self:center;color:var(--sec);font-size:.82rem;text-align:center}
+#gMsgs .m .ler{margin-top:5px;font-size:.84rem} #gMsgs .m .ler a{word-break:normal}
+#gMsgs .ajudou{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:.8rem;color:var(--sec)} #gMsgs .ajudou button{font:inherit;padding:1px 9px;border:1px solid var(--borda);border-radius:999px;background:transparent;color:inherit;cursor:pointer} #gMsgs .ajudou button.on{background:var(--blue);border-color:var(--blue);color:#fff}
+#gaveta .g-env{display:flex;gap:6px;padding:8px 12px;border-top:1px solid var(--borda)} #gaveta textarea{flex:1;min-height:42px;max-height:110px}
+body.escuro .overlay .cx,body.escuro #gaveta,body.escuro .cand-b{background:#1d232b;color:#E6E8EB}
+body.escuro table.med th{background:#242b34}
+@media print{#gaveta,.overlay,.bl-head .acoes{display:none !important} body.gav main{margin:0}}
+
+/* ficha 3 */
+.abas{display:flex;gap:6px;margin:14px 0 10px;border-bottom:2px solid var(--borda);position:sticky;top:0;background:#fff;z-index:5;padding-top:6px}
+.aba{border:1.5px solid var(--borda);border-bottom:0;border-radius:8px 8px 0 0;background:var(--card);color:var(--sec);padding:8px 14px;display:inline-flex;gap:6px;align-items:center;margin-bottom:-2px}
+.aba:hover{background:var(--card)} .aba.on,.aba.on:hover{background:#fff;color:var(--blue);border-color:var(--blue);border-bottom:2px solid #fff}
+body.escuro .abas{background:#15191f} body.escuro .aba.on,body.escuro .aba.on:hover{background:#15191f;border-bottom-color:#15191f}
+ol.cal{list-style:none;margin:4px 0 0;padding:0;display:grid;grid-template-columns:repeat(5,1fr);gap:8px} @media (max-width:760px){ol.cal{grid-template-columns:1fr 1fr}}
+ol.cal li{background:#fff;border:1px solid var(--borda);border-radius:8px;padding:8px 10px;font-size:.86rem} ol.cal li b{display:block;color:var(--blue);font-size:.95rem} ol.cal li.on{border-color:var(--blue);border-width:1.5px}
+body.escuro ol.cal li{background:#1d232b}
+.nivel-h{border:1px solid var(--borda);border-radius:10px;padding:10px 12px 8px;margin:10px 0;background:var(--card)}
+.nh-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline;flex-wrap:wrap}
+.nh-barra{position:relative;display:grid;grid-template-columns:repeat(4,1fr);height:14px;border-radius:999px;background:var(--borda);margin:24px 0 26px}
+.nh-fill{position:absolute;left:0;top:0;bottom:0;border-radius:999px;background:var(--blue);transition:width .9s cubic-bezier(.2,.8,.2,1),background-color .6s}
+.nivel-h[data-nivel="1"] .nh-fill{background:var(--laranja)} .nivel-h[data-nivel="3"] .nh-fill{background:var(--verde)}
+.nh-seg{position:relative;border-right:2px solid var(--card)} .nh-seg:last-of-type{border-right:0}
+.nh-seg small{position:absolute;top:18px;left:0;right:0;text-align:center;font-size:.72rem;color:var(--sec);white-space:nowrap}
+.nh-seg.on small{color:var(--texto);font-weight:700}
+.nh-seg.ideal::before{content:"recomendado";position:absolute;top:-18px;right:-2px;font-size:.68rem;font-weight:700;color:var(--verde);border-right:2px solid var(--verde);padding-right:4px;height:32px;box-sizing:border-box}
+.nh-seg.dep{opacity:.45} .nh-seg.dep::after{content:"";position:absolute;inset:0;border-radius:0 999px 999px 0;background:repeating-linear-gradient(135deg,transparent 0 4px,var(--card) 4px 7px)}
+.nh-falta{margin:0}
+@media (prefers-reduced-motion:reduce){ .nh-fill{transition:none} }
+details.niveis{border:1px solid var(--borda);border-radius:10px;padding:8px 12px;margin:10px 0 12px;background:var(--card)} details.niveis summary{cursor:pointer;font-weight:700;color:var(--blue)} details.niveis[open] summary{margin-bottom:4px}
+details.niveis .nv{display:grid;grid-template-columns:26px 1fr;gap:10px;align-items:start;border-top:1px solid var(--borda);padding:8px 0} details.niveis .nv .ic{color:var(--sec);margin-top:2px} details.niveis .nv .ic svg{width:22px;height:22px;display:block}
+details.niveis .nv p{margin:2px 0 0;font-size:.92rem} details.niveis .nv p.ex{color:var(--sec);font-style:italic}
+details.niveis .tg{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;border:1px solid var(--borda);border-radius:999px;padding:0 8px;color:var(--sec);vertical-align:1px}
+details.niveis .nv.min .tg{border-color:var(--red);color:var(--red)} details.niveis .nv.min .ic{color:var(--red)} details.niveis .nv.rec .tg{border-color:var(--verde);color:var(--verde)} details.niveis .nv.rec .ic{color:var(--verde)}
+details.niveis > p{margin:8px 0 0}
+.marca{display:inline-block;border-radius:999px;padding:1px 10px;font-size:.82rem;font-weight:600;margin:6px 6px 0 0;border:1px solid var(--borda)} .marca.ok{color:var(--verde);border-color:var(--verde)} .marca.ajustar{color:#8a5a00;border-color:var(--amarelob);background:var(--amarelo)} body.escuro .marca.ajustar{color:#f0d27a}
+dl.cons{margin:0} dl.cons dt{font-weight:700;font-size:.82rem;color:var(--sec);margin-top:8px} dl.cons dd{margin:0;font-size:.95rem;overflow-wrap:anywhere} dl.cons ul.lista{margin:2px 0}
+.card.cons .cand h4{font-size:.86rem}
+.pre{white-space:pre-wrap;overflow-wrap:anywhere} span.pre{display:block}
+.cons-topo{font-size:.92rem;color:var(--titulo);display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.sub-campo{margin-top:8px} .sub-campo .rot{display:block;font-size:.88rem;font-weight:600;color:var(--titulo);margin-bottom:3px}
+table.med select{width:100%;min-width:130px;padding:4px 6px} table.med.leitura th,table.med.leitura td{padding:5px 8px}
+#secCal .bl-head{margin-bottom:2px}
+.abas-met{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-end;margin:10px 0 12px;border-bottom:1.5px solid var(--borda)}
+.aba-met{border:1.5px solid var(--borda);border-bottom:0;border-radius:7px 7px 0 0;background:#fff;color:var(--sec);padding:5px 12px;font-size:.88rem;margin-bottom:-1.5px;max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.aba-met.on,.aba-met.on:hover{color:var(--blue);border-color:var(--blue);border-bottom:1.5px solid var(--card);background:var(--card)}
+.aba-met.nova{border-style:dashed;color:var(--blue)} .abas-met .mini{margin:0 0 5px auto}
+body.escuro .aba-met{background:#15191f}
+::placeholder{color:#9AA1A9;font-weight:500;opacity:1} body.escuro ::placeholder{color:#6f7780}
+@media print{.pane.oculto{display:none !important}}
+
+/* ficha 4 */
+ol.cal.cal4{grid-template-columns:repeat(4,1fr)} @media (max-width:760px){ol.cal.cal4{grid-template-columns:1fr 1fr}}
+ol.cal.cal3{grid-template-columns:repeat(3,1fr)} @media (max-width:760px){ol.cal.cal3{grid-template-columns:1fr}}
+.op-v{flex-direction:column;gap:6px;margin-top:6px} .op-v label{background:#fff;border:1px solid var(--borda);border-radius:6px;padding:5px 10px;cursor:pointer} body.escuro .op-v label{background:#1d232b}
+.marca.v-sustentam{color:var(--verde);border-color:var(--verde)} .marca.v-contrariam{color:var(--roxo);border-color:var(--roxo)} .marca.v-nao_dizem{color:#8a5a00;border-color:var(--amarelob)} .marca.v-sem_dados{color:var(--sec)}
+.met-lista .marca{margin:0 4px;font-size:.78rem}
+pre.pedido{white-space:pre-wrap;overflow-wrap:anywhere;font-family:"JetBrains Mono",Consolas,monospace;font-size:.8rem;line-height:1.45;background:#fff;border:1px solid var(--borda);border-radius:8px;padding:10px 12px;margin:8px 0;max-height:340px;overflow:auto} body.escuro pre.pedido{background:#15191f}
+details.niveis .nv b{color:var(--titulo)}
+svg.pv{display:block;width:100%;max-width:760px;height:auto;margin:8px auto 2px;background:#fff;border:1px solid var(--borda);border-radius:8px} body.escuro svg.pv{background:#15191f}
+svg.pv text{font-family:Montserrat,Verdana,sans-serif}
+.pv-tit{font-size:17px;font-weight:700;fill:var(--texto)} .pv-tx{font-size:13px;font-weight:600;fill:var(--sec)} .pv-cat{font-size:12.5px;font-weight:600;fill:var(--titulo)} .pv-eixo-t{font-size:14px;font-weight:700;fill:var(--titulo)}
+.pv-val,.pv-rot{font-size:13px;font-weight:700;fill:var(--texto)}
+.pv-grade{stroke:var(--borda);stroke-width:1} .pv-eixo{stroke:var(--titulo);stroke-width:1.6}
+.pv-serie{fill:var(--blue)} .pv-barra{fill:var(--blue);opacity:.82} .pv-linha{fill:none;stroke:var(--blue);stroke-width:2.6} .pv-rep{fill:#fff;stroke:var(--blue);stroke-width:1.6}
+.pv-ref{stroke:var(--red);stroke-width:2.2} .pv-ref-t{font-size:13px;font-weight:700;fill:var(--red)}
+ol.secoes{margin:6px 0;padding-left:22px} ol.secoes li{font-size:.92rem;margin:3px 0}
+.overlay svg.pv{margin-top:10px}
+@media (max-width:520px){.abas{gap:4px} .aba{padding:7px 9px;font-size:.86rem} .aba .ic{display:none}}
+</style>
+</head>
+<body>
+<main>
+<div style="display:flex;gap:14px;align-items:center"><img src="data:image/png;base64,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" alt="Mackenzie" style="width:64px;height:64px;flex:none"><div><h1>Projeto 2 · Custo · Ficha 4: resultados e visualização</h1>
+<p class="sub" id="subtitulo" style="margin:0">Sistemas Operacionais (CC) · 2026.2 · Prof. Lucas Figueiredo</p></div></div>
+<p class="cab-g oculto" id="cabGrupo"></p>
+<div id="impressao"></div>
+<div class="status no-print"><span class="pill" id="pillId">sem identificação</span><span id="salvo">nada salvo ainda</span><span id="rede" class="peq"></span><button class="mini" id="btEscuro" style="margin-left:auto">modo escuro</button></div>
+
+<!-- ACESSO -->
+<section class="card" id="gate">
+  <h3>Acesso</h3>
+  <p>Escolha a turma e digite o RA, o nome e o seu código pessoal, o mesmo das fichas anteriores. Quem nunca recebeu um código deixa o campo em branco e recebe um agora. Quem esqueceu o código pede ao professor.</p>
+  <div class="linha">
+    <label>Turma <select id="inTurma"><option value="4N">4N</option><option value="4G">4G</option><option value="4D">4D</option><option value="4P">4P</option><option value="TESTE">TESTE</option></select></label>
+    <label>RA <input type="text" class="cod" id="inId" placeholder="só números" maxlength="12" inputmode="numeric" autocomplete="off"></label>
+    <label>Nome <input type="text" id="inNome" placeholder="Nome e Sobrenome" maxlength="60" autocomplete="off"></label>
+    <label id="lblCod4">Código <input type="text" class="cod" id="inCod4" placeholder="4X-XXXX" maxlength="7" autocomplete="off" autocapitalize="characters"></label>
+    <button class="primario" id="btEntrar">Entrar</button>
+  </div>
+  <div class="fb" id="fbGate"></div>
+  <p class="peq sec">O progresso fica salvo neste navegador. Se precisar entrar em outro dispositivo, entre com o seu RA e código e clique em "recuperar envios".</p>
+</section>
+
+
+<div id="atividade" class="oculto">
+
+<!-- GRUPO -->
+<section class="card" id="secG">
+  <div class="ex-head"><span class="tag">Grupo</span><h3>Grupo</h3></div>
+  <div id="gSem">
+    <p>Um cria o grupo e os demais entram pelo código. O nome do grupo será o nome registrado no GitHub também e não pode ser alterado. O grupo deve ter de 3 a 5 integrantes.</p>
+    <div class="lado">
+      <div class="campo"><label for="inNomeG">Nome do grupo</label><input type="text" id="inNomeG" maxlength="40" placeholder="Os 161 MB"><div class="botoes"><button class="primario" id="btCriar">Criar grupo</button></div></div>
+      <div class="campo"><label for="inCodG">Código do grupo</label><input type="text" class="cod" id="inCodG" maxlength="7" placeholder="KIN-7Q2" autocapitalize="characters"><div class="botoes"><button class="primario" id="btEntrarG">Entrar no grupo</button></div></div>
+    </div>
+  </div>
+  <div id="gCom" class="oculto">
+    <p><b id="gNome"></b> <span class="sec peq" id="gN"></span></p>
+    <div class="linha"><span class="peq sec">Código para os colegas entrarem</span><span class="codigo-grande" id="gCod"></span></div>
+    <div class="membros" id="gMembros"></div>
+    <div class="botoes no-print"><button class="mini" id="btAtualizarG">atualizar</button><button class="mini" id="btSairG">sair do grupo</button></div>
+  </div>
+  <div class="fb" id="fbG"></div>
+</section>
+
+
+<div id="blocos" class="oculto">
+<nav class="abas no-print" role="tablist" aria-label="Fichas do projeto">
+  <button role="tab" class="aba on" data-aba="f4" aria-selected="true"><span class="ic" data-ic="pen-line"></span>Ficha 4</button>
+  <button role="tab" class="aba" data-aba="f1" aria-selected="false"><span class="ic" data-ic="eye"></span>Ficha 1</button>
+  <button role="tab" class="aba" data-aba="f2" aria-selected="false"><span class="ic" data-ic="eye"></span>Ficha 2</button>
+  <button role="tab" class="aba" data-aba="f3" aria-selected="false"><span class="ic" data-ic="eye"></span>Ficha 3</button>
+</nav>
+
+<div id="pane-f4" class="pane">
+<section class="card" id="secCal"></section>
+<div id="pendF2"></div>
+<div id="mesa3" class="parecer oculto"><div class="pt"><span class="ic" data-ic="badge-check"></span>Retorno do professor na Ficha 3</div><div id="mesaMarcas"></div><p id="mesaTx" class="pre"></p></div>
+
+<section class="card" id="secM3" data-ex="M3" data-ab="F4X">
+<div class="conteudo">
+  <div class="bl-head"><div class="tt"><span class="tag">Grupo · entrega até <span data-prazo>24/11</span></span><h3><span class="ic" data-ic="table"></span>Medição</h3></div><div class="acoes no-print"><button class="mini bt-ic" data-assist="F4X" title="Assistente"><span class="ic" data-ic="message-circle"></span>Assistente</button><button class="mini bt-ic" data-exemplo="M3" title="Ver o exemplo" aria-label="Ver o exemplo"><span class="ic" data-ic="circle-help"></span>?</button></div></div>
+  <div id="boxM3"></div>
+  <div class="fb" data-fb="M3"></div><div class="peq" data-comp="M3"></div>
+</div></section>
+
+<section class="card" id="secF4V" data-ex="F4V">
+<div class="conteudo">
+  <div class="bl-head"><div class="tt"><span class="tag">Individual · entrega até <span data-prazo>24/11</span></span><h3><span class="ic" data-ic="scale"></span>Minha hipótese diante dos dados</h3></div><div class="acoes no-print"><button class="mini bt-ic" data-assist="F4V" title="Assistente"><span class="ic" data-ic="message-circle"></span>Assistente</button><button class="mini bt-ic" data-exemplo="F4V" title="Ver o exemplo" aria-label="Ver o exemplo"><span class="ic" data-ic="circle-help"></span>?</button></div></div>
+  <div id="boxF4V"></div>
+  <div class="fb" data-fb="F4V"></div><div class="peq" data-comp="F4V"></div>
+</div></section>
+
+<section class="card" id="secF4G" data-ex="F4G">
+<div class="conteudo">
+  <div class="bl-head"><div class="tt"><span class="tag">Grupo · entrega até <span data-prazo>24/11</span></span><h3><span class="ic" data-ic="chart-line"></span>Gráfico do grupo</h3></div><div class="acoes no-print"><button class="mini bt-ic" data-assist="F4G" title="Assistente"><span class="ic" data-ic="message-circle"></span>Assistente</button><button class="mini bt-ic" data-exemplo="F4G" title="Ver o exemplo" aria-label="Ver o exemplo"><span class="ic" data-ic="circle-help"></span>?</button></div></div>
+  <details class="niveis" id="criterios" open>
+    <summary>Critérios do gráfico</summary>
+    <div class="nv"><span class="ic" data-ic="message-circle"></span><div><b>Uma mensagem</b><p>Quem olha entende em dez segundos o que o gráfico mostra, e o título diz isso.</p></div></div>
+    <div class="nv"><span class="ic" data-ic="ruler"></span><div><b>Eixos com nome e unidade</b><p>A variável que o grupo mudou fica no eixo horizontal, e a métrica fica no vertical.</p></div></div>
+    <div class="nv"><span class="ic" data-ic="table"></span><div><b>Todas as condições medidas</b><p>Com repetições, aparecem a média e os valores de cada rodada.</p></div></div>
+    <div class="nv"><span class="ic" data-ic="gauge"></span><div><b>Uma referência</b><p>Uma linha ou marca que dá sentido ao número: o total de memória, o número de núcleos, o valor sem carga.</p></div></div>
+    <div class="nv"><span class="ic" data-ic="eye"></span><div><b>Leitura de longe</b><p>Fonte grande, poucas cores e o nome de cada série escrito ao lado da linha. Em gráfico de barras, o eixo começa em zero.</p></div></div>
+    <div class="nv"><span class="ic" data-ic="badge-check"></span><div><b>Os números são os do grupo</b><p>A ferramenta é livre, inclusive IA. Os valores vêm da tabela de medição, e cada um pode ser conferido na saída bruta.</p></div></div>
+  </details>
+  <div id="boxF4G"></div>
+  <div class="fb" data-fb="F4G"></div><div class="peq" data-comp="F4G"></div>
+  <details class="niveis" id="previaBox" open>
+    <summary>Prévia com a tabela do grupo</summary>
+    <p class="peq sec">Um rascunho desenhado com a tabela de medição, com a mensagem e com o tipo escolhidos acima, para o grupo ver a forma dos dados e conferir a mensagem. O nome do eixo vertical vem da tabela. O gráfico da apresentação é feito na ferramenta do grupo. A prévia lê só números, e uma célula com mais de um número é tratada como repetições da mesma condição.</p>
+    <div class="linha no-print"><label>Métrica no eixo vertical <select id="pvY"></select></label><label id="pvXl" class="oculto">Métrica no eixo horizontal <select id="pvX"></select></label></div>
+    <div id="pvGraf"></div>
+    <p class="peq sec" id="pvNota"></p>
+  </details>
+  <details class="niveis" id="pedidoIA">
+    <summary>Pedido para a IA</summary>
+    <p class="peq sec">Um texto para levar a uma ferramenta de IA que monte o gráfico. Ele é montado com os campos acima e com a tabela de medição do grupo, do jeito que estão na tela. Confiram o resultado com a tabela antes de usar.</p>
+    <pre class="pedido" id="pedidoTxt"></pre>
+    <div class="botoes no-print"><button class="btnl" id="btPedido"><span class="ic" data-ic="copy"></span>Copiar pedido</button><span class="peq sec" id="pedidoSt"></span></div>
+  </details>
+</div></section>
+
+<section class="card" id="secF4R" data-ex="F4R">
+<div class="conteudo">
+  <div class="bl-head"><div class="tt"><span class="tag">Grupo · entrega até <span data-prazo>24/11</span></span><h3><span class="ic" data-ic="list-checks"></span>Relatório e repositório</h3></div><div class="acoes no-print"><button class="mini bt-ic" data-assist="F4R" title="Assistente"><span class="ic" data-ic="message-circle"></span>Assistente</button></div></div>
+  <details class="niveis" id="formatoRel" open>
+    <summary>Formato do relatório</summary>
+    <p class="peq">PDF de até 10 páginas, entregue no repositório do grupo até <b data-rel></b>. A ferramenta é livre: LaTeX, Google Docs ou Word. As seções vêm nesta ordem:</p>
+    <ol class="secoes">
+      <li><b>Pergunta.</b> Quanto custa X, quando mudo Y, medido em Z, e o mecanismo do sistema operacional que gera o custo.</li>
+      <li><b>Método.</b> O dispositivo, as condições comparadas, a carga, as repetições e como cada métrica foi medida.</li>
+      <li><b>Hipóteses.</b> A de cada integrante, como estava antes de medir.</li>
+      <li><b>Resultados.</b> A tabela de medição e o gráfico do grupo.</li>
+      <li><b>Discussão.</b> Cada hipótese diante dos dados e o que o sistema operacional fez.</li>
+      <li><b>Limites.</b> As afirmações que a medição não sustenta.</li>
+      <li><b>Frentes.</b> O que cada integrante investigou.</li>
+      <li><b>Referências.</b></li>
+      <li><b>Declaração de uso de IA.</b> Onde a IA entrou e para quê.</li>
+    </ol>
+  </details>
+  <p>O grupo cria um repositório público no GitHub e cola o link abaixo. O mínimo é o PDF do relatório e uma pasta com os dados e todo o material usado para gerá-los: scripts, comandos, configurações, saídas dos programas, planilhas. O material pode subir do jeito que está, sem organizar. O repositório serve para os professores entenderem as ferramentas que o grupo usou.</p>
+  <div id="boxF4R"></div>
+  <div class="fb" data-fb="F4R"></div><div class="peq" data-comp="F4R"></div>
+</div></section>
+
+</div>
+
+<div id="pane-f1" class="pane oculto"><div id="consF1"></div></div>
+<div id="pane-f2" class="pane oculto"><div id="consF2"></div></div>
+<div id="pane-f3" class="pane oculto"><div id="consF3"></div></div>
+</div>
+
+<!-- ENTREGA -->
+<h2>Entrega</h2>
+<section class="card" id="envio">
+  <p>Cada parte tem o seu "Enviar". Os comprovantes aparecem em cada parte e no PDF.</p>
+  <div class="botoes no-print"><button id="btRecuperar" class="btnl"><span class="ic" data-ic="rotate-ccw"></span>recuperar envios</button><button id="btPdf">Guardar em PDF</button><button id="btJson">Baixar respostas</button></div>
+  <div class="fb" id="fbEnvio"></div>
+</section>
+
+</div><!-- atividade -->
+
+<footer>Estrutura, diagramas e artefatos interativos construídos com apoio do modelo Claude Fable 5.1 (Anthropic). Pré-checagem automática dos envios e do nome do grupo feita pelo modelo Jev (TypeSafe, jev-1.14). A avaliação é do professor. Produção de conteúdo, sequência didática, verificação dos códigos e revisão final: Prof. Lucas Figueiredo.</footer>
+</main>
+
+<div class="overlay" id="overlay" role="dialog" aria-modal="true"><div class="cx"><button class="mini fechar" id="ovFechar" aria-label="Fechar"><span class="ic" data-ic="x"></span></button><div id="ovCorpo"></div></div></div>
+
+<aside id="gaveta" aria-label="Assistente">
+  <div class="g-top"><b><span class="ic" data-ic="message-circle"></span>Assistente</b><span class="cont" id="gCont"></span><button class="mini" id="gFechar" aria-label="Fechar"><span class="ic" data-ic="x"></span></button></div>
+  <div class="g-bloco" id="gBloco"></div>
+  <div id="gMsgs"></div>
+  <div class="g-env"><textarea id="gTexto" maxlength="600" rows="2" aria-label="Mensagem"></textarea><button class="primario btnl" id="gEnviar"><span class="ic" data-ic="send"></span></button></div>
+</aside>
+
+<script>
+(function(){
+"use strict";
+var CONFIG = {
+  endpoint: "https://script.google.com/macros/s/AKfycbx80lrmbZQOYqmj0PICagRCQAo-0ebqEQkjmlqQ2-qQBewtOgFwi3OmBjp1W81bgYhjdQ/exec",
+  versao: "20262-proj2-ficha4-v2",
+  ls: "so-proj2-ficha4-20262-v1",
+  turmas: ["4N", "4G", "4D", "4P", "TESTE"],
+  site: "https://lucascerfig.github.io/aulas/sistemas-operacionais/"
+};
+var ICONS = {"copy": "<rect width=\"14\" height=\"14\" x=\"8\" y=\"8\" rx=\"2\" ry=\"2\"/><path d=\"M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2\"/>", "scale": "<path d=\"m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\"/><path d=\"m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z\"/><path d=\"M7 21h10\"/><path d=\"M12 3v18\"/><path d=\"M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2\"/>", "list-checks": "<path d=\"m3 17 2 2 4-4\"/><path d=\"m3 7 2 2 4-4\"/><path d=\"M13 6h8\"/><path d=\"M13 12h8\"/><path d=\"M13 18h8\"/>", "bot": "<path d=\"M12 8V4H8\"/><rect width=\"16\" height=\"12\" x=\"4\" y=\"8\" rx=\"2\"/><path d=\"M2 14h2\"/><path d=\"M20 14h2\"/><path d=\"M15 13v2\"/><path d=\"M9 13v2\"/>", "badge-check": "<path d=\"M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.77 4.78 4 4 0 0 1-6.75 0 4 4 0 0 1-4.78-4.77 4 4 0 0 1 0-6.76Z\" /> <path d=\"m9 12 2 2 4-4\" />", "circle-help": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\" /> <path d=\"M12 17h.01\" />", "external-link": "<path d=\"M15 3h6v6\" /> <path d=\"M10 14 21 3\" /> <path d=\"M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6\" />", "flask-conical": "<path d=\"M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2\" /> <path d=\"M8.5 2h7\" /> <path d=\"M7 16h10\" />", "help-circle": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <path d=\"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3\" /> <path d=\"M12 17h.01\" />", "message-circle": "<path d=\"M7.9 20A9 9 0 1 0 4 16.1L2 22Z\" />", "pen-line": "<path d=\"M12 20h9\" /> <path d=\"M16.376 3.622a1 1 0 0 1 3.002 3.002L7.368 18.635a2 2 0 0 1-.855.506l-2.872.838a.5.5 0 0 1-.62-.62l.838-2.872a2 2 0 0 1 .506-.854z\" />", "rotate-ccw": "<path d=\"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8\" /> <path d=\"M3 3v5h5\" />", "ruler": "<path d=\"M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z\" /> <path d=\"m14.5 12.5 2-2\" /> <path d=\"m11.5 9.5 2-2\" /> <path d=\"m8.5 6.5 2-2\" /> <path d=\"m17.5 15.5 2-2\" />", "send": "<path d=\"m22 2-7 20-4-9-9-4Z\" /> <path d=\"M22 2 11 13\" />", "table": "<path d=\"M12 3v18\" /> <rect width=\"18\" height=\"18\" x=\"3\" y=\"3\" rx=\"2\" /> <path d=\"M3 9h18\" /> <path d=\"M3 15h18\" />", "users": "<path d=\"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2\" /> <circle cx=\"9\" cy=\"7\" r=\"4\" /> <path d=\"M22 21v-2a4 4 0 0 0-3-3.87\" /> <path d=\"M16 3.13a4 4 0 0 1 0 7.75\" />", "x": "<path d=\"M18 6 6 18\" /> <path d=\"m6 6 12 12\" />", "clock": "<circle cx=\"12\" cy=\"12\" r=\"10\" /> <polyline points=\"12 6 12 12 16 14\" />", "eye": "<path d=\"M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0\" /> <circle cx=\"12\" cy=\"12\" r=\"3\" />", "lightbulb": "<path d=\"M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5\" /> <path d=\"M9 18h6\" /> <path d=\"M10 22h4\" />", "wrench": "<path d=\"M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z\" />", "trending-up": "<path d=\"M16 7h6v6\" /> <path d=\"m22 7-8.5 8.5-5-5L2 17\" />", "cpu": "<path d=\"M12 20v2\" /> <path d=\"M12 2v2\" /> <path d=\"M17 20v2\" /> <path d=\"M17 2v2\" /> <path d=\"M2 12h2\" /> <path d=\"M2 17h2\" /> <path d=\"M2 7h2\" /> <path d=\"M20 12h2\" /> <path d=\"M20 17h2\" /> <path d=\"M20 7h2\" /> <path d=\"M7 20v2\" /> <path d=\"M7 2v2\" /> <rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\" /> <rect x=\"8\" y=\"8\" width=\"8\" height=\"8\" rx=\"1\" />", "gauge": "<path d=\"m12 14 4-4\" /> <path d=\"M3.34 19a10 10 0 1 1 17.32 0\" />", "chart-line": "<path d=\"M3 3v16a2 2 0 0 0 2 2h16\" /> <path d=\"m19 9-5 5-4-4-3 3\" />"};
+var PARTES = [["cpu", "Virtualização de CPU"], ["mem", "Virtualização de memória"], ["conc", "Concorrência"], ["pers", "Persistência"], ["seg", "Segurança"]];
+var AVISOS = {
+  F4V: {veredito: "Marque o veredito desta métrica.", numeros: "Os números não aparecem em pelo menos duas condições, com a unidade.", explica: "A explicação não diz o que o sistema operacional fez na medição.", falta: "Escreva o que falta para medir e em que dia os números ficam prontos."},
+  F4G: {mensagem: "Falta a mensagem do gráfico em uma frase.", tipo: "Falta escolher o tipo de gráfico.", eixos: "Falta dizer o que vai em cada eixo.", unidade: "O eixo vertical está sem a unidade.", link: "O link não foi aceito. O endereço precisa começar com https://"},
+  F4R: {publico: "O repositório não abriu como público. Confiram o endereço e se a visibilidade está como pública."},
+  M3: {linhas: "São necessárias pelo menos duas linhas com número.", surpreendeu: "\"O que surpreendeu\" está vazio."}
+};
+var NOMES_BLOCO = {F4V: "Minha hipótese diante dos dados", F4G: "Gráfico do grupo", F4R: "Relatório e repositório", F4X: "Medição", M3: "Medição"};
+var EXEMPLOS_REPO = [["cpu", "cpu"], ["memoria", "memoria"], ["concorrencia", "concorrencia"], ["persistencia", "persistencia"], ["es", "es"]];
+var ARQ_EXEMPLOS = ["exemplos.sh", "cpu.c", "memoria.c", "concorrencia.c", "persistencia.c", "README.md"];
+function dl(pares){ return "<dl>" + pares.map(function(p){ return "<dt>" + p[0] + "</dt><dd>" + p[1] + "</dd>"; }).join("") + "</dl>"; }
+function linhasTab(cab, linhas){ return '<table class="tab-ex"><tr>' + cab.map(function(c){ return "<th>" + c + "</th>"; }).join("") + "</tr>" + linhas.map(function(l){ return "<tr>" + l.map(function(c){ return "<td>" + c + "</td>"; }).join("") + "</tr>"; }).join("") + "</table>"; }
+var CAB_MET = ["Métrica", "Unidade", "Quem mede", "Em que condição"];
+var TERMOS = {
+  F4V: "<h3>Termos desta parte</h3>" + dl([["Sustentam", "os números foram na direção que a hipótese previa, nas condições medidas."], ["Contrariam", "os números foram em outra direção, ou ficaram iguais onde a hipótese previa mudança. É um resultado, e a explicação dele entra no relatório e na apresentação."], ["Não permitem dizer", "há uma rodada só, a variação entre as repetições é maior do que a diferença entre as condições, ou faltou medir uma condição."]]),
+  F4G: "<h3>Termos desta parte</h3>" + dl([["Mensagem", "o que a pessoa precisa entender olhando o gráfico por dez segundos, em uma frase."], ["Referência ou limite", "uma linha ou marca que dá sentido ao número: o total de memória do aparelho, o número de núcleos, o valor sem carga."]]),
+  M3: "<h3>Como ler a tabela</h3><p>Cada linha é uma condição. Cada coluna é uma métrica. Cada célula é o que o comando devolveu naquela condição. Com três repetições, anotem os três valores. Se não deu para medir, escrevam o que houve.</p>"
+};
+var CENARIOS = [
+  {nome: "Redimensionar fotos em lote",
+    F4V: dl([["Métrica", "tempo total (s)"], ["O que eu esperava", "que o tempo total caísse quando o número de processos sobe, até perto do número de núcleos"], ["Veredito", "os dados sustentam a hipótese"], ["Que números mostram isso", "1 processo: 75,4 s. 4 processos: 18,6 s. 8 processos: 9,7 s"], ["O que explica o resultado", "de 1 para 4 processos o tempo caiu a um quarto, e de 4 para 8 caiu pela metade. O servidor tem 16 núcleos lógicos, então o escalonador deu um núcleo a cada processo. O limite da hipótese ficou sem teste, porque não medimos acima de 16 processos"]]),
+    F4G: dl([["Mensagem", "com até 8 processos, dobrar os processos corta o tempo pela metade"], ["Tipo de gráfico", "linha"], ["Eixo horizontal", "número de processos (1, 4, 8)"], ["Eixo vertical", "tempo total (s), média de 3 repetições"], ["Referência ou limite", "linha vertical em 16, o número de núcleos lógicos do servidor"], ["Ferramenta", "página HTML gerada com IA a partir da tabela do grupo"]]) + graficoSVG({tipo: "linha", titulo: "Com até 8 processos, dobrar os processos corta o tempo pela metade", rotX: "número de processos", rotY: "tempo total (s), média de 3 repetições", xnum: [1, 4, 8], pontos: [{rot: "1", y: [75.5, 75.2, 75.4]}, {rot: "4", y: [18.5, 18.6, 18.6]}, {rot: "8", y: [9.6, 9.8, 9.7]}]}),
+    M3: "<table class=\"tab-ex\"><tr><th>Condição</th><th>tempo total (s)</th><th>trocas de contexto</th></tr><tr><td>500 fotos com 1 processo</td><td>75,5 / 75,2 / 75,4</td><td>2574 / 2555 / 2502</td></tr><tr><td>500 fotos com 4 processos</td><td>18,5 / 18,6 / 18,6</td><td>2448 / 2470 / 2502</td></tr><tr><td>500 fotos com 8 processos</td><td>9,6 / 9,8 / 9,7</td><td>2411 / 2445 / 2414</td></tr></table><p>Três repetições, no servidor do laboratório.</p><dl><dt>O que surpreendeu</dt><dd>as trocas de contexto quase não mudaram; os 8 processos couberam nos 16 núcleos lógicos, sem disputa</dd><dt>O que muda no método</dt><dd>acrescentar condições acima de 16 processos, onde a disputa começa</dd></dl>"},
+  {nome: "Ordenar um arquivo grande",
+    F4V: dl([["Métrica", "tempo total (s)"], ["O que eu esperava", "que o tempo total caísse quando a memória do <code>sort</code> sobe"], ["Veredito", "os dados contrariam a hipótese"], ["Que números mostram isso", "16 MB: 20,2 s. 256 MB: 21,3 s. 2 GB: 23,5 s"], ["O que explica o resultado", "o tempo subiu um pouco, e a hipótese previa queda. Os dados gravados caíram de 2000 MB para zero, mas o servidor tem 62 GB de RAM: a gravação dos temporários fica no cache de páginas (page cache) e o programa não espera o disco. O custo do disco não apareceu nesta máquina"]]),
+    F4G: dl([["Mensagem", "com memória sobrando na máquina, dar mais memória ao sort não reduz o tempo"], ["Tipo de gráfico", "barras"], ["Eixo horizontal", "memória do sort (16 MB, 256 MB, 2 GB)"], ["Eixo vertical", "tempo total (s), com os três valores de cada condição"], ["Referência ou limite", "os dados gravados em cada condição (2000, 1000 e 0 MB), escritos acima das barras"], ["Ferramenta", "Excel"]]) + graficoSVG({tipo: "barras", titulo: "Com memória sobrando na máquina, dar mais memória ao sort não reduz o tempo", rotX: "memória do sort", rotY: "tempo total (s)", pontos: [{rot: "16 MB", y: [20.0, 20.4, 20.1]}, {rot: "256 MB", y: [21.2, 21.3, 21.3]}, {rot: "2 GB", y: [23.4, 23.5, 23.5]}]}),
+    M3: "<table class=\"tab-ex\"><tr><th>Condição</th><th>tempo total (s)</th><th>dados gravados (MB)</th></tr><tr><td>arquivo de 1 GB com 16 MB</td><td>20,0 / 20,4 / 20,1</td><td>2000 / 2000 / 2000</td></tr><tr><td>arquivo de 1 GB com 256 MB</td><td>21,2 / 21,3 / 21,3</td><td>1000 / 1000 / 1000</td></tr><tr><td>arquivo de 1 GB com 2 GB</td><td>23,4 / 23,5 / 23,5</td><td>0 / 0 / 0</td></tr></table><p>Três repetições, no servidor do laboratório.</p><dl><dt>O que surpreendeu</dt><dd>os dados gravados caíram de 2000 MB a zero, mas o tempo quase não mudou e até subiu um pouco, ao contrário da hipótese; com 62 GB de RAM, a gravação provavelmente fica no cache de páginas e o programa não espera o disco</dd><dt>O que muda no método</dt><dd>repetir com pouca memória livre, para ver o custo do disco aparecer</dd></dl>"},
+  {nome: "Kindle",
+    F4V: dl([["Métrica", "pico de memória residente (MB)"], ["O que eu esperava", "que o pico de memória caísse quando os pesos passam de float32 para int8"], ["Veredito", "os dados sustentam a hipótese"], ["Que números mostram isso", "stories15M float32: 62,5 MB. stories15M int8: 20,9 MB"], ["O que explica o resultado", "o pico caiu a um terço. Os pesos são mapeados por mmap e só as páginas usadas contam na memória residente, então pesos de um byte ocupam menos páginas do que pesos de quatro bytes. O preço foi a velocidade, que caiu de 12,0 para 5,6 tok/s"]]),
+    F4G: dl([["Mensagem", "int8 ocupa um terço da memória e roda na metade da velocidade"], ["Tipo de gráfico", "dispersão"], ["Eixo horizontal", "pico de memória (MB)"], ["Eixo vertical", "velocidade (tok/s)"], ["Referência ou limite", "linha vertical em 161 MB, a memória disponível no aparelho"], ["Ferramenta", "página HTML gerada com IA"]]) + graficoSVG({tipo: "dispersao", titulo: "int8 ocupa um terço da memória e roda na metade da velocidade", rotX: "pico de memória (MB)", rotY: "velocidade (tok/s)", refX: {v: 161, rot: "161 MB disponíveis"}, pontos: [{rot: "stories15M float32", x: [62.5], y: [12.03]}, {rot: "stories15M int8", x: [20.9], y: [5.62]}, {rot: "stories42M int8", x: [75.7], y: [3.25]}]}),
+    M3: "<table class=\"tab-ex\"><tr><th>Condição</th><th>tokens por segundo (tok/s)</th><th>pico de memória (MB)</th></tr><tr><td>stories15M float32</td><td>12,0</td><td>62,5</td></tr><tr><td>stories15M int8</td><td>5,6</td><td>20,9</td></tr><tr><td>stories42M int8</td><td>3,3</td><td>75,7</td></tr></table><dl><dt>O que surpreendeu</dt><dd>int8 cortou a memória a um terço e ficou duas vezes mais lento</dd></dl>"}
+];
+
+
+/* ---------- utilidades ---------- */
+function $(id){ return document.getElementById(id); }
+function $$(sel, root){ return Array.prototype.slice.call((root || document).querySelectorAll(sel)); }
+function el(tag, cls, html){ var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+function esc(s){ return String(s == null ? "" : s).replace(/[&<>"]/g, function(c){ return {"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]; }); }
+function icone(n){ return '<svg viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[n] || "") + "</svg>"; }
+function ic(n){ return '<span class="ic">' + icone(n) + "</span>"; }
+function pintaIcones(root){ $$("[data-ic]", root).forEach(function(n){ n.innerHTML = icone(n.dataset.ic); }); }
+function fb(node, tipo, html){ if (!node) return; node.className = "fb " + (tipo || ""); node.innerHTML = html || ""; }
+function fbDe(ex){ return document.querySelector('[data-fb="' + ex + '"]'); }
+function agora(){ var d = new Date(); return ("0" + d.getHours()).slice(-2) + ":" + ("0" + d.getMinutes()).slice(-2); }
+function online(){ return CONFIG.endpoint && CONFIG.endpoint.indexOf("http") === 0; }
+function post(corpo){ if (corpo.turma == null) corpo.turma = TURMA; if (corpo.ra == null) corpo.ra = ID; if (corpo.nome == null) corpo.nome = NOME; corpo.codigo_pessoal = COD4 || ""; corpo.versao = CONFIG.versao; return fetch(CONFIG.endpoint, {method: "POST", headers: {"Content-Type": "text/plain;charset=utf-8"}, body: JSON.stringify(corpo)}).then(function(r){ return r.json(); }); }
+function get(q){ return fetch(CONFIG.endpoint + "?" + q + "&t=" + Date.now(), {cache: "no-store"}).then(function(r){ return r.json(); }); }
+function nomeParte(k){ for (var i = 0; i < PARTES.length; i++) if (PARTES[i][0] === k) return PARTES[i][1]; return ""; }
+function nomePartes(c){ return ((c && c.partes) || []).map(function(k){ return k === "outro" ? "outro: " + (c.parte_outro || "") : nomeParte(k); }).join(", "); }
+function normTxt(s){ return String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim(); }
+function m3Vazio(){ return {onde: "", cenario: "", exemplo: "", colunas: [], linhas: [], saida: "", surpreendeu: "", muda: ""}; }
+
+/* ---------- estado ---------- */
+var S = null, ID = null, NOME = "", COD4 = null, TURMA = null, poller = null, tickN = 0, GRUPO = null, EST = {assistente: 0}, CHAVES = {}, BLOCO_ATUAL = "F4V", GAV_ENVIANDO = false, RECUP = {}, ABA = "f4";
+function f4vVazio(){ return {metrica: "", esperava: "", veredito: "", numeros: "", explica: "", falta: "", jev: null}; }
+function f4gVazio(){ return {mensagem: "", tipo: "", eixo_x: "", eixo_y: "", referencia: "", ferramenta: "", link: ""}; }
+function estadoNovo(){ return {v: 1, id: ID, nome: NOME, turma: TURMA, F4V: {itens: [f4vVazio()], tocado: false}, mi: 0, F4G: {g: f4gVazio(), v: 0, tocado: false}, F4R: {link: "", v: 0, tocado: false}, pv: {y: 0, x: 1}, M3: {med: m3Vazio(), v: 0, tocado: false}, chat: {hist: [], usadas: 0, limite: 10}, envios: {}}; }
+function chave(){ return CONFIG.ls + ":" + TURMA + ":" + ID; }
+function salvar(){ if (!S) return; try { localStorage.setItem(chave(), JSON.stringify(S)); localStorage.setItem(CONFIG.ls + ":ultimo", TURMA + "|" + ID + "|" + NOME + "|" + (COD4 || "")); $("salvo").textContent = "salvo às " + agora(); } catch (e) {} }
+function carregar(){ try { var s = localStorage.getItem(chave()); if (s){ var o = JSON.parse(s); if (o && o.F4V && Array.isArray(o.F4V.itens) && o.F4G && o.F4G.g && o.M3){ if (!(o.mi >= 0)) o.mi = 0; if (!o.F4R) o.F4R = {link: "", v: 0, tocado: false}; if (!o.pv) o.pv = {y: 0, x: 1}; return o; } } } catch (e) {} return null; }
+function urlFicha(n){ return CONFIG.site + "proj2-ficha" + n + "/?turma=" + encodeURIComponent(TURMA || ""); }
+function lkFicha(n, rot){ return '<a class="lk-f1 no-print" href="' + urlFicha(n) + '" target="_blank" rel="noopener">' + ic("external-link") + rot + "</a>"; }
+
+/* ---------- acesso ---------- */
+function entrar(){
+  var turma = String($("inTurma").value || "").toUpperCase(), ra = String($("inId").value || "").replace(/\D/g, ""), nome = String($("inNome").value || "").trim();
+  var cod = String($("inCod4").value || "").toUpperCase().replace(/\s+/g, "").replace(/^([A-Z0-9]{2})(?!-)/, "$1-");
+  if (!/^\d{8,12}$/.test(ra)){ fb($("fbGate"), "erro", "Digite o RA, só números (8 a 12 dígitos)."); return; }
+  if (nome.length < 2){ fb($("fbGate"), "erro", "Digite o seu nome."); return; }
+  if (cod && !/^[A-Z0-9]{2}-[A-Z0-9]{4}$/.test(cod)){ fb($("fbGate"), "erro", "O código tem o formato " + turma.slice(0, 2) + "-XXXX."); return; }
+  if (turma === "4P" && !cod){ fb($("fbGate"), "erro", "Na 4P, digite também o seu código (4P-XXXX)."); return; }
+  if (turma !== "TESTE" && !online()){ fb($("fbGate"), "erro", "Sem contato com o servidor. Tente de novo em instantes."); return; }
+  function segue(codigo, aviso){
+    ID = ra; NOME = nome; COD4 = codigo || null; TURMA = turma;
+    S = carregar() || estadoNovo(); S.nome = NOME;
+    $("pillId").textContent = NOME + " · RA " + ID + (COD4 ? " · código " + COD4 : "") + " · turma " + TURMA; $("pillId").classList.add("ok");
+    $("gate").classList.add("oculto"); $("atividade").classList.remove("oculto");
+    if (aviso){ var av = el("div", "aviso", aviso); $("atividade").insertBefore(av, $("atividade").firstChild); }
+    renderTudo(true); salvar();
+    if (online()){ recuperar(true); iniciaPolling(); }
+  }
+  if (turma === "TESTE"){ segue(cod, ""); return; }
+  fb($("fbGate"), "info", cod ? "Conferindo o código..." : "Emitindo o seu código...");
+  post({acao: "codigo", turma: turma, ra: ra, codigo: cod}).then(function(j){
+    if (!j || !j.ok){ fb($("fbGate"), "erro", j && j.erro === "codigo" ? (j.exigido ? "Este RA já tem um código pessoal. Digite o código para entrar. Quem esqueceu o código pede ao professor, que consulta no painel." : "O código não confere com o RA. Confira o que anotou ou peça ao professor, que consulta no painel.") : (j && j.erro === "ra" ? "RA não reconhecido nesta turma. Confira o RA e a turma." : "O servidor não respondeu (" + ((j && j.erro) || "?") + "). Tente de novo.")); return; }
+    segue(j.codigo, j.novo ? "<b>Seu código é " + j.codigo + ".</b> Anote: ele é pedido nas próximas entradas, em qualquer aparelho." : "");
+  }).catch(function(){ fb($("fbGate"), "erro", "Sem contato com o servidor. Tente de novo em instantes."); });
+}
+$("btEntrar").onclick = entrar;
+["inId", "inNome", "inCod4"].forEach(function(id){ $(id).addEventListener("keydown", function(e){ if (e.key === "Enter") entrar(); }); });
+$("inTurma").addEventListener("change", function(){ var t = $("inTurma").value; $("inCod4").placeholder = t === "TESTE" ? "opcional" : (t === "4P" ? "4P-XXXX" : t.slice(0, 2) + "-XXXX (vazio só no primeiro acesso)"); });
+(function(){ var escuro = false; try { escuro = localStorage.getItem("ficha:escuro") === "1"; } catch (e) {} if (escuro) document.body.classList.add("escuro");
+  $("btEscuro").onclick = function(){ var on = document.body.classList.toggle("escuro"); try { localStorage.setItem("ficha:escuro", on ? "1" : "0"); } catch (e) {} }; })();
+(function(){
+  var m = location.search.match(/turma=([A-Za-z0-9]+)/); if (m){ var t = m[1].toUpperCase(); if (CONFIG.turmas.indexOf(t) >= 0) $("inTurma").value = t; }
+  $("inTurma").dispatchEvent(new Event("change"));
+  // o código digitado nas fichas anteriores, neste navegador, já vem preenchido
+  try { var u = null; [CONFIG.ls, "so-proj2-ficha3-20262-v1", "so-proj2-ficha2-20262-v1", "so-proj2-ficha1-20262-v2"].forEach(function(k){ if (!u) u = localStorage.getItem(k + ":ultimo"); }); if (u){ var p = u.split("|"); if (!m) $("inTurma").value = p[0]; $("inId").value = p[1] || ""; $("inNome").value = p[2] || ""; $("inCod4").value = p[3] || ""; } } catch (e) {}
+  pintaIcones(document);
+})();
+
+/* ---------- grupo ---------- */
+function aplicaGrupo(g, forcar){
+  GRUPO = g || null;
+  $("gSem").classList.toggle("oculto", !!GRUPO); $("gCom").classList.toggle("oculto", !GRUPO);
+  $("blocos").classList.toggle("oculto", !GRUPO); $("cabGrupo").classList.toggle("oculto", !GRUPO);
+  if (!GRUPO) return;
+  $("gNome").textContent = GRUPO.nome; $("gN").textContent = GRUPO.n + " de 5 integrantes";
+  $("gCod").textContent = GRUPO.codigo;
+  $("gMembros").innerHTML = GRUPO.membros.map(function(n){ return "<span>" + esc(n) + "</span>"; }).join("");
+  $("cabGrupo").innerHTML = "<b>" + esc(GRUPO.nome) + "</b> · " + GRUPO.membros.map(esc).join(", ");
+  $("btSairG").style.display = GRUPO.travado ? "none" : "";
+  if (GRUPO.chat_limite && GRUPO.chat_limite !== S.chat.limite){ S.chat.limite = GRUPO.chat_limite; if ($("gaveta").classList.contains("on") && !GAV_ENVIANDO) pintaGaveta(); }
+  sincroniza("F4G"); sincroniza("F4R"); sincroniza("M3");
+  salvar(); renderBlocos(forcar);
+}
+// traz o registro do grupo: entra se o aluno não mexeu; se mexeu e há versão mais nova, avisa
+function sincroniza(ex){
+  var sv = GRUPO[ex], loc = S[ex]; if (!sv) return;
+  var v = sv.v || 1;
+  if (loc.tocado){ if (v > loc.v) loc.novaVersao = v; return; }
+  if (loc.v !== v){
+    if (ex === "F4G"){ var z = f4gVazio(); Object.keys(z).forEach(function(c){ z[c] = sv[c] || ""; }); loc.g = z; }
+    else if (ex === "F4R") loc.link = sv.link || "";
+    else loc.med = {onde: sv.onde || "", cenario: sv.cenario || "", exemplo: sv.exemplo || "", colunas: sv.colunas || [], linhas: sv.linhas || [], saida: sv.saida || "", surpreendeu: sv.surpreendeu || "", muda: sv.muda || ""};
+  }
+  loc.v = v; loc.novaVersao = 0;
+}
+function atualizaGrupo(silencioso){
+  if (!online()) return Promise.resolve();
+  return get("acao=grupo&turma=" + encodeURIComponent(TURMA) + "&ra=" + encodeURIComponent(ID)).then(function(j){ if (j && j.ok){ aplicaGrupo(j.grupo); if (!silencioso) fb($("fbG"), "info", j.grupo ? "Grupo atualizado às " + agora() + "." : "Você não está em nenhum grupo."); } }).catch(function(){ if (!silencioso) fb($("fbG"), "erro", "Sem contato com o servidor."); });
+}
+function erroGrupo(j){
+  var e = j && j.erro;
+  if (e === "nome") return "Esse nome não passou na pré-checagem. Escolha outro nome para o grupo.";
+  if (e === "nome_curto") return "O nome precisa de pelo menos duas letras.";
+  if (e === "nome_repetido") return "Já existe um grupo com esse nome na turma. Escolha outro.";
+  if (e === "ja_em_grupo") return "Você já está num grupo" + (j.grupo ? " (" + esc(j.grupo.nome) + ")" : "") + ". Saia dele antes de criar ou entrar em outro.";
+  if (e === "codigo") return "Código não encontrado nesta turma. Confira com quem criou o grupo.";
+  if (e === "cheio") return "O grupo " + esc(j.nome || "") + " já tem cinco integrantes. Peça outro código.";
+  if (e === "travado") return "O grupo já enviou o B; não dá mais para sair.";
+  return "O servidor não aceitou (" + esc(e || "sem resposta") + "). Tente de novo.";
+}
+$("btCriar").onclick = function(){
+  var nome = String($("inNomeG").value || "").trim(); if (nome.length < 2){ fb($("fbG"), "erro", "Digite um nome para o grupo."); return; }
+  fb($("fbG"), "info", "Criando o grupo e conferindo o nome...");
+  post({acao: "grupo_criar", nome_grupo: nome}).then(function(j){
+    if (!j || !j.ok){ fb($("fbG"), "erro", erroGrupo(j)); if (j && j.grupo) aplicaGrupo(j.grupo); return; }
+    aplicaGrupo(j.grupo, true); fb($("fbG"), "ok", "Grupo criado. Dite o código <b>" + esc(j.grupo.codigo) + "</b> para os colegas.");
+  }).catch(function(){ fb($("fbG"), "erro", "Sem contato com o servidor. Tente de novo em instantes."); });
+};
+$("btEntrarG").onclick = function(){
+  var cod = String($("inCodG").value || "").toUpperCase().replace(/[^A-Z0-9]/g, ""); if (cod.length < 6){ fb($("fbG"), "erro", "O código tem seis caracteres, no formato ABC-123."); return; }
+  fb($("fbG"), "info", "Entrando no grupo...");
+  post({acao: "grupo_entrar", codigo: cod}).then(function(j){
+    if (!j || !j.ok){ fb($("fbG"), "erro", erroGrupo(j)); if (j && j.grupo) aplicaGrupo(j.grupo); return; }
+    aplicaGrupo(j.grupo, true); fb($("fbG"), "ok", "Você entrou em <b>" + esc(j.grupo.nome) + "</b>.");
+  }).catch(function(){ fb($("fbG"), "erro", "Sem contato com o servidor. Tente de novo em instantes."); });
+};
+$("inCodG").addEventListener("input", function(){ var v = this.value.toUpperCase().replace(/[^A-Z0-9-]/g, ""); if (v.length === 3 && !/-/.test(v) && this.value.length > (this.dataset.len || 0)) v += "-"; this.value = v; this.dataset.len = v.length; });
+$("btSairG").onclick = function(){
+  if (!GRUPO) return; fb($("fbG"), "info", "Saindo...");
+  post({acao: "grupo_sair"}).then(function(j){ if (!j || !j.ok){ fb($("fbG"), "erro", erroGrupo(j)); return; } aplicaGrupo(null); fb($("fbG"), "ok", "Você saiu do grupo."); }).catch(function(){ fb($("fbG"), "erro", "Sem contato com o servidor."); });
+};
+$("btAtualizarG").onclick = function(){ atualizaGrupo(false); };
+
+/* ---------- avisos da pré-checagem ---------- */
+function htmlAvisos(ex, prefixo, jev, discordo){
+  if (!jev || typeof jev !== "object") return "";
+  var li = "", avisos = 0;
+  Object.keys(AVISOS[ex]).forEach(function(k){
+    var v = jev[k]; if (typeof v !== "number" || v >= 0.5) return;
+    avisos++; var dk = prefixo + "_" + k;
+    li += "<li><span>" + AVISOS[ex][k] + (v > 0 ? ' <span class="sec">(confiança ' + Math.round((1 - v) * 100) + "%)</span>" : "") + '</span><label><input type="checkbox" data-disc="' + dk + '"' + (discordo && discordo[dk] ? " checked" : "") + "> discordo</label></li>";
+  });
+  if (!avisos) li = '<li class="ok">Pré-checagem sem avisos. O professor é quem avalia.</li>';
+  else li = '<li class="ok" style="border-color:var(--borda);background:transparent;color:var(--sec)">' + avisos + ' aviso(s) da pré-checagem. O envio já está gravado. Os avisos são alertas, e você pode seguir. Se quiser, ajuste e envie de novo, ou marque "discordo" para o professor analisar.</li>' + li;
+  if (jev.erro) li += '<li class="ok" style="border-color:var(--borda);background:transparent;color:var(--sec)">Parte da pré-checagem ficou indisponível neste envio. O professor lê o registro.</li>';
+  return li;
+}
+document.addEventListener("change", function(e){
+  var cb = e.target.closest("[data-disc]"); if (!cb) return;
+  post({acao: "discordo", chave_aviso: cb.dataset.disc, valor: cb.checked ? 1 : 0}).then(function(j){ if (!(j && j.ok)) cb.checked = !cb.checked; else if (GRUPO) GRUPO.discordo = j.discordo; }).catch(function(){ cb.checked = !cb.checked; });
+});
+function linhaVersao(ex, nomeVazio){
+  var g = GRUPO, loc = S[ex];
+  if (!g[ex]) return nomeVazio;
+  return "Última versão enviada por <b>" + esc(g[ex + "_por"]) + "</b> às " + esc(g[ex + "_hora"]) + "." + (loc.novaVersao && loc.novaVersao > loc.v ? ' <span style="color:var(--red)">Há uma versão mais nova no servidor do que a que você está editando. Recuperar substitui o que você digitou.</span>' : "");
+}
+function btRecupera(ex){ return '<div class="botoes no-print"><button class="btnl" data-rec="' + ex + '">' + ic("rotate-ccw") + 'recuperar envios do grupo</button><span class="versao" id="ver' + ex + '"></span></div>'; }
+var ENVIANDO = {};
+function marcaEnvio(ex, on){ ENVIANDO[ex] = on; var b = document.querySelector('[data-env="' + ex + '"]'); if (b) b.disabled = on; }
+function btEnvia(ex, rot){ return '<div class="botoes no-print"><button class="primario btnl" data-env="' + ex + '"' + (ENVIANDO[ex] ? " disabled" : "") + ">" + ic("send") + rot + "</button></div>"; }
+document.addEventListener("click", function(e){
+  var b = e.target.closest("[data-rec]"); if (!b) return;
+  var ex = b.dataset.rec; S[ex].tocado = false; S[ex].v = 0; S[ex].novaVersao = 0;
+  atualizaGrupo(true).then(function(){ renderBlocos(true); fb(fbDe(ex), "info", "Envios do grupo recuperados."); });
+});
+function confirmaVersao(ex){
+  var loc = S[ex]; if (!(loc.novaVersao && loc.novaVersao > loc.v)) return true;
+  return window.confirm("Há uma versão mais nova enviada por " + (GRUPO[ex + "_por"] || "um colega") + " às " + GRUPO[ex + "_hora"] + ". Enviar agora substitui essa versão pela sua. Continuar?");
+}
+function renderComp(ex){ var c = document.querySelector('[data-comp="' + ex + '"]'); if (!c) return; var e = S.envios[ex]; c.innerHTML = e ? "Enviado às " + e.hora + ' · comprovante <span class="comp">' + e.comprovante + "</span>" : ""; }
+// envio com novas tentativas quando o servidor está ocupado ou a rede falha
+function enviaComRetentativa(corpo, box, aoOk, msgErro){
+  // um envio por bloco: dois cliques seguidos geravam duas linhas e duas pré-checagens; o temporizador libera o botão se a rede travar
+  var ex = box && box.dataset ? box.dataset.fb : "";
+  if (ex && ENVIANDO[ex]) return Promise.resolve();
+  var trava = 0, fim = function(){ clearTimeout(trava); if (ex) marcaEnvio(ex, false); };
+  if (ex){ marcaEnvio(ex, true); trava = setTimeout(fim, 120000); }
+  function tenta(n){
+    return post(corpo).then(function(j){
+      if (!j || !j.ok){
+        if (n < 3 && (!j || /simultaneous|limite|Exception|lock/i.test(j.erro || ""))) return new Promise(function(res){ setTimeout(res, 3000 + 2000 * n); }).then(function(){ return tenta(n + 1); });
+        fb(box, "erro", msgErro(j)); return;
+      }
+      aoOk(j);
+    }).catch(function(e){ if (n < 3) return new Promise(function(res){ setTimeout(res, 3000 + 2000 * n); }).then(function(){ return tenta(n + 1); }); fb(box, "erro", "Sem contato com o servidor. Tente de novo em instantes."); });
+  }
+  return tenta(0).then(fim, fim);
+}
+function msgErroPadrao(j){ var e = j && j.erro; if (e === "sem_grupo") return "Você não está em nenhum grupo."; if (e === "vazio") return "Preencha os campos antes de enviar."; if (e === "codigo") return "O seu código pessoal não confere. Saia e entre de novo."; if (e === "link") return "O endereço precisa ser de um repositório no GitHub, no formato https://github.com/usuario/repositorio."; return "Não foi possível enviar (" + esc(e || "sem resposta") + "). Tente de novo."; }
+
+/* ---------- render por bloco: não refaz o formulário enquanto o aluno digita nele ---------- */
+function deveRefazer(ex, chaveNova, forcar){
+  var box = $("box" + ex);
+  if (!forcar && CHAVES[ex] === chaveNova) return false;
+  if (!forcar && box.contains(document.activeElement)) return false;
+  CHAVES[ex] = chaveNova; return true;
+}
+function renderBlocos(forcar){
+  if (!GRUPO || !S) return;
+  preencheF4(); renderCal(); renderPend(); renderMesa();
+  renderM3(forcar); renderF4V(forcar); renderF4G(forcar); renderF4R(forcar);
+  ["M3", "F4V", "F4G", "F4R"].forEach(renderComp); renderConsulta(); pintaPrevia();
+}
+
+
+/* ---------- abas ---------- */
+function mostraAba(a){
+  ABA = a;
+  $$(".aba").forEach(function(b){ var on = b.dataset.aba === a; b.classList.toggle("on", on); b.setAttribute("aria-selected", on ? "true" : "false"); });
+  ["f4", "f1", "f2", "f3"].forEach(function(x){ $("pane-" + x).classList.toggle("oculto", x !== a); });
+  if (a !== "f4") fechaGaveta();
+}
+document.addEventListener("click", function(e){ var b = e.target.closest("[data-aba]"); if (b) mostraAba(b.dataset.aba); });
+
+/* ---------- calendário, pendências da ficha 2 e retorno do professor ---------- */
+// a ficha 4 passou a ser feita em casa e vence junto com o relatório, na véspera da apresentação (decisão do Lucas em 18/11/2026; antes o relatório vencia dois dias antes); a leitura cruzada dos gráficos fica para o dia da apresentação
+var DATAS = {"4N": {relatorio: "24/11", apres: "25/11"}, outras: {relatorio: "25/11", apres: "26/11"}};
+function datas(){ return TURMA === "4N" || TURMA === "TESTE" ? DATAS["4N"] : DATAS.outras; }
+function renderCal(){
+  var d = datas(), h = '<div class="bl-head"><div class="tt"><h3>' + ic("clock") + "Calendário</h3></div></div>" + '<ol class="cal cal3">' +
+    '<li class="on"><b>até ' + d.relatorio + "</b><span>Ficha 4: medição, a hipótese diante dos dados, o gráfico do grupo e o link do repositório.</span></li>" +
+    "<li><b>" + d.relatorio + "</b><span>Relatório em PDF no repositório do grupo, com os dados e o material usado para gerá-los.</span></li>" +
+    "<li><b>" + d.apres + "</b><span>Apresentação, com a leitura cruzada dos gráficos entre os grupos.</span></li></ol>";
+  if (CHAVES.cal !== h){ CHAVES.cal = h; $("secCal").innerHTML = h; }
+  $$("[data-prazo]").forEach(function(e){ e.textContent = d.relatorio; });
+}
+function renderPend(){
+  var f = []; if (!GRUPO.P) f.push("a pergunta do grupo"); if (!GRUPO.M2) f.push("o método"); if (!(GRUPO.metricas || []).some(function(m){ return m.minha; })) f.push("a sua métrica");
+  var h = f.length ? '<div class="aviso"><b>Falta na Ficha 2:</b> ' + f.join(", ") + ". " + lkFicha(2, "Abrir a Ficha 2") + "</div>" : "";
+  if (RECUP.pronto && !hipoteses().length) h += '<div class="aviso"><b>Falta na Ficha 3:</b> a hipótese da sua métrica. ' + lkFicha(3, "Abrir a Ficha 3") + ' Depois de enviar por lá, clique aqui em "recuperar envios".</div>';
+  if (CHAVES.pend !== h){ CHAVES.pend = h; $("pendF2").innerHTML = h; }
+}
+var MARCAS = [["metricas", "Métricas"], ["coleta", "Coleta"], ["hipoteses", "Hipóteses"]];
+function renderMesa(){
+  var m = GRUPO.mesa3, meu = m ? m.meu : null, tem = !!(m && (m.nota || (meu && meu.obs) || MARCAS.some(function(x){ return m[x[0]] || (meu && meu[x[0]]); })));
+  $("mesa3").classList.toggle("oculto", !tem); if (!tem) return;
+  function chips(o){ return o ? MARCAS.map(function(x){ var v = o[x[0]]; return v ? '<span class="marca ' + v + '">' + x[1] + ": " + (v === "ok" ? "ok" : "ajustar") + "</span>" : ""; }).join("") : ""; }
+  function linha(rot, h){ return h ? '<div><span class="peq sec">' + rot + "</span> " + h + "</div>" : ""; }
+  var cm = chips(meu), obs = meu && meu.obs ? '<div style="margin-top:6px">' + esc(meu.obs) + "</div>" : "";
+  $("mesaMarcas").innerHTML = linha("Para você:", cm + obs) + linha("Para o grupo:", chips(m));
+  $("mesaTx").textContent = m.nota || "";
+}
+
+/* ---------- a hipótese diante dos dados (F4V), individual, com uma aba por métrica do aluno ---------- */
+var CHAVES_F4V = ["metrica", "esperava", "veredito", "numeros", "explica", "falta"];
+var VEREDITOS = [["sustentam", "os dados sustentam a hipótese"], ["contrariam", "os dados contrariam a hipótese"], ["nao_dizem", "os dados não permitem dizer"], ["sem_dados", "ainda não medi"]];
+var VER_CURTO = {sustentam: "sustentam", contrariam: "contrariam", nao_dizem: "não permitem dizer", sem_dados: "ainda sem medição"};
+var NOME_NIVEL = ["", "Direção", "Causa", "Limite", "Proporção"];
+function itensDe(r){ return r && Array.isArray(r.itens) ? r.itens : (r ? [r] : []); }
+// as hipóteses que o aluno enviou na ficha 3, na ordem das abas de lá
+function hipoteses(){ return itensDe(RECUP.F3H && RECUP.F3H.respostas).filter(function(h){ return h && (h.espera || h.porque || h.metrica); }); }
+function minhaMetrica(){
+  var f = GRUPO.F3M && GRUPO.F3M.metricas ? GRUPO.F3M.metricas.filter(function(x){ return normTxt(x.quem) === normTxt(NOME); })[0] : null;
+  if (!f){ var m = (GRUPO.metricas || []).filter(function(x){ return x.minha; })[0]; if (m) f = {metrica: m.metrica, unidade: m.unidade}; }
+  return f && f.metrica ? f.metrica + (f.unidade ? " (" + f.unidade + ")" : "") : "";
+}
+function temAviso(jev){ return !!jev && Object.keys(jev).some(function(k){ return typeof jev[k] === "number" && jev[k] < 0.5; }); }
+function prefixoItem(ex, i){ return ex + "_" + ID + (i ? "i" + i : ""); }
+function nomeItem(i){ return String(S.F4V.itens[i].metrica || "").trim() || "Métrica " + (i + 1); }
+// antes do primeiro envio, as abas chegam com as métricas e as hipóteses que o aluno enviou na ficha 3
+function preencheF4(){
+  if (!S.F4V.itens.length) S.F4V.itens = [f4vVazio()];
+  if (!S.F4V.tocado && !S.envios.F4V){
+    var hs = hipoteses();
+    if (hs.length){
+      while (S.F4V.itens.length < hs.length) S.F4V.itens.push(f4vVazio());
+      hs.forEach(function(h, n){ var it = S.F4V.itens[n]; if (!it.metrica) it.metrica = h.metrica || ""; if (!it.esperava) it.esperava = h.espera || ""; });
+    } else if (!S.F4V.itens[0].metrica) S.F4V.itens[0].metrica = minhaMetrica();
+  }
+  if (!(S.mi >= 0 && S.mi < S.F4V.itens.length)) S.mi = 0;
+}
+function htmlAbasMet(){
+  return S.F4V.itens.map(function(c, i){ return '<button type="button" role="tab" class="aba-met' + (i === S.mi ? " on" : "") + '" aria-selected="' + (i === S.mi) + '" data-met="' + i + '">' + esc(nomeItem(i)) + (temAviso(c.jev) ? ' <span class="peq">(aviso)</span>' : "") + "</button>"; }).join("") +
+    '<button type="button" class="aba-met nova" data-met-nova="1">+ Nova métrica</button>' + (S.F4V.itens.length > 1 ? '<button type="button" class="mini" data-met-tira="1">tirar esta métrica</button>' : "");
+}
+function pintaAbasMet(){ var h = htmlAbasMet(); $$("[data-abasmet]").forEach(function(n){ n.innerHTML = h; }); }
+document.addEventListener("click", function(e){
+  var b = e.target.closest("[data-met], [data-met-nova], [data-met-tira]"); if (!b || !S || !GRUPO) return;
+  if (b.dataset.met != null) S.mi = +b.dataset.met;
+  else if (b.dataset.metNova){ S.F4V.itens.push(f4vVazio()); S.mi = S.F4V.itens.length - 1; S.F4V.tocado = true; }
+  else { if (S.F4V.itens.length < 2) return; S.F4V.itens.splice(S.mi, 1); S.mi = Math.max(0, S.mi - 1); S.F4V.tocado = true; }
+  salvar(); renderF4V(true);
+  if (b.dataset.metNova){ var inp = document.querySelector('#boxF4V [data-f4v="metrica"]'); if (inp) inp.focus(); }
+});
+function htmlHipotese(i){
+  var h = hipoteses()[i];
+  if (!h) return '<div class="ex-cond"><p>' + (RECUP.pronto ? "Não há hipótese sua na Ficha 3 para esta aba. Escreva abaixo, em uma frase, o que você esperava antes de medir." : "Carregando a sua hipótese da Ficha 3...") + "</p></div>";
+  var n = h.jev && typeof h.jev.nivel === "number" ? h.jev.nivel : null;
+  return '<div class="ex-cond"><p><b>Sua hipótese na Ficha 3' + (n == null ? "" : " (" + (n ? "nível " + n + ", " + NOME_NIVEL[n].toLowerCase() : "sem direção") + ")") + ":</b> " + esc(h.espera) + "</p>" + (h.porque ? "<p><b>Por quê:</b> " + esc(h.porque) + "</p>" : "") + (h.contraria ? "<p><b>O que contrariaria:</b> " + esc(h.contraria) + "</p>" : "") + "</div>";
+}
+function dicaExplica(v){
+  if (v === "contrariam") return "O que o sistema operacional fez de diferente do que você esperava. Hipótese contrariada é resultado, e a explicação dela entra no relatório e na apresentação.";
+  if (v === "nao_dizem") return "O que impede a conclusão: uma rodada só, variação entre as repetições maior do que a diferença entre as condições, ou uma condição que faltou medir. Diga também o que falta medir.";
+  return "Quanto a métrica mudou entre as condições e o que o sistema operacional fez para isso acontecer. É o nível 4 da escala de maturidade: a hipótese dita com os números da medição.";
+}
+function htmlVereditos(){
+  var vs = (GRUPO.vereditos || []).filter(function(v){ return v.itens && v.itens.length; }); if (!vs.length) return "";
+  return '<h4>Vereditos do grupo</h4><ul class="met-lista">' + vs.map(function(v){ return v.itens.map(function(x){
+    return "<li><b>" + esc(v.nome) + (v.minha ? " (você)" : "") + ":</b> " + esc(x.metrica) + ' <span class="marca v-' + esc(x.veredito) + '">' + (VER_CURTO[x.veredito] || "") + "</span>" + (x.numeros ? ' <span class="sec">· ' + esc(x.numeros) + "</span>" : "") + "</li>"; }).join(""); }).join("") + "</ul>";
+}
+function renderF4V(forcar){
+  preencheF4();
+  var d = GRUPO.discordo || {}, i = S.mi, r = S.F4V.itens[i], k = JSON.stringify([i, S.F4V.itens.length, S.F4V.itens.map(function(x){ return x.jev; }), S.F4V.tocado ? 0 : S.F4V.itens.map(function(x){ return [x.metrica, x.esperava, x.veredito, x.numeros, x.explica, x.falta]; }), hipoteses(), !!RECUP.pronto, GRUPO.vereditos, !!S.envios.F4V, TURMA, Object.keys(d).filter(function(x){ return /^f4v_/.test(x); })]);
+  if (!deveRefazer("F4V", k, forcar)) return;
+  var box = $("boxF4V"), semDados = r.veredito === "sem_dados";
+  box.innerHTML = "<p>Cada hipótese sua, agora ao lado dos números medidos. Os números vêm da tabela de medição do grupo, logo acima. Quem mediu mais de uma coisa responde uma aba por métrica.</p>" +
+    '<div class="abas-met no-print" role="tablist" aria-label="Minhas métricas" data-abasmet></div>' +
+    '<div class="campo"><label>Métrica</label><input type="text" maxlength="160" placeholder="Ex: tempo total (s)" data-f4v="metrica" value="' + esc(r.metrica) + '"></div>' + htmlHipotese(i) +
+    (hipoteses()[i] ? "" : '<div class="campo"><label>O que eu esperava</label><div class="ph">A direção da hipótese, em uma frase, como estava antes de medir.</div><input type="text" maxlength="300" placeholder="Ex: que o tempo total caísse quando o número de processos sobe" data-f4v="esperava" value="' + esc(r.esperava) + '"></div>') +
+    '<div class="campo"><span class="rot">Veredito</span><div class="ph">O que os números dizem sobre a hipótese. As três primeiras opções são resultados. Quem ainda não tem os números marca a última.</div><div class="op-l op-v">' + VEREDITOS.map(function(v){ return '<label><input type="radio" name="f4ver" value="' + v[0] + '"' + (r.veredito === v[0] ? " checked" : "") + "> " + v[1] + "</label>"; }).join("") + "</div></div>" +
+    '<div id="f4Com"' + (semDados ? ' class="oculto"' : "") + ">" +
+    '<div class="campo"><label>Que números mostram isso</label><div class="ph">Os valores medidos em pelo menos duas condições, com a unidade.</div><textarea rows="2" maxlength="400" placeholder="Ex: 1 processo: 84 s. 4 processos: 23 s. 8 processos: 22 s" data-f4v="numeros">' + esc(r.numeros) + "</textarea></div>" +
+    '<div class="campo"><label>O que explica o resultado</label><div class="ph" id="f4Dica">' + dicaExplica(r.veredito) + '</div><textarea rows="4" maxlength="600" placeholder="Ex: até 4 processos, dobrar os processos cortou o tempo quase pela metade, porque cada processo ficou com um núcleo. Com 8 o tempo ficou igual: os processos passaram a se revezar nos mesmos 4 núcleos" data-f4v="explica">' + esc(r.explica) + "</textarea></div></div>" +
+    '<div id="f4Sem" class="campo' + (semDados ? "" : " oculto") + '"><label>O que falta e quando você mede</label><div class="ph">O que ainda impede a medição e o dia em que os números ficam prontos. A ficha e o relatório são entregues em ' + datas().relatorio + '.</div><input type="text" maxlength="300" placeholder="Ex: falta instalar o servidor no celular. Meço no sábado, 21/11" data-f4v="falta" value="' + esc(r.falta) + '"></div>' +
+    '<ul class="jev">' + htmlAvisos("F4V", prefixoItem("f4v", i), r.jev, d) + "</ul>" + btEnvia("F4V", S.F4V.itens.length > 1 ? "Enviar as " + S.F4V.itens.length + " métricas" : "Enviar") + htmlVereditos();
+  pintaAbasMet();
+  $$("[data-f4v]", box).forEach(function(inp){ inp.addEventListener("input", function(){ S.F4V.itens[i][inp.dataset.f4v] = inp.value; S.F4V.tocado = true; salvar(); if (inp.dataset.f4v === "metrica") pintaAbasMet(); }); });
+  $$('input[name="f4ver"]', box).forEach(function(rd){ rd.onchange = function(){ S.F4V.itens[i].veredito = rd.value; S.F4V.tocado = true; var sd = rd.value === "sem_dados"; $("f4Com").classList.toggle("oculto", sd); $("f4Sem").classList.toggle("oculto", !sd); $("f4Dica").textContent = dicaExplica(rd.value); salvar(); }; });
+  $$("[data-env]", box).forEach(function(b){ b.onclick = enviarF4V; });
+}
+function enviarF4V(){
+  var hs = hipoteses(), box = fbDe("F4V"), its = S.F4V.itens.map(function(r, n){ var o = {}; CHAVES_F4V.forEach(function(c){ o[c] = r[c]; }); if (hs[n] && hs[n].espera) o.esperava = hs[n].espera; return o; });
+  if (!its.some(function(r){ return r.veredito || r.numeros || r.explica || r.falta; })){ fb(box, "erro", "Marque o veredito antes de enviar."); return; }
+  fb(box, "info", "Enviando e pré-checando (leva alguns segundos)...");
+  enviaComRetentativa({acao: "envio", ex: "F4V", respostas: {itens: its}, navegador: navigator.userAgent.slice(0, 120)}, box, function(j){
+    var js = Array.isArray(j.jev) ? j.jev : [j.jev];
+    S.envios.F4V = {comprovante: j.comprovante, hora: agora()}; S.F4V.itens.forEach(function(r, n){ r.jev = js[n] || null; }); S.F4V.tocado = false; salvar();
+    if (j.grupo) aplicaGrupo(j.grupo, true); else renderBlocos(true);
+    fb(fbDe("F4V"), "ok", "Enviado.");
+  }, msgErroPadrao);
+}
+
+/* ---------- gráfico do grupo (F4G): plano do gráfico principal, com link opcional, e o pedido para a IA ---------- */
+var CAMPOS_F4G = [["mensagem", "A mensagem do gráfico em uma frase", 240, "O que a pessoa precisa entender olhando o gráfico por dez segundos.", "Ex: depois de 4 processos, colocar mais processos não reduz o tempo"], ["tipo"],
+  ["eixo_x", "Eixo horizontal", 200, "Em geral, a variável que o grupo mudou, com os valores medidos.", "Ex: número de processos (1, 2, 4, 8, 16)"], ["eixo_y", "Eixo vertical", 200, "A métrica, com a unidade, e como as repetições entram.", "Ex: tempo total (s), média de 3 repetições"],
+  ["referencia", "Referência ou limite", 240, "Uma linha ou marca que dá sentido ao número: o total de memória, o número de núcleos, o valor sem carga.", "Ex: linha vertical em 4, o número de núcleos da máquina"],
+  ["ferramenta", "Ferramenta", 200, "Qualquer uma que monte o gráfico: página HTML feita com IA, Grafana, Excel, Python.", "Ex: página HTML gerada com IA a partir da nossa tabela"],
+  ["link", "Link do gráfico (opcional)", 300, "Se o gráfico já está em algum endereço, colem aqui. Quem ainda não tem deixa em branco.", "Ex: https://..."]];
+var TIPOS = [["linha", "linha"], ["barras", "barras"], ["dispersao", "dispersão"], ["tabela", "tabela colorida (heatmap)"], ["outro", "outro"]];
+function renderF4G(forcar){
+  var d = GRUPO.discordo || {}, jev = GRUPO.F4G ? GRUPO.F4G.jev : null, k = JSON.stringify([GRUPO.F4G ? GRUPO.F4G.v : 0, S.F4G.v, S.F4G.novaVersao || 0, jev, Object.keys(d).filter(function(x){ return /^f4g_/.test(x); })]);
+  if (!deveRefazer("F4G", k, forcar)) return;
+  var box = $("boxF4G"), g = S.F4G.g;
+  function campo(c){ return '<div class="campo"><label>' + c[1] + '</label><div class="ph">' + c[3] + '</div><input type="text" maxlength="' + c[2] + '" placeholder="' + esc(c[4]) + '" data-f4g="' + c[0] + '" value="' + esc(g[c[0]]) + '"></div>'; }
+  box.innerHTML = "<p>O gráfico principal da apresentação do grupo. Quem já tem os números planeja com eles. Quem ainda vai medir planeja o gráfico que os números vão preencher.</p>" + btRecupera("F4G") +
+    CAMPOS_F4G.map(function(c){
+      if (c[0] === "tipo") return '<div class="campo"><label for="f4Tipo">Tipo de gráfico</label><div class="ph">Linha para uma métrica ao longo de uma variável numérica. Barras para comparar poucas condições com nome. Dispersão para relacionar duas métricas.</div><select id="f4Tipo"><option value="">escolha</option>' + TIPOS.map(function(t){ return '<option value="' + t[0] + '"' + (g.tipo === t[0] ? " selected" : "") + ">" + t[1] + "</option>"; }).join("") + "</select></div>";
+      return campo(c);
+    }).join("") + '<ul class="jev">' + htmlAvisos("F4G", "f4g", jev, d) + "</ul>" + btEnvia("F4G", "Enviar gráfico do grupo");
+  $("verF4G").innerHTML = linhaVersao("F4G", "Nenhuma versão enviada ainda.");
+  function mudou(){ S.F4G.tocado = true; salvar(); pintaPedido(); agendaPrevia(); }
+  $$("[data-f4g]", box).forEach(function(inp){ inp.addEventListener("input", function(){ S.F4G.g[inp.dataset.f4g] = inp.value; mudou(); }); });
+  $("f4Tipo").onchange = function(){ S.F4G.g.tipo = this.value; mudou(); };
+  $$("[data-env]", box).forEach(function(b){ b.onclick = enviarF4G; });
+  pintaPedido(); pintaPrevia();
+}
+function enviarF4G(){
+  var box = fbDe("F4G"), g = S.F4G.g;
+  if (!["mensagem", "eixo_x", "eixo_y", "link"].some(function(c){ return String(g[c] || "").trim(); })){ fb(box, "erro", "Preencham a mensagem e os eixos antes de enviar."); return; }
+  if (!confirmaVersao("F4G")) return;
+  fb(box, "info", "Enviando...");
+  enviaComRetentativa({acao: "grupoF4G", grafico: g, navegador: navigator.userAgent.slice(0, 120)}, box, function(j){
+    S.envios.F4G = {comprovante: j.comprovante, hora: agora()}; S.F4G.tocado = false; S.F4G.v = 0; S.F4G.novaVersao = 0; aplicaGrupo(j.grupo, true); fb(fbDe("F4G"), "ok", "Enviado.");
+  }, msgErroPadrao);
+}
+// pedido para levar a uma ferramenta de IA: os campos do gráfico e a tabela de medição do grupo, como estão na tela
+function csvMedicao(){
+  var m = S.M3.med, cols = m.colunas || [], lins = (m.linhas || []).filter(function(l){ return (l.celulas || []).some(function(c){ return c && String(c.v || "").trim(); }); });
+  if (!cols.some(function(c){ return c.metrica; }) || !lins.length) return "";
+  function q(s){ s = String(s == null ? "" : s).trim(); return /[";\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }
+  return ["condicao"].concat(cols.map(function(c){ return q(c.metrica + (c.unidade ? " (" + c.unidade + ")" : "")); })).join(";") + "\n" + lins.map(function(l){ return [q(l.cond)].concat(cols.map(function(_, j){ return q(((l.celulas || [])[j] || {}).v); })).join(";"); }).join("\n");
+}
+function textoPedido(){
+  var g = S.F4G.g, csv = csvMedicao(), tipo = TIPOS.filter(function(t){ return t[0] === g.tipo && t[0] !== "outro"; })[0];
+  function v(c, falta){ return String(g[c] || "").trim() || "[" + falta + "]"; }
+  return "Tenho os dados de uma medição que o meu grupo fez. Eles estão no fim desta mensagem, em CSV separado por ponto e vírgula, com vírgula decimal. Uma célula pode trazer mais de um valor, quando a condição foi repetida.\n\n" +
+    "Monte uma página HTML única, que abra direto no navegador, com um gráfico" + (tipo ? " de " + tipo[1].replace(/ \(.*$/, "") : "") + " para ser projetado numa apresentação em sala.\n\n" +
+    "Mensagem que o gráfico precisa transmitir: " + v("mensagem", "a mensagem em uma frase") + "\n" +
+    "Eixo horizontal: " + v("eixo_x", "o que vai no eixo horizontal") + "\n" +
+    "Eixo vertical: " + v("eixo_y", "o que vai no eixo vertical, com a unidade") + "\n" +
+    (String(g.referencia || "").trim() ? "Referência a marcar no gráfico: " + String(g.referencia).trim() + "\n" : "") +
+    "\nRegras:\n" +
+    "- Use só os números que estão abaixo. Sem inventar, estimar ou completar valor que falta. Se uma célula não for número, deixe o ponto de fora e me avise.\n" +
+    "- Com repetições, mostre a média de cada condição e os valores de cada rodada.\n" +
+    "- Nome e unidade em cada eixo. Eixo de barras começando em zero.\n" +
+    "- A mensagem do gráfico como título. Fonte grande e poucas cores, para ler de longe.\n" +
+    "- Abaixo do gráfico, uma tabela com os números usados, para eu conferir com o meu arquivo.\n\n" +
+    "Dados:\n" + (csv || "[cole aqui a tabela de medição do grupo]");
+}
+function pintaPedido(){ var p = $("pedidoTxt"); if (p) p.textContent = textoPedido(); }
+$("btPedido").onclick = function(){
+  pintaPedido(); var t = textoPedido(), st = $("pedidoSt");
+  function ok(){ st.textContent = "Pedido copiado às " + agora() + "."; }
+  function manual(){ var r = document.createRange(); r.selectNodeContents($("pedidoTxt")); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); try { if (document.execCommand("copy")){ ok(); return; } } catch (e) {} st.textContent = "O texto está selecionado. Copie com Ctrl+C."; }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t).then(ok, manual); else manual();
+};
+$("pedidoIA").addEventListener("toggle", pintaPedido);
+
+/* ---------- gráfico em SVG: usado na prévia com a tabela do grupo e nos exemplos do "?" ---------- */
+// lê os números de uma célula da tabela: vírgula decimal, ponto de milhar e mais de um valor na mesma célula (repetições). Número colado em letra ("p99") fica de fora
+function numerosDe(txt){
+  var out = [], re = /(^|[^A-Za-zÀ-ÿ0-9.,])(-?\d[\d.,]*)/g, m, s = String(txt == null ? "" : txt);
+  while ((m = re.exec(s))){
+    var t = m[2].replace(/[.,]+$/, ""), v;
+    if (/,/.test(t) && /\./.test(t)) v = t.lastIndexOf(",") > t.lastIndexOf(".") ? t.replace(/\./g, "").replace(",", ".") : t.replace(/,/g, "");
+    else if (/,/.test(t)) v = t.match(/,/g).length > 1 ? t.replace(/,/g, "") : t.replace(",", ".");
+    else if (/^-?\d{1,3}(\.\d{3})+$/.test(t)) v = t.replace(/\./g, "");
+    else v = t;
+    v = parseFloat(v); if (isFinite(v)) out.push(v);
+  }
+  return out;
+}
+// quando só um número muda entre os nomes das condições ("500 fotos com 1 processo", "500 fotos com 4 processos"), ele vira a posição no eixo horizontal
+function xDasCondicoes(rots){
+  var ns = rots.map(function(r){ return numerosDe(r); }), k = ns.length ? ns[0].length : 0; if (!k || ns.some(function(a){ return a.length !== k; })) return null;
+  var varia = []; for (var j = 0; j < k; j++){ var vals = ns.map(function(a){ return a[j]; }); if (vals.some(function(v){ return v !== vals[0]; })) varia.push(j); }
+  if (varia.length !== 1) return null;
+  var xs = ns.map(function(a){ return a[varia[0]]; }); return xs.every(function(v, i){ return xs.indexOf(v) === i; }) ? xs : null;
+}
+// o: {tipo: "linha" | "barras" | "dispersao", titulo, rotX, rotY, pontos: [{rot, y: [..], x: [..]}], xnum: [..] ou null, refX: {v, rot}, refY: {v, rot}}
+function graficoSVG(o){
+  var W = 720, H = 404, x0 = 76, x1 = 700, y0 = 66, y1 = 330, pts = o.pontos || [], disp = o.tipo === "dispersao", barras = o.tipo === "barras", n = pts.length, h = [];
+  function med(a){ return a.reduce(function(s, v){ return s + v; }, 0) / a.length; }
+  function escala(max){ if (!(max > 0)) max = 1; var p = Math.pow(10, Math.floor(Math.log10(max))), f = max / p, m = f <= 1 ? 1 : (f <= 2 ? 2 : (f <= 2.5 ? 2.5 : (f <= 5 ? 5 : 10))); return {max: m * p, n: m === 2 ? 4 : 5}; }
+  function fmt(v){ return (Math.abs(v) >= 1000 ? Math.round(v) : +v.toPrecision(3)).toLocaleString("pt-BR", {maximumFractionDigits: 4}); }
+  function quebra(t, nc, nl){ var ws = String(t || "").split(/\s+/).filter(Boolean), ls = [], l = ""; ws.forEach(function(w){ if (l && (l + " " + w).length > nc){ ls.push(l); l = w; } else l = l ? l + " " + w : w; }); if (l) ls.push(l); if (ls.length > nl){ ls = ls.slice(0, nl); ls[nl - 1] = ls[nl - 1].slice(0, Math.max(1, nc - 1)) + "…"; } return ls.map(function(x){ return x.length > nc + 2 ? x.slice(0, nc + 1) + "…" : x; }); }
+  function tx(x, y, t, cls, anc){ return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" class="' + cls + '"' + (anc ? ' text-anchor="' + anc + '"' : "") + ">" + esc(t) + "</text>"; }
+  var ys = [], xs = []; pts.forEach(function(p){ ys = ys.concat(p.y || []); if (disp) xs = xs.concat(p.x || []); });
+  if (o.refY) ys.push(o.refY.v); if (o.refX && disp) xs.push(o.refX.v);
+  var ymin = Math.min.apply(null, ys.concat([0])), ey = escala(Math.max.apply(null, ys.concat([0])) * 1.04), ymax = ey.max, yn = ey.n;
+  if (ymin < 0){ var a = Math.max(ymax, -ymin); ymax = escala(a).max; ymin = -ymax; yn = 4; }
+  function Y(v){ return y1 - (v - ymin) / (ymax - ymin) * (y1 - y0); }
+  quebra(o.titulo, 74, 2).forEach(function(l, i){ h.push(tx(x0, 22 + i * 21, l, "pv-tit")); });
+  for (var i = 0; i <= yn; i++){ var v = ymin + (ymax - ymin) * i / yn; h.push('<line x1="' + x0 + '" x2="' + x1 + '" y1="' + Y(v).toFixed(1) + '" y2="' + Y(v).toFixed(1) + '" class="pv-grade"/>' + tx(x0 - 8, Y(v) + 5, fmt(v), "pv-tx", "end")); }
+  h.push('<text transform="translate(20 ' + ((y0 + y1) / 2) + ') rotate(-90)" class="pv-eixo-t" text-anchor="middle">' + esc(quebra(o.rotY, 44, 1)[0] || "") + "</text>");
+  h.push(tx((x0 + x1) / 2, H - 10, quebra(o.rotX, 80, 1)[0] || "", "pv-eixo-t", "middle"));
+  var X, numerico = disp || (!barras && o.xnum && o.xnum.length === n);
+  if (numerico){
+    var vx = disp ? xs : o.xnum.concat(o.refX ? [o.refX.v] : []), lo = Math.min.apply(null, vx), hi = Math.max.apply(null, vx), ex = escala(hi * 1.04), xmin = 0, xmax = ex.max;
+    if (lo < 0 || (!disp && lo > hi * 0.5)){ var fol = (hi - lo) * 0.08 || 1; xmin = lo - fol; xmax = hi + fol; }
+    X = function(v){ return x0 + 16 + (v - xmin) / (xmax - xmin) * (x1 - x0 - 32); };
+    if (disp || xmin === 0){ for (var k = 0; k <= ex.n; k++){ var xv = xmin + (xmax - xmin) * k / ex.n; if (disp) h.push(tx(X(xv), y1 + 20, fmt(xv), "pv-tx", "middle")); } }
+  } else X = function(i){ return x0 + (i + 0.5) * (x1 - x0) / n; };
+  h.push('<line x1="' + x0 + '" x2="' + x1 + '" y1="' + Y(Math.max(0, ymin)).toFixed(1) + '" y2="' + Y(Math.max(0, ymin)).toFixed(1) + '" class="pv-eixo"/><line x1="' + x0 + '" x2="' + x0 + '" y1="' + y0 + '" y2="' + y1 + '" class="pv-eixo"/>');
+  if (o.refX && numerico){ var rx = X(o.refX.v); h.push('<line x1="' + rx.toFixed(1) + '" x2="' + rx.toFixed(1) + '" y1="' + y0 + '" y2="' + y1 + '" class="pv-ref"/>' + tx(rx - 7, y0 + 14, o.refX.rot || "", "pv-ref-t", "end")); }
+  if (o.refY){ var ry = Y(o.refY.v); h.push('<line x1="' + x0 + '" x2="' + x1 + '" y1="' + ry.toFixed(1) + '" y2="' + ry.toFixed(1) + '" class="pv-ref"/>' + tx(x1 - 4, ry - 7, o.refY.rot || "", "pv-ref-t", "end")); }
+  if (disp){
+    pts.forEach(function(p){ var px = X(med(p.x)), py = Y(med(p.y)), dir = px > x1 - 150; h.push('<circle cx="' + px.toFixed(1) + '" cy="' + py.toFixed(1) + '" r="7" class="pv-serie"/>' + tx(px + (dir ? -11 : 11), py + 5, quebra(p.rot, 26, 1)[0] || "", "pv-rot", dir ? "end" : "start")); });
+  } else {
+    var px = pts.map(function(p, i){ return numerico ? X(o.xnum[i]) : X(i); }), my = pts.map(function(p){ return med(p.y); }), lb = Math.min(64, (x1 - x0) / n * 0.56);
+    if (barras) pts.forEach(function(p, i){ var a = Y(Math.max(my[i], 0)), b = Y(Math.min(my[i], 0)); h.push('<rect x="' + (px[i] - lb / 2).toFixed(1) + '" y="' + a.toFixed(1) + '" width="' + lb.toFixed(1) + '" height="' + Math.max(1, b - a).toFixed(1) + '" class="pv-barra"/>'); });
+    else h.push('<polyline points="' + px.map(function(x, i){ return x.toFixed(1) + "," + Y(my[i]).toFixed(1); }).join(" ") + '" class="pv-linha"/>');
+    var ult = -99;
+    pts.forEach(function(p, i){
+      if (p.y.length > 1) p.y.forEach(function(v, j){ h.push('<circle cx="' + (px[i] + (j - (p.y.length - 1) / 2) * Math.min(9, lb / p.y.length)).toFixed(1) + '" cy="' + Y(v).toFixed(1) + '" r="3.6" class="pv-rep"/>'); });
+      if (!barras) h.push('<circle cx="' + px[i].toFixed(1) + '" cy="' + Y(my[i]).toFixed(1) + '" r="6" class="pv-serie"/>');
+      if (n <= 12) h.push(tx(px[i], Y(Math.max.apply(null, p.y.concat([my[i]]))) - 10, fmt(my[i]), "pv-val", "middle"));
+      if (numerico){ if (px[i] - ult > 30){ h.push(tx(px[i], y1 + 20, fmt(o.xnum[i]), "pv-tx", "middle")); ult = px[i]; } }
+      else quebra(p.rot, Math.max(6, Math.floor((x1 - x0) / n / 7.4)), 2).forEach(function(l, k){ h.push(tx(px[i], y1 + 19 + k * 15, l, "pv-cat", "middle")); });
+    });
+  }
+  return '<svg class="pv" viewBox="0 0 ' + W + " " + H + '" role="img" aria-label="' + esc(o.titulo || "Gráfico") + '">' + h.join("") + "</svg>";
+}
+// prévia: a tabela de medição do grupo desenhada com os campos do gráfico. Atualiza quando a tabela ou os campos mudam
+var PV_T = 0;
+function agendaPrevia(){ clearTimeout(PV_T); PV_T = setTimeout(pintaPrevia, 250); }
+function pintaPrevia(){
+  var box = $("pvGraf"); if (!box || !S || !GRUPO) return;
+  var m = S.M3.med, cols = (m.colunas || []).map(function(c, i){ return {i: i, nome: (c.metrica || "Métrica " + (i + 1)) + (c.unidade ? " (" + c.unidade + ")" : "")}; }), g = S.F4G.g, nota = [];
+  if (!S.pv) S.pv = {y: 0, x: 1};
+  if (!(S.pv.y < cols.length)) S.pv.y = 0; if (!(S.pv.x < cols.length)) S.pv.x = cols.length > 1 ? 1 : 0;
+  var disp = g.tipo === "dispersao", tipo = disp || g.tipo === "linha" ? g.tipo : "barras";
+  function ops(sel){ return cols.map(function(c){ return '<option value="' + c.i + '"' + (c.i === sel ? " selected" : "") + ">" + esc(c.nome) + "</option>"; }).join(""); }
+  if ($("pvY").dataset.k !== JSON.stringify([cols, S.pv, disp])){ $("pvY").innerHTML = ops(S.pv.y); $("pvX").innerHTML = ops(S.pv.x); $("pvY").dataset.k = JSON.stringify([cols, S.pv, disp]); }
+  $("pvXl").classList.toggle("oculto", !disp);
+  var fora = 0, pontos = [];
+  (m.linhas || []).forEach(function(l){
+    var cy = (l.celulas || [])[S.pv.y] || {}, cx = (l.celulas || [])[S.pv.x] || {}, y = numerosDe(cy.v), x = disp ? numerosDe(cx.v) : [];
+    if (!String(l.cond || "").trim() && !String(cy.v || "").trim()) return;
+    if (!y.length || (disp && !x.length)){ if (String(cy.v || "").trim() || (disp && String(cx.v || "").trim())) fora++; return; }
+    pontos.push({rot: String(l.cond || "").trim() || "condição " + (pontos.length + 1), y: y, x: x});
+  });
+  if (disp && cols.length < 2) nota.push("A dispersão relaciona duas métricas, e a tabela tem uma só.");
+  if (g.tipo === "tabela" || g.tipo === "outro") nota.push("A prévia desenha linha, barras e dispersão. Para o tipo escolhido, ela mostra barras.");
+  if (fora) nota.push(fora + (fora === 1 ? " célula sem número ficou de fora." : " células sem número ficaram de fora."));
+  if (pontos.some(function(p){ return p.y.length > 1; })) nota.push("Célula com mais de um número: os pontos pequenos são os valores e a marca maior é a média.");
+  if (String(g.referencia || "").trim()) nota.push("Referência do grupo, para marcar no gráfico final: " + String(g.referencia).trim());
+  if (pontos.length < 2 || (disp && cols.length < 2)){ box.innerHTML = '<p class="sec peq">A prévia aparece quando a tabela de medição tiver pelo menos duas condições com número na métrica escolhida.</p>'; }
+  else {
+    var xnum = tipo === "linha" ? xDasCondicoes(pontos.map(function(p){ return p.rot; })) : null;
+    box.innerHTML = graficoSVG({tipo: tipo, titulo: String(g.mensagem || "").trim() || "[a mensagem do gráfico em uma frase]", rotY: cols[S.pv.y].nome, rotX: disp ? cols[S.pv.x].nome : (String(g.eixo_x || "").trim() || "condição"), pontos: pontos, xnum: xnum});
+  }
+  $("pvNota").textContent = nota.join(" ");
+}
+$("pvY").onchange = function(){ S.pv.y = +this.value; salvar(); pintaPrevia(); };
+$("pvX").onchange = function(){ S.pv.x = +this.value; salvar(); pintaPrevia(); };
+$("secM3").addEventListener("input", agendaPrevia); $("secM3").addEventListener("click", agendaPrevia);
+
+/* ---------- relatório e repositório (F4R): o link do repositório público do grupo no GitHub ---------- */
+function renderF4R(forcar){
+  var d = GRUPO.discordo || {}, jev = GRUPO.F4R ? GRUPO.F4R.jev : null, k = JSON.stringify([GRUPO.F4R ? GRUPO.F4R.v : 0, S.F4R.v, S.F4R.novaVersao || 0, jev, TURMA, !!d.f4r_publico]);
+  if (!deveRefazer("F4R", k, forcar)) return;
+  var box = $("boxF4R"), dt = datas();
+  $$("[data-rel]").forEach(function(e){ e.textContent = dt.relatorio; });
+  box.innerHTML = '<div class="campo"><label>Link do repositório</label><div class="ph">O endereço do repositório público do grupo no GitHub. O relatório e o material entram até ' + dt.relatorio + '.</div><input type="text" maxlength="200" placeholder="Ex: https://github.com/usuario/proj2-custo" data-f4r="1" value="' + esc(S.F4R.link) + '"></div>' +
+    btRecupera("F4R") + '<ul class="jev">' + (jev && jev.publico === 1 ? '<li class="ok">O repositório abriu como público.</li>' : htmlAvisos("F4R", "f4r", jev, d)) + "</ul>" + btEnvia("F4R", "Enviar link");
+  $("verF4R").innerHTML = linhaVersao("F4R", "Nenhum link enviado ainda.");
+  $$("[data-f4r]", box).forEach(function(inp){ inp.addEventListener("input", function(){ S.F4R.link = inp.value; S.F4R.tocado = true; salvar(); }); });
+  $$("[data-env]", box).forEach(function(b){ b.onclick = enviarF4R; });
+}
+function enviarF4R(){
+  var box = fbDe("F4R"); if (!String(S.F4R.link || "").trim()){ fb(box, "erro", "Colem o link do repositório antes de enviar."); return; }
+  if (!confirmaVersao("F4R")) return;
+  fb(box, "info", "Enviando e conferindo o endereço...");
+  enviaComRetentativa({acao: "grupoF4R", link: S.F4R.link, navegador: navigator.userAgent.slice(0, 120)}, box, function(j){
+    S.envios.F4R = {comprovante: j.comprovante, hora: agora()}; S.F4R.tocado = false; S.F4R.v = 0; S.F4R.novaVersao = 0; aplicaGrupo(j.grupo, true); fb(fbDe("F4R"), "ok", "Enviado.");
+  }, msgErroPadrao);
+}
+
+/* ---------- abas de consulta: o que foi enviado nas fichas 1, 2 e 3, sem edição ---------- */
+function dlc(pares){ return '<dl class="cons">' + pares.filter(function(p){ return p[1]; }).map(function(p){ return "<dt>" + p[0] + "</dt><dd>" + p[1] + "</dd>"; }).join("") + "</dl>"; }
+function semEnvio(t){ return '<p class="sec peq">' + (t || "Ainda sem envio.") + "</p>"; }
+function porHora(ex){ return GRUPO[ex + "_por"] ? "Última versão enviada por " + esc(GRUPO[ex + "_por"]) + (GRUPO[ex + "_hora"] ? " às " + esc(GRUPO[ex + "_hora"]) : "") + "." : ""; }
+function cardCons(tag, icone, titulo, corpo, rodape){ return '<section class="card cons"><div class="bl-head"><div class="tt"><span class="tag">' + tag + "</span><h3>" + ic(icone) + titulo + "</h3></div></div>" + corpo + (rodape ? '<p class="sec peq">' + rodape + "</p>" : "") + "</section>"; }
+function htmlCand(c, rotMec){ return dlc([["Pergunta", esc(c.pergunta)], ["Pilar do OSTEP", esc(nomePartes(c))], [rotMec, esc(c.mecanismo || c.conceito)], ["O que varia", esc(c.varia)], ["O que mede", esc(c.mede)]]); }
+function htmlListaMetricas(){
+  var ms = GRUPO.metricas || []; if (!ms.length) return "";
+  return '<h4>Métricas do grupo</h4><ul class="met-lista">' + ms.map(function(m){ return "<li><b>" + esc(m.nome) + (m.minha ? " (você)" : "") + ":</b> " + esc(m.metrica) + (m.unidade ? " · " + esc(m.unidade) : "") + (m.condicao ? ' <span class="sec">· ' + esc(m.condicao) + "</span>" : "") + "</li>"; }).join("") + "</ul>";
+}
+function htmlConsF1(){
+  var g = GRUPO, a = RECUP.A && RECUP.A.respostas ? RECUP.A.respostas : null, res = g.resultados && g.resultados.cands;
+  var h = '<p class="cons-topo">O que você e o grupo enviaram na Ficha 1, para consulta. ' + lkFicha(1, "Abrir a Ficha 1") + "</p>";
+  var qs = a ? [a.q1, a.q2, a.q3].filter(Boolean) : [];
+  h += cardCons("Bloco A · individual", "help-circle", "As minhas perguntas", qs.length ? '<ol class="lista">' + qs.map(function(q){ return "<li>" + esc(q) + "</li>"; }).join("") + "</ol>" : semEnvio());
+  var cs = g.B && g.B.cands ? g.B.cands.filter(function(c){ return c && c.pergunta; }) : [];
+  h += cardCons("Bloco B · grupo", "users", "Perguntas candidatas", cs.length ? g.B.cands.map(function(c, i){
+    if (!c || !c.pergunta) return "";
+    var media = res && res[i] && res[i].geral != null ? " · média da votação " + String(Number(res[i].geral).toFixed(1)).replace(".", ",") : "";
+    return '<div class="cand"><h4>Candidata ' + (i + 1) + media + "</h4>" + htmlCand(c, "Conceito") + "</div>"; }).join("") : semEnvio(), porHora("B"));
+  h += cardCons("Bloco D · grupo", "badge-check", "Pergunta escolhida", g.D && g.D.cand ? htmlCand(g.D.cand, "Conceito") : semEnvio("O grupo não enviou este bloco."), porHora("D"));
+  var fr = (g.frentes || []).filter(function(f){ return f.frente; });
+  if (fr.length) h += cardCons("Bloco D · individual", "pen-line", "Frentes", '<ul class="met-lista">' + fr.map(function(f){ return "<li><b>" + esc(f.nome) + (f.minha ? " (você)" : "") + ":</b> " + esc(f.frente) + (f.mostra ? ' <span class="sec">· ' + esc(f.mostra) + "</span>" : "") + "</li>"; }).join("") + "</ul>");
+  return h;
+}
+var ONDE_TXT = {dispositivo: "dispositivo próprio", laboratorio: "máquina do laboratório", codespaces: "Codespaces"};
+function htmlTabelaM3(m){
+  var cols = m.colunas || [], lins = (m.linhas || []).filter(function(l){ return l.cond || (l.celulas || []).some(function(c){ return c && c.v; }); });
+  if (!cols.length || !lins.length) return "";
+  return '<div class="tab-wrap"><table class="med leitura"><tr><th>Condição</th>' + cols.map(function(c){ return "<th>" + esc(c.metrica) + (c.unidade ? " (" + esc(c.unidade) + ")" : "") + "</th>"; }).join("") + "</tr>" +
+    lins.map(function(l){ return "<tr><td>" + esc(l.cond) + "</td>" + cols.map(function(_, j){ var c = (l.celulas || [])[j] || {}; return "<td>" + esc(c.v) + "</td>"; }).join("") + "</tr>"; }).join("") + "</table></div>";
+}
+function htmlConsF2(){
+  var g = GRUPO, h = '<p class="cons-topo">O que você e o grupo enviaram na Ficha 2, para consulta. ' + lkFicha(2, "Abrir a Ficha 2") + "</p>";
+  h += cardCons("Bloco livre · grupo", "pen-line", "Contexto do grupo", g.L && g.L.texto ? '<p class="pre">' + esc(g.L.texto) + "</p>" : semEnvio(), porHora("L"));
+  h += cardCons("Bloco P · grupo", "help-circle", "A pergunta do grupo", (g.veredito_P ? '<div class="parecer"><div class="pt">' + ic("badge-check") + 'Parecer do professor</div><p class="pre">' + esc(g.veredito_P) + "</p></div>" : "") + (g.P && g.P.cand ? htmlCand(g.P.cand, "Mecanismo do sistema operacional") : semEnvio()), porHora("P"));
+  var m1 = RECUP.M1 && RECUP.M1.respostas ? RECUP.M1.respostas : null;
+  h += cardCons("Bloco M1 · individual", "ruler", "A minha métrica", (m1 && m1.metrica ? dlc([["Nome da métrica", esc(m1.metrica)], ["Unidade", esc(m1.unidade)], ["O que o número representa", esc(m1.significa)], ["Como se mede", esc(m1.como)], ["Em que condição", esc(m1.condicao)], ["O que pode distorcer", esc(m1.distorce)]]) : semEnvio()) + htmlListaMetricas());
+  var m2 = g.M2, conds = m2 && m2.condicoes ? m2.condicoes.filter(function(c){ return c.nome || c.valor; }) : [], f2 = (g.frentes2 || []).filter(function(f){ return f.frente; });
+  h += cardCons("Bloco M2 · grupo", "flask-conical", "Método", m2 ? dlc([["Dispositivo", esc(m2.dispositivo)], ["O que fica igual", esc(m2.fixo)],
+    ["Condições a comparar", conds.length ? '<ul class="lista">' + conds.map(function(c){ return "<li>" + esc(c.nome) + (c.valor ? ": " + esc(c.valor) : "") + "</li>"; }).join("") + "</ul>" : ""],
+    ["Carga", esc(m2.carga)], ["Repetições por condição", esc(m2.repeticoes)], ["Hipótese", esc(m2.hipotese)], ["Como vão mostrar o custo", esc(m2.mostra)],
+    ["Frentes", f2.length ? '<ul class="lista">' + f2.map(function(f){ return "<li><b>" + esc(f.nome) + (f.minha ? " (você)" : "") + ":</b> " + esc(f.frente) + "</li>"; }).join("") + "</ul>" : ""]]) : semEnvio(), porHora("M2"));
+  var m3 = g.M3, onde = m3 ? [ONDE_TXT[m3.onde] || "", m3.cenario === "exemplo" ? "exemplo do repositório" + (m3.exemplo ? ": " + m3.exemplo : "") : (m3.cenario === "proprio" ? "cenário próprio" : "")].filter(Boolean).join(", ") : "";
+  h += cardCons("Bloco M3 · grupo", "table", "Primeira medição", m3 ? htmlTabelaM3(m3) + dlc([["Onde mediram", esc(onde)], ["Saída e observações", m3.saida ? '<span class="pre mono peq">' + esc(m3.saida) + "</span>" : ""], ["O que surpreendeu", esc(m3.surpreendeu)], ["O que muda no método", esc(m3.muda)]]) : semEnvio(), porHora("M3"));
+  return h;
+}
+function htmlConsF3(){
+  var g = GRUPO, h = '<p class="cons-topo">O que você e o grupo enviaram na Ficha 3, para consulta. ' + lkFicha(3, "Abrir a Ficha 3") + "</p>";
+  h += cardCons("Grupo · livre", "pen-line", "Espaço livre do grupo", g.F3L && g.F3L.texto ? '<p class="pre">' + esc(g.F3L.texto) + "</p>" : semEnvio(), porHora("F3L"));
+  var ms = g.F3M && g.F3M.metricas ? g.F3M.metricas : [];
+  h += cardCons("Grupo", "ruler", "Métricas do grupo", ms.length ? linhasTab(CAB_MET, ms.map(function(m){ return [esc(m.metrica), esc(m.unidade), esc(m.quem), esc(m.condicao)]; })) : semEnvio(), porHora("F3M"));
+  var cs = itensDe(RECUP.F3C && RECUP.F3C.respostas).filter(function(c){ return c && (c.metrica || c.onde || c.como || c.quando || c.registro || c.falta); });
+  h += cardCons("Individual", "wrench", "Coleta da minha métrica", cs.length ? cs.map(function(c){ return '<div class="cand">' + dlc([["Métrica", esc(c.metrica)], ["Onde vai coletar", esc(c.onde)], ["Ambiente", c.ambiente === "pronto" ? "pronto" : (c.ambiente === "falta" ? "falta preparar" + (c.falta ? ": " + esc(c.falta) : "") : "")], ["Como coleta", esc(c.como)], ["Quando", esc(c.quando)], ["Onde ficam os números", esc(c.registro)], ["O que pode impedir", esc(c.impede)]]) + "</div>"; }).join("") : semEnvio());
+  var hs = hipoteses();
+  h += cardCons("Individual", "lightbulb", "Hipótese da minha métrica", hs.length ? hs.map(function(x){ var n = x.jev && typeof x.jev.nivel === "number" ? x.jev.nivel : null;
+    return '<div class="cand">' + dlc([["Métrica", esc(x.metrica)], ["O que você espera", esc(x.espera)], ["Por quê", esc(x.porque)], ["O que contrariaria", esc(x.contraria)], ["Maturidade pela pré-checagem", n == null ? "" : (n ? "nível " + n + ", " + NOME_NIVEL[n].toLowerCase() : "sem direção")]]) + "</div>"; }).join("") : semEnvio());
+  var pl = (g.planos || []).filter(function(p){ return p.hipotese && !p.minha; });
+  if (pl.length) h += cardCons("Grupo", "users", "Hipóteses dos colegas", '<ul class="met-lista">' + pl.map(function(p){ return (p.hipotese.itens || [p.hipotese]).map(function(x){ return "<li><b>" + esc(p.nome) + ":</b> " + esc(x.metrica) + (x.espera ? ' <span class="sec">· ' + esc(x.espera) + "</span>" : "") + "</li>"; }).join(""); }).join("") + "</ul>");
+  return h;
+}
+function renderConsulta(){
+  var a = htmlConsF1(), b = htmlConsF2(), c = htmlConsF3();
+  if (CHAVES.c1 !== a){ CHAVES.c1 = a; $("consF1").innerHTML = a; }
+  if (CHAVES.c2 !== b){ CHAVES.c2 = b; $("consF2").innerHTML = b; }
+  if (CHAVES.c3 !== c){ CHAVES.c3 = c; $("consF3").innerHTML = c; }
+}
+
+/* ---------- medição: o mesmo registro M3 das fichas 2 e 3 ---------- */
+function colunaChave(c){ return normTxt(c.metrica); }
+function metricasM1(){ var f = GRUPO.F3M && GRUPO.F3M.metricas; return f && f.length ? f.map(function(m){ return {metrica: m.metrica, unidade: m.unidade, nome: m.quem}; }) : (GRUPO.metricas || []).map(function(m){ return {metrica: m.metrica, unidade: m.unidade, nome: m.nome}; }); }
+function condicoesM2(){ var cs = GRUPO.M2 && GRUPO.M2.condicoes ? GRUPO.M2.condicoes : []; return (cs || []).map(function(c){ return c.nome || c.valor; }).filter(Boolean); }
+function celulaVazia(){ return {v: "", obs: ""}; }
+function linhaNova(cond, n){ var cel = []; for (var i = 0; i < n; i++) cel.push(celulaVazia()); return {cond: cond || "", celulas: cel}; }
+function faltamM1(){ var cols = S.M3.med.colunas || []; return metricasM1().filter(function(m){ return !cols.some(function(c){ return colunaChave(c) === colunaChave(m); }); }); }
+function faltamM2(){ var lin = S.M3.med.linhas || []; return condicoesM2().filter(function(n){ return !lin.some(function(l){ return normTxt(l.cond) === normTxt(n); }); }); }
+function colunaEmBranco(i){ var m = S.M3.med, c = m.colunas[i]; return !c.metrica && !c.unidade && m.linhas.every(function(l){ var x = l.celulas[i]; return !x || !x.v; }); }
+function trazColunas(){
+  var m = S.M3.med;
+  for (var i = m.colunas.length - 1; i >= 0; i--) if (colunaEmBranco(i)){ m.colunas.splice(i, 1); m.linhas.forEach(function(l){ l.celulas.splice(i, 1); }); }
+  faltamM1().forEach(function(c){ m.colunas.push(c); m.linhas.forEach(function(l){ l.celulas.push(celulaVazia()); }); });
+  if (!m.colunas.length){ m.colunas.push({metrica: "", unidade: "", nome: ""}); m.linhas.forEach(function(l){ l.celulas.push(celulaVazia()); }); }
+}
+function trazLinhas(){
+  var m = S.M3.med;
+  m.linhas = m.linhas.filter(function(l){ return l.cond || l.celulas.some(function(c){ return c.v; }); });
+  faltamM2().forEach(function(n){ m.linhas.push(linhaNova(n, m.colunas.length)); });
+  while (m.linhas.length < 2) m.linhas.push(linhaNova("", m.colunas.length));
+}
+// enquanto o grupo não mexeu nem enviou, a tabela acompanha o M2 e o M1; depois é do grupo, e o que for novo vem por botão
+function preparaTabela(){
+  var m = S.M3.med; m.colunas = m.colunas || []; m.linhas = m.linhas || [];
+  if (!S.M3.tocado && !GRUPO.M3){ m.colunas = []; m.linhas = []; }
+  m.linhas.forEach(function(l){ l.celulas = l.celulas || []; while (l.celulas.length < m.colunas.length) l.celulas.push(celulaVazia()); });
+  if (m.colunas.every(function(c, i){ return colunaEmBranco(i); })) trazColunas();
+  if (m.linhas.every(function(l){ return !l.cond && !l.celulas.some(function(c){ return c.v; }); })) trazLinhas();
+}
+function renderM3(forcar){
+  var d = GRUPO.discordo || {}, jev = GRUPO.M3 ? GRUPO.M3.jev : null, k = JSON.stringify([GRUPO.M3 ? GRUPO.M3.v : 0, GRUPO.F3M ? GRUPO.F3M.v : 0, S.M3.v, S.M3.novaVersao || 0, GRUPO.metricas ? GRUPO.metricas.map(function(m){ return [m.nome, m.metrica, m.unidade]; }) : [], GRUPO.M2 ? GRUPO.M2.condicoes : null, jev, Object.keys(d).filter(function(x){ return /^m3_/.test(x); })]);
+  if (!deveRefazer("M3", k, forcar)) return;
+  preparaTabela();
+  var m = S.M3.med, box = $("boxM3"), links = ARQ_EXEMPLOS.map(function(a){ return '<a href="' + CONFIG.site + "proj2-exemplos/" + a + '" target="_blank" rel="noopener">' + a + "</a>"; }).join(" · ");
+  function rad(name, val, rot, atual){ return '<label><input type="radio" name="' + name + '" value="' + val + '"' + (atual === val ? " checked" : "") + "> " + rot + "</label>"; }
+  box.innerHTML = '<p>A tabela de medição do grupo, a mesma das fichas 2 e 3. Completem com o que foi medido desde a última aula. Com repetições, anotem na mesma célula o valor de cada rodada.</p>' + btRecupera("M3") +
+    '<div class="campo"><span class="rot">Onde mediram</span><div class="ph">O dispositivo e o cenário desta medição.</div><div class="op-l">' + rad("m3onde", "dispositivo", "dispositivo próprio", m.onde) + rad("m3onde", "laboratorio", "máquina do laboratório", m.onde) + rad("m3onde", "codespaces", "Codespaces", m.onde) + "</div>" +
+    '<div class="op-l">' + rad("m3cen", "proprio", "cenário próprio", m.cenario) + rad("m3cen", "exemplo", "um dos exemplos do repositório", m.cenario) +
+    '<select id="m3Ex" class="' + (m.cenario === "exemplo" ? "" : "oculto") + '"><option value="">qual?</option>' + EXEMPLOS_REPO.map(function(e){ return '<option value="' + e[0] + '"' + (m.exemplo === e[0] ? " selected" : "") + ">" + e[1] + "</option>"; }).join("") + "</select></div>" +
+    '<div class="ph peq sec no-print">Arquivos dos exemplos: ' + links + "</div></div>" +
+    '<div class="campo"><span class="rot">Medições</span><div class="ph">Cada linha é uma condição e cada coluna é uma métrica. As condições vêm do método da ficha 2 e as métricas vêm da lista do grupo. Vocês podem editar, tirar e acrescentar. Na célula vai o que o comando devolveu; se não deu para medir, escrevam o que houve.</div><div class="tab-wrap" id="m3Tab"></div><div class="botoes no-print"><button class="mini" id="m3Mais">acrescentar linha</button><button class="mini" id="m3MaisC">acrescentar métrica</button><span id="m3Dicas"></span></div></div>' +
+    '<div class="campo"><label>Saída e observações</label><div class="ph">Colem o comando usado e a saída dele, ou contem o que travou.</div><textarea rows="4" maxlength="4000" placeholder="Ex: o comando /usr/bin/time -v e as linhas que ele imprimiu" data-m3="saida">' + esc(m.saida) + "</textarea></div>" +
+    '<div class="campo"><label>O que surpreendeu</label><div class="ph">O que saiu diferente do esperado, ou o que deu trabalho para coletar.</div><textarea maxlength="500" placeholder="Ex: as trocas de contexto quase não mudaram entre as condições" data-m3="surpreendeu">' + esc(m.surpreendeu) + "</textarea></div>" +
+    '<div class="campo"><label>O que muda no método</label><div class="ph">O que vocês trocam depois de ver o número: métrica, condição, repetições, instrumento.</div><textarea maxlength="500" placeholder="Ex: acrescentar condições acima de 16 processos" data-m3="muda">' + esc(m.muda) + "</textarea></div>" +
+    '<ul class="jev">' + htmlAvisos("M3", "m3", jev, d) + "</ul>" + btEnvia("M3", "Enviar medição");
+  $("verM3").innerHTML = linhaVersao("M3", "Nenhuma versão enviada ainda.");
+  function tabela(){
+    var m = S.M3.med, h = '<table class="med"><tr><th>Condição</th>' + m.colunas.map(function(c, j){ return '<th><div class="col-l"><input type="text" maxlength="120" placeholder="Ex: tempo total" aria-label="Métrica" data-colm="' + j + '" value="' + esc(c.metrica) + '">' + (m.colunas.length > 1 ? '<button class="mini no-print" data-tirac="' + j + '" aria-label="Tirar métrica">' + ic("x") + "</button>" : "") + '</div><input type="text" class="obs" maxlength="40" placeholder="Ex: s" aria-label="Unidade" data-colu="' + j + '" value="' + esc(c.unidade) + '"></th>'; }).join("") + "</tr>";
+    h += m.linhas.map(function(l, i){ return '<tr><td><div class="col-l"><input type="text" maxlength="120" aria-label="Condição" placeholder="Ex: 500 fotos com 2 processos" data-lin="' + i + '" value="' + esc(l.cond) + '">' + (m.linhas.length > 1 ? '<button class="mini no-print" data-tiral="' + i + '" aria-label="Tirar linha">' + ic("x") + "</button>" : "") + "</div></td>" + l.celulas.slice(0, m.colunas.length).map(function(c, j){ return '<td><input type="text" maxlength="60" aria-label="Resultado" placeholder="Ex: 75,5" data-cel="' + i + "," + j + '" value="' + esc(c.v) + '"></td>'; }).join("") + "</tr>"; }).join("") + "</table>";
+    $("m3Tab").innerHTML = h;
+    function mudou(){ S.M3.tocado = true; salvar(); }
+    $$("[data-colm]", $("m3Tab")).forEach(function(inp){ inp.addEventListener("input", function(){ S.M3.med.colunas[+inp.dataset.colm].metrica = inp.value; mudou(); }); });
+    $$("[data-colu]", $("m3Tab")).forEach(function(inp){ inp.addEventListener("input", function(){ S.M3.med.colunas[+inp.dataset.colu].unidade = inp.value; mudou(); }); });
+    $$("[data-lin]", $("m3Tab")).forEach(function(inp){ inp.addEventListener("input", function(){ S.M3.med.linhas[+inp.dataset.lin].cond = inp.value; mudou(); }); });
+    $$("[data-cel]", $("m3Tab")).forEach(function(inp){ inp.addEventListener("input", function(){ var p = inp.dataset.cel.split(","); S.M3.med.linhas[+p[0]].celulas[+p[1]].v = inp.value; mudou(); }); });
+    $$("[data-tirac]", $("m3Tab")).forEach(function(b){ b.onclick = function(){ var j = +b.dataset.tirac, m = S.M3.med; m.colunas.splice(j, 1); m.linhas.forEach(function(l){ l.celulas.splice(j, 1); }); mudou(); tabela(); dicas(); }; });
+    $$("[data-tiral]", $("m3Tab")).forEach(function(b){ b.onclick = function(){ S.M3.med.linhas.splice(+b.dataset.tiral, 1); mudou(); tabela(); dicas(); }; });
+  }
+  function dicas(){
+    var d = []; if (faltamM2().length) d.push('<button class="mini no-print" id="m3TrazL">trazer condições da ficha 2</button>'); if (faltamM1().length) d.push('<button class="mini no-print" id="m3TrazC">trazer métricas do grupo</button>');
+    $("m3Dicas").innerHTML = d.join(" ");
+    if ($("m3TrazL")) $("m3TrazL").onclick = function(){ trazLinhas(); S.M3.tocado = true; salvar(); tabela(); dicas(); };
+    if ($("m3TrazC")) $("m3TrazC").onclick = function(){ trazColunas(); S.M3.tocado = true; salvar(); tabela(); dicas(); };
+  }
+  tabela(); dicas();
+  $("m3Mais").onclick = function(){ var m = S.M3.med; m.linhas.push(linhaNova("", m.colunas.length)); S.M3.tocado = true; salvar(); tabela(); };
+  $("m3MaisC").onclick = function(){ var m = S.M3.med; m.colunas.push({metrica: "", unidade: "", nome: ""}); m.linhas.forEach(function(l){ l.celulas.push(celulaVazia()); }); S.M3.tocado = true; salvar(); tabela(); };
+  $$('input[name="m3onde"]', box).forEach(function(r){ r.onchange = function(){ S.M3.med.onde = r.value; S.M3.tocado = true; salvar(); }; });
+  $$('input[name="m3cen"]', box).forEach(function(r){ r.onchange = function(){ S.M3.med.cenario = r.value; $("m3Ex").classList.toggle("oculto", r.value !== "exemplo"); S.M3.tocado = true; salvar(); }; });
+  $("m3Ex").onchange = function(){ S.M3.med.exemplo = this.value; S.M3.tocado = true; salvar(); };
+  $$("[data-m3]", box).forEach(function(t){ t.addEventListener("input", function(){ S.M3.med[t.dataset.m3] = t.value; S.M3.tocado = true; salvar(); }); });
+  $$("[data-env]", box).forEach(function(b){ b.onclick = enviarM3; });
+}
+function enviarM3(){
+  var box = fbDe("M3"), m = S.M3.med;
+  if (!confirmaVersao("M3")) return;
+  fb(box, "info", "Enviando a medição...");
+  enviaComRetentativa({acao: "grupoM3", medicao: m, navegador: navigator.userAgent.slice(0, 120)}, box, function(j){
+    S.envios.M3 = {comprovante: j.comprovante, hora: agora()}; S.M3.tocado = false; S.M3.v = 0; S.M3.novaVersao = 0; aplicaGrupo(j.grupo, true); fb(fbDe("M3"), "ok", "Enviado.");
+  }, msgErroPadrao);
+}
+
+/* ---------- termos e exemplos em sobreposição ---------- */
+function abreExemplo(ex){ $("ovCorpo").innerHTML = (TERMOS[ex] || "") + "<h3>Exemplos</h3>" + CENARIOS.map(function(c, i){ return "<details" + (i ? "" : " open") + "><summary>" + c.nome + "</summary>" + (c[ex] || "") + "</details>"; }).join(""); $("ovCorpo").parentNode.scrollTop = 0; $("overlay").classList.add("on"); }
+function fechaExemplo(){ $("overlay").classList.remove("on"); }
+document.addEventListener("click", function(e){ var b = e.target.closest("[data-exemplo]"); if (b) abreExemplo(b.dataset.exemplo); });
+$("ovFechar").onclick = fechaExemplo;
+$("overlay").addEventListener("click", function(e){ if (e.target === this) fechaExemplo(); });
+document.addEventListener("keydown", function(e){ if (e.key === "Escape") fechaExemplo(); });
+
+/* ---------- assistente ---------- */
+function formularioDe(bl){
+  if (bl === "F4V") return {aba_aberta: S.mi + 1, vereditos: S.F4V.itens.map(function(r){ var x = {}; CHAVES_F4V.forEach(function(c){ x[c] = r[c]; }); return x; })};
+  if (bl === "F4G") return {grafico: S.F4G.g};
+  var m = S.M3.med; return {onde: m.onde, cenario: m.cenario, exemplo: m.exemplo, metricas: (m.colunas || []).map(function(c){ return c.metrica + (c.unidade ? " (" + c.unidade + ")" : ""); }), linhas: (m.linhas || []).map(function(l){ return {condicao: l.cond, valores: (l.celulas || []).map(function(c){ return c.v; })}; }), saida: String(m.saida || "").slice(0, 800), surpreendeu: m.surpreendeu, muda: m.muda};
+}
+// "Para ler" com link quando a fonte tem endereço público; o texto da resposta continua sem HTML
+function htmlMensagem(m){
+  var fs = m.fontes || []; if (!fs.length) return esc(m.content);
+  var corpo = String(m.content || "").replace(/\n*Para ler:[\s\S]*$/, "");
+  return esc(corpo) + '<div class="ler">Para ler: ' + fs.map(function(f){ return /^https:\/\//.test(f.url || "") ? '<a href="' + esc(f.url) + '" target="_blank" rel="noopener">' + esc(f.rotulo) + "</a>" : esc(f.rotulo); }).join("; ") + "</div>";
+}
+function htmlAjudou(m, i){
+  if (m.role === "user" || !m.id) return "";
+  return '<div class="ajudou no-print"><span>Ajudou?</span><button data-aj="' + i + '" data-v="sim"' + (m.ajudou === "sim" ? ' class="on"' : "") + '>Sim</button><button data-aj="' + i + '" data-v="nao"' + (m.ajudou === "nao" ? ' class="on"' : "") + ">Não</button></div>";
+}
+function pintaGaveta(){
+  var ativo = !!EST.assistente, usadas = S.chat.usadas || 0, limite = S.chat.limite || 10, esgotou = usadas >= limite, box = $("gMsgs");
+  $("gCont").textContent = ativo ? usadas + " de " + limite : "";
+  $("gBloco").textContent = NOMES_BLOCO[BLOCO_ATUAL] || "";
+  var h = ativo ? S.chat.hist.map(function(m, i){ return '<div class="m ' + (m.role === "user" ? "eu" : "ela") + '">' + htmlMensagem(m) + htmlAjudou(m, i) + "</div>"; }).join("") : '<div class="m sis">O assistente está desligado nesta aula</div>';
+  if (ativo && esgotou) h += '<div class="m sis">Você usou as ' + limite + ' mensagens desta ficha.</div>';
+  box.innerHTML = h; box.scrollTop = box.scrollHeight;
+  $("gTexto").disabled = !ativo || esgotou || GAV_ENVIANDO; $("gEnviar").disabled = !ativo || esgotou || GAV_ENVIANDO;
+}
+function abreGaveta(bl){ if (bl) BLOCO_ATUAL = bl; $("gaveta").classList.add("on"); document.body.classList.add("gav"); pintaGaveta(); if (!$("gTexto").disabled) $("gTexto").focus(); }
+function fechaGaveta(){ $("gaveta").classList.remove("on"); document.body.classList.remove("gav"); }
+document.addEventListener("click", function(e){ var b = e.target.closest("[data-assist]"); if (b) abreGaveta(b.dataset.assist); });
+$("gFechar").onclick = fechaGaveta;
+document.addEventListener("focusin", function(e){ var sec = e.target.closest && e.target.closest("section[data-ex]"); var bl = sec ? (sec.dataset.ab || sec.dataset.ex) : ""; if (bl && $("gaveta").classList.contains("on") && BLOCO_ATUAL !== bl){ BLOCO_ATUAL = bl; $("gBloco").textContent = NOMES_BLOCO[bl] || ""; } });
+function enviaGaveta(){
+  var msg = String($("gTexto").value || "").trim(); if (!msg || GAV_ENVIANDO) return;
+  var hist = S.chat.hist.slice(-12).map(function(m){ return {role: m.role, content: m.content}; });
+  S.chat.hist.push({role: "user", content: msg}); $("gTexto").value = ""; GAV_ENVIANDO = true; pintaGaveta();
+  var esp = el("div", "m sis", "..."); $("gMsgs").appendChild(esp); $("gMsgs").scrollTop = $("gMsgs").scrollHeight;
+  function fim(texto, fontes, id){ GAV_ENVIANDO = false; if (texto) S.chat.hist.push({role: "assistant", content: texto, fontes: fontes || [], id: id || ""}); salvar(); pintaGaveta(); if (!$("gTexto").disabled) $("gTexto").focus(); }
+  post({acao: "assistente", ficha: 4, bloco: BLOCO_ATUAL, mensagem: msg, historico: hist, formulario: formularioDe(BLOCO_ATUAL)}).then(function(j){
+    if (j && j.usadas != null) S.chat.usadas = j.usadas; if (j && j.limite) S.chat.limite = j.limite;
+    if (j && j.ok){ fim(j.resposta, j.fontes, j.id); return; }
+    S.chat.hist.pop();
+    if (j && j.erro === "desligado"){ EST.assistente = 0; fim(""); return; }
+    if (j && j.erro === "cota"){ fim(""); return; }
+    fim(""); var av = el("div", "m sis", "O assistente não respondeu agora. Tente de novo em instantes."); $("gMsgs").appendChild(av); $("gTexto").value = msg;
+  }).catch(function(){ S.chat.hist.pop(); fim(""); var av = el("div", "m sis", "Sem contato com o servidor. Tente de novo em instantes."); $("gMsgs").appendChild(av); $("gTexto").value = msg; });
+}
+$("gEnviar").onclick = enviaGaveta;
+$("gMsgs").addEventListener("click", function(e){
+  var b = e.target.closest("[data-aj]"); if (!b) return;
+  var m = S.chat.hist[+b.dataset.aj]; if (!m || !m.id) return;
+  var antes = m.ajudou || ""; m.ajudou = b.dataset.v; salvar(); pintaGaveta();
+  function desfaz(){ m.ajudou = antes; salvar(); pintaGaveta(); }
+  post({acao: "assistente_ajudou", id: m.id, ajudou: m.ajudou}).then(function(j){ if (!(j && j.ok)) desfaz(); }).catch(desfaz);
+});
+$("gTexto").addEventListener("keydown", function(e){ if (e.key === "Enter" && !e.shiftKey){ e.preventDefault(); enviaGaveta(); } });
+
+/* ---------- sincronização periódica: estado da turma (assistente ligado ou não) e registro do grupo ---------- */
+function iniciaPolling(){
+  if (poller || !online()) return;
+  function tick(){
+    tickN++;
+    get("acao=estado&turma=" + encodeURIComponent(TURMA)).then(function(j){
+      if (!j || !j.ok) return;
+      $("rede").textContent = "sincronizado às " + agora();
+      var antes = EST.assistente; EST = {assistente: j.assistente ? 1 : 0};
+      if (antes !== EST.assistente && $("gaveta").classList.contains("on")) pintaGaveta();
+    }).catch(function(){ $("rede").textContent = "sem contato com o servidor"; });
+    if (tickN % 2 === 0 && GRUPO) atualizaGrupo(true);
+  }
+  tick(); poller = setInterval(tick, 12000 + Math.floor(Math.random() * 4000));
+}
+
+/* ---------- recuperação e entrega ---------- */
+function recuperar(silencioso){
+  if (!online()) return;
+  get("acao=recupera&ficha=4&turma=" + encodeURIComponent(TURMA) + "&ra=" + encodeURIComponent(ID)).then(function(j){
+    if (!j || !j.ok){ if (!silencioso) fb($("fbEnvio"), "erro", "O servidor não respondeu."); return; }
+    RECUP = {A: j.A || null, M1: j.M1 || null, F3C: j.F3C || null, F3H: j.F3H || null, pronto: true};
+    var n = 0, e = j.F4V;
+    if (e){
+      if (!S.F4V.tocado || !silencioso){
+        S.F4V.itens = itensDe(e.respostas || {}).map(function(r){ var o = f4vVazio(); CHAVES_F4V.forEach(function(c){ o[c] = r[c] || ""; }); o.jev = r.jev || null; return o; });
+        if (!S.F4V.itens.length) S.F4V.itens = [f4vVazio()]; S.F4V.tocado = false; n++;
+      }
+      S.envios.F4V = {comprovante: e.comprovante, hora: e.hora};
+    }
+    if (typeof j.chat_usadas === "number") S.chat.usadas = j.chat_usadas; if (j.chat_limite) S.chat.limite = j.chat_limite;
+    if (j.assistente != null) EST.assistente = j.assistente;
+    if (!silencioso){ ["F4G", "F4R", "M3"].forEach(function(ex){ S[ex].tocado = false; S[ex].v = 0; S[ex].novaVersao = 0; }); }
+    aplicaGrupo(j.grupo, true); salvar();
+    if (!silencioso) fb($("fbEnvio"), "ok", (n ? "Envios individuais recuperados" : "Comprovantes recuperados") + (j.grupo ? "; grupo " + esc(j.grupo.nome) + " carregado." : "."));
+  }).catch(function(){ if (!silencioso) fb($("fbEnvio"), "erro", "Sem contato com o servidor."); });
+}
+$("btRecuperar").onclick = function(){ recuperar(false); };
+$("btPdf").onclick = function(){ $("impressao").innerHTML = "<b>" + esc(NOME) + " · RA " + ID + "</b> · turma " + TURMA + (GRUPO ? " · grupo " + esc(GRUPO.nome) : "") + " · " + new Date().toLocaleString("pt-BR") + " · " + Object.keys(S.envios).map(function(ex){ return ex + ": " + S.envios[ex].comprovante; }).join(", "); window.print(); };
+$("btJson").onclick = function(){ var blob = new Blob([JSON.stringify({ra: ID, nome: NOME, turma: TURMA, versao: CONFIG.versao, estado: S, grupo: GRUPO}, null, 1)], {type: "application/json"}); var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "proj2_ficha4_" + TURMA + "_" + ID + ".json"; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500); };
+
+/* ---------- render geral ---------- */
+function renderTudo(){ aplicaGrupo(GRUPO, true); }
+})();
+
+</script>
+</body>
+</html>

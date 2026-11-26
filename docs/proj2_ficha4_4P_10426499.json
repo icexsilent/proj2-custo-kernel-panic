@@ -81,6 +81,11 @@
       "nome": "Vinicius Rampazi de Oliveira"
      },
      {
+      "metrica": "Percentual de tarefas de compilação por servidor",
+      "unidade": "%",
+      "nome": "Caio Belom"
+     },
+     {
       "metrica": "Energia elétrica consumida",
       "unidade": "mWh",
       "nome": "Vinicius Rampazi de Oliveira"
@@ -101,6 +106,10 @@
        },
        {
         "v": "1,00x (efic. 100%)",
+        "obs": ""
+       },
+       {
+        "v": "100,0% (N1)",
         "obs": ""
        },
        {
@@ -125,6 +134,10 @@
         "obs": ""
        },
        {
+        "v": "52,94% (N1) / 47,06% (N2)",
+        "obs": ""
+       },
+       {
         "v": "83,90 mWh (a 268,5W)",
         "obs": ""
        },
@@ -143,6 +156,10 @@
        },
        {
         "v": "2,22x (efic. 74%)",
+        "obs": ""
+       },
+       {
+        "v": "35,29% (N1) / 35,29% (N2) / 29,41% (N3)",
         "obs": ""
        },
        {
@@ -167,6 +184,10 @@
         "obs": ""
        },
        {
+        "v": "29,41% (N1) / 23,53% (N2..N4)",
+        "obs": ""
+       },
+       {
         "v": "104,60 mWh",
         "obs": ""
        },
@@ -185,6 +206,10 @@
        },
        {
         "v": "+0% / +9% / +27% / +247% lentidão",
+        "obs": ""
+       },
+       {
+        "v": "52,94% (N1) / 47,06% (N2)",
         "obs": ""
        },
        {
@@ -209,6 +234,10 @@
         "obs": ""
        },
        {
+        "v": "55,56% (N1) / 44,44% (N2)",
+        "obs": ""
+       },
+       {
         "v": "Solo 37,94 vs Dist 34,28 mWh",
         "obs": ""
        },
@@ -227,6 +256,10 @@
        },
        {
         "v": "2,59x mais rápido (-61,3%)",
+        "obs": ""
+       },
+       {
+        "v": "52,00% (N1) / 48,00% (N2)",
         "obs": ""
        },
        {
@@ -251,6 +284,10 @@
         "obs": ""
        },
        {
+        "v": "51,02% (N1) / 48,98% (N2)",
+        "obs": ""
+       },
+       {
         "v": "Solo 192,24 vs Dist 121,56 mWh",
         "obs": ""
        },
@@ -269,6 +306,10 @@
        },
        {
         "v": "2,12x mais rápido (-52,9%)",
+        "obs": ""
+       },
+       {
+        "v": "54,37% (N1) / 45,63% (N2)",
         "obs": ""
        },
        {
@@ -293,6 +334,10 @@
         "obs": ""
        },
        {
+        "v": "50,62% (N1) / 49,38% (N2)",
+        "obs": ""
+       },
+       {
         "v": "Solo 7137,8 vs Dist 4564,5 mWh",
         "obs": ""
        },
@@ -301,13 +346,38 @@
         "obs": ""
        }
       ]
+     },
+     {
+      "cond": "Individual vs Coletivo (Máq 1, Máq 2 vs Coletivo -j8)",
+      "celulas": [
+       {
+        "v": "1,24 / 1,21 / 0,80 s",
+        "obs": ""
+       },
+       {
+        "v": "1,55x mais rápido (-35,5%)",
+        "obs": ""
+       },
+       {
+        "v": "52,94% (N1) / 47,06% (N2)",
+        "obs": ""
+       },
+       {
+        "v": "Solo 51,60 vs Dist 59,58 mWh",
+        "obs": ""
+       },
+       {
+        "v": "Solo 63,92 vs Dist 47,59 mWh·s",
+        "obs": ""
+       }
+      ]
      }
     ],
-    "saida": "Comandos executados no Ubuntu 26.04 WSL2 (Ryzen 7 5700X3D):\n$ bash scripts/manage_distccd.sh start 4\n$ bash scripts/run_experiments.sh all\n$ python3 scripts/calc_energy.py\n\nSaída bruta resumida (dados/tempos_compilacao.csv e dados/energia_estimada.csv):\nescala_1_maquina (-j2): 1.9859s / 1.9637s (média 1.9748s, speedup 1.00x, efic 100%)\nescala_2_maquinas (-j4): 1.1306s / 1.1192s (média 1.1249s, speedup 1.76x, efic 88%)\nescala_3_maquinas (-j6): 0.9121s / 0.8698s (média 0.8910s, speedup 2.22x, efic 74%)\nescala_4_maquinas (-j8): 0.7297s / 0.7380s (média 0.7339s, speedup 2.69x, efic 67%)\ncontencao_cpu_0pct (0 threads): 0.7333s / 0.7639s (média 0.7486s)\ncontencao_cpu_25pct (4 threads stress-ng): 0.8253s / 0.8101s (média 0.8177s, +9.2%)\ncontencao_cpu_50pct (8 threads stress-ng): 0.9526s / 0.9533s (média 0.9530s, +27.3%)\ncontencao_cpu_100pct (16 threads stress-ng): 2.2157s / 2.9801s (média 2.5979s, +247.0%)\nporte_8_arqs: Solo 0.9120s/0.9089s (0.9104s) vs Dist 0.4611s/0.4581s (0.4596s) -> Speedup 1.98x | Energia: 37.94 vs 34.28 mWh\nporte_24_arqs: Solo 2.3872s/2.3624s (2.3748s) vs Dist 0.9212s/0.9150s (0.9181s) -> Speedup 2.59x | Energia: 98.95 vs 68.48 mWh\nporte_48_arqs: Solo 4.6296s/4.5981s (4.6138s) vs Dist 1.6375s/1.6221s (1.6298s) -> Speedup 2.83x | Energia: 192.24 vs 121.56 mWh\nprojeto_SQLite (103 .c): Solo 14.2371s/14.2494s (14.2432s) vs Dist 6.6544s/6.7757s (6.7150s) -> Speedup 2.12x | Energia: 593.47 vs 500.83 mWh\nprojeto_Kernel_Linux (904 .o): Solo 173.4631s/169.1517s (171.3074s) vs Dist 65.6213s/56.7788s (61.2001s) -> Speedup 2.80x | Energia: 7.14 Wh vs 4.56 Wh (-36.1%)",
+    "saida": "Comandos executados no Ubuntu 26.04 WSL2 (Ryzen 7 5700X3D):\n$ bash scripts/manage_distccd.sh start 4\n$ bash scripts/run_experiments.sh all\n$ python3 scripts/calc_energy.py\n\nSaída bruta resumida (dados/tempos_compilacao.csv e dados/energia_estimada.csv):\nescala_1_maquina (-j2): 1.9859s / 1.9637s (média 1.9748s, speedup 1.00x, efic 100%)\nescala_2_maquinas (-j4): 1.1306s / 1.1192s (média 1.1249s, speedup 1.76x, efic 88%)\nescala_3_maquinas (-j6): 0.9121s / 0.8698s (média 0.8910s, speedup 2.22x, efic 74%)\nescala_4_maquinas (-j8): 0.7297s / 0.7380s (média 0.7339s, speedup 2.69x, efic 67%)\ncontencao_cpu_0pct (0 threads): 0.7333s / 0.7639s (média 0.7486s)\ncontencao_cpu_25pct (4 threads stress-ng): 0.8253s / 0.8101s (média 0.8177s, +9.2%)\ncontencao_cpu_50pct (8 threads stress-ng): 0.9526s / 0.9533s (média 0.9530s, +27.3%)\ncontencao_cpu_100pct (16 threads stress-ng): 2.2157s / 2.9801s (média 2.5979s, +247.0%)\nporte_8_arqs: Solo 0.9120s/0.9089s (0.9104s) vs Dist 0.4611s/0.4581s (0.4596s) -> Speedup 1.98x | Energia: 37.94 vs 34.28 mWh\nporte_24_arqs: Solo 2.3872s/2.3624s (2.3748s) vs Dist 0.9212s/0.9150s (0.9181s) -> Speedup 2.59x | Energia: 98.95 vs 68.48 mWh\nporte_48_arqs: Solo 4.6296s/4.5981s (4.6138s) vs Dist 1.6375s/1.6221s (1.6298s) -> Speedup 2.83x | Energia: 192.24 vs 121.56 mWh\nprojeto_SQLite (103 .c): Solo 14.2371s/14.2494s (14.2432s) vs Dist 6.6544s/6.7757s (6.7150s) -> Speedup 2.12x | Energia: 593.47 vs 500.83 mWh\nprojeto_Kernel_Linux (904 .o): Solo 173.4631s/169.1517s (171.3074s) vs Dist 65.6213s/56.7788s (61.2001s) -> Speedup 2.80x | Energia: 7.14 Wh vs 4.56 Wh (-36.1%)\n\nAuditoria de logs distcc (parse_distcc_logs.py -> dados/distribuicao_hosts.csv - Caio Belom):\n1 servidor (-j2, 17 arqs .c remotos): Nó 1 = 17/17 (100,0% remoto; 94,44% total c/ linker ld local)\n2 servidores (-j4/-j8, 17 arqs .c remotos): Nó 1 (3632) = 9/17 (52,94%) | Nó 2 (3633) = 8/17 (47,06%)\n3 servidores (-j6, 17 arqs .c remotos): Nó 1 = 6/17 (35,29%) | Nó 2 = 6/17 (35,29%) | Nó 3 = 5/17 (29,41%)\n4 servidores (-j8, 17 arqs .c remotos): Nó 1 = 5/17 (29,41%) | Nó 2 = 4/17 (23,53%) | Nó 3 = 4/17 (23,53%) | Nó 4 = 4/17 (23,53%)\nPortes 8 / 24 / 48 arqs .c (2 nós): 55,56%/44,44% (8 .c) | 52,00%/48,00% (24 .c) | 51,02%/48,98% (48 .c)",
     "surpreendeu": "Nos testes de contenção de CPU em segundo plano, até 50% de ocupação (8 threads do stress-ng) o tempo de compilação subiu apenas 27% (de 0,75s para 0,95s) porque o escalonador CFS do Linux alocou os 8 threads livres do Ryzen 7 5700X3D (SMT); porém em 100% (16 threads) o tempo disparou +247% (2,60s) por trocas de contexto. Também surpreendeu que 2 máquinas (268,5W) gastam até 36,8% menos energia total (Wh) do que 1 máquina (150W) quando o speedup supera 1,79x (race-to-idle).",
     "muda": "Desativamos o log detalhado por arquivo (DISTCC_VERBOSE=1) durante a compilação do Kernel Linux (904 objetos), pois a contenção de escrita em /tmp/distcc-client.log adicionava ~65s de atraso artificial, e isolamos o controle de banda (tc qdisc tbf) em par veth com network namespace."
    },
-   "v": 4,
+   "v": 5,
    "tocado": false,
    "novaVersao": 0
   },
@@ -328,6 +398,10 @@
    "F4R": {
     "comprovante": "22200C",
     "hora": "11:04"
+   },
+   "M3": {
+    "comprovante": "298290",
+    "hora": "11:55"
    }
   }
  },
@@ -403,7 +477,10 @@
     "mede": 0.96
    }
   },
-  "discordo": {},
+  "discordo": {
+   "f4v_10748434_numeros": 1,
+   "f4v_10748434_explica": 1
+  },
   "D": {
    "escolha": 2,
    "cand": {
@@ -559,6 +636,11 @@
      "nome": "Vinicius Rampazi de Oliveira"
     },
     {
+     "metrica": "Percentual de tarefas de compilação por servidor",
+     "unidade": "%",
+     "nome": "Caio Belom"
+    },
+    {
      "metrica": "Energia elétrica consumida",
      "unidade": "mWh",
      "nome": "Vinicius Rampazi de Oliveira"
@@ -579,6 +661,10 @@
       },
       {
        "v": "1,00x (efic. 100%)",
+       "obs": ""
+      },
+      {
+       "v": "100,0% (N1)",
        "obs": ""
       },
       {
@@ -603,6 +689,10 @@
        "obs": ""
       },
       {
+       "v": "52,94% (N1) / 47,06% (N2)",
+       "obs": ""
+      },
+      {
        "v": "83,90 mWh (a 268,5W)",
        "obs": ""
       },
@@ -621,6 +711,10 @@
       },
       {
        "v": "2,22x (efic. 74%)",
+       "obs": ""
+      },
+      {
+       "v": "35,29% (N1) / 35,29% (N2) / 29,41% (N3)",
        "obs": ""
       },
       {
@@ -645,6 +739,10 @@
        "obs": ""
       },
       {
+       "v": "29,41% (N1) / 23,53% (N2..N4)",
+       "obs": ""
+      },
+      {
        "v": "104,60 mWh",
        "obs": ""
       },
@@ -663,6 +761,10 @@
       },
       {
        "v": "+0% / +9% / +27% / +247% lentidão",
+       "obs": ""
+      },
+      {
+       "v": "52,94% (N1) / 47,06% (N2)",
        "obs": ""
       },
       {
@@ -687,6 +789,10 @@
        "obs": ""
       },
       {
+       "v": "55,56% (N1) / 44,44% (N2)",
+       "obs": ""
+      },
+      {
        "v": "Solo 37,94 vs Dist 34,28 mWh",
        "obs": ""
       },
@@ -705,6 +811,10 @@
       },
       {
        "v": "2,59x mais rápido (-61,3%)",
+       "obs": ""
+      },
+      {
+       "v": "52,00% (N1) / 48,00% (N2)",
        "obs": ""
       },
       {
@@ -729,6 +839,10 @@
        "obs": ""
       },
       {
+       "v": "51,02% (N1) / 48,98% (N2)",
+       "obs": ""
+      },
+      {
        "v": "Solo 192,24 vs Dist 121,56 mWh",
        "obs": ""
       },
@@ -747,6 +861,10 @@
       },
       {
        "v": "2,12x mais rápido (-52,9%)",
+       "obs": ""
+      },
+      {
+       "v": "54,37% (N1) / 45,63% (N2)",
        "obs": ""
       },
       {
@@ -771,6 +889,10 @@
        "obs": ""
       },
       {
+       "v": "50,62% (N1) / 49,38% (N2)",
+       "obs": ""
+      },
+      {
        "v": "Solo 7137,8 vs Dist 4564,5 mWh",
        "obs": ""
       },
@@ -779,19 +901,44 @@
        "obs": ""
       }
      ]
+    },
+    {
+     "cond": "Individual vs Coletivo (Máq 1, Máq 2 vs Coletivo -j8)",
+     "celulas": [
+      {
+       "v": "1,24 / 1,21 / 0,80 s",
+       "obs": ""
+      },
+      {
+       "v": "1,55x mais rápido (-35,5%)",
+       "obs": ""
+      },
+      {
+       "v": "52,94% (N1) / 47,06% (N2)",
+       "obs": ""
+      },
+      {
+       "v": "Solo 51,60 vs Dist 59,58 mWh",
+       "obs": ""
+      },
+      {
+       "v": "Solo 63,92 vs Dist 47,59 mWh·s",
+       "obs": ""
+      }
+     ]
     }
    ],
-   "saida": "Comandos executados no Ubuntu 26.04 WSL2 (Ryzen 7 5700X3D):\n$ bash scripts/manage_distccd.sh start 4\n$ bash scripts/run_experiments.sh all\n$ python3 scripts/calc_energy.py\n\nSaída bruta resumida (dados/tempos_compilacao.csv e dados/energia_estimada.csv):\nescala_1_maquina (-j2): 1.9859s / 1.9637s (média 1.9748s, speedup 1.00x, efic 100%)\nescala_2_maquinas (-j4): 1.1306s / 1.1192s (média 1.1249s, speedup 1.76x, efic 88%)\nescala_3_maquinas (-j6): 0.9121s / 0.8698s (média 0.8910s, speedup 2.22x, efic 74%)\nescala_4_maquinas (-j8): 0.7297s / 0.7380s (média 0.7339s, speedup 2.69x, efic 67%)\ncontencao_cpu_0pct (0 threads): 0.7333s / 0.7639s (média 0.7486s)\ncontencao_cpu_25pct (4 threads stress-ng): 0.8253s / 0.8101s (média 0.8177s, +9.2%)\ncontencao_cpu_50pct (8 threads stress-ng): 0.9526s / 0.9533s (média 0.9530s, +27.3%)\ncontencao_cpu_100pct (16 threads stress-ng): 2.2157s / 2.9801s (média 2.5979s, +247.0%)\nporte_8_arqs: Solo 0.9120s/0.9089s (0.9104s) vs Dist 0.4611s/0.4581s (0.4596s) -> Speedup 1.98x | Energia: 37.94 vs 34.28 mWh\nporte_24_arqs: Solo 2.3872s/2.3624s (2.3748s) vs Dist 0.9212s/0.9150s (0.9181s) -> Speedup 2.59x | Energia: 98.95 vs 68.48 mWh\nporte_48_arqs: Solo 4.6296s/4.5981s (4.6138s) vs Dist 1.6375s/1.6221s (1.6298s) -> Speedup 2.83x | Energia: 192.24 vs 121.56 mWh\nprojeto_SQLite (103 .c): Solo 14.2371s/14.2494s (14.2432s) vs Dist 6.6544s/6.7757s (6.7150s) -> Speedup 2.12x | Energia: 593.47 vs 500.83 mWh\nprojeto_Kernel_Linux (904 .o): Solo 173.4631s/169.1517s (171.3074s) vs Dist 65.6213s/56.7788s (61.2001s) -> Speedup 2.80x | Energia: 7.14 Wh vs 4.56 Wh (-36.1%)",
+   "saida": "Comandos executados no Ubuntu 26.04 WSL2 (Ryzen 7 5700X3D):\n$ bash scripts/manage_distccd.sh start 4\n$ bash scripts/run_experiments.sh all\n$ python3 scripts/calc_energy.py\n\nSaída bruta resumida (dados/tempos_compilacao.csv e dados/energia_estimada.csv):\nescala_1_maquina (-j2): 1.9859s / 1.9637s (média 1.9748s, speedup 1.00x, efic 100%)\nescala_2_maquinas (-j4): 1.1306s / 1.1192s (média 1.1249s, speedup 1.76x, efic 88%)\nescala_3_maquinas (-j6): 0.9121s / 0.8698s (média 0.8910s, speedup 2.22x, efic 74%)\nescala_4_maquinas (-j8): 0.7297s / 0.7380s (média 0.7339s, speedup 2.69x, efic 67%)\ncontencao_cpu_0pct (0 threads): 0.7333s / 0.7639s (média 0.7486s)\ncontencao_cpu_25pct (4 threads stress-ng): 0.8253s / 0.8101s (média 0.8177s, +9.2%)\ncontencao_cpu_50pct (8 threads stress-ng): 0.9526s / 0.9533s (média 0.9530s, +27.3%)\ncontencao_cpu_100pct (16 threads stress-ng): 2.2157s / 2.9801s (média 2.5979s, +247.0%)\nporte_8_arqs: Solo 0.9120s/0.9089s (0.9104s) vs Dist 0.4611s/0.4581s (0.4596s) -> Speedup 1.98x | Energia: 37.94 vs 34.28 mWh\nporte_24_arqs: Solo 2.3872s/2.3624s (2.3748s) vs Dist 0.9212s/0.9150s (0.9181s) -> Speedup 2.59x | Energia: 98.95 vs 68.48 mWh\nporte_48_arqs: Solo 4.6296s/4.5981s (4.6138s) vs Dist 1.6375s/1.6221s (1.6298s) -> Speedup 2.83x | Energia: 192.24 vs 121.56 mWh\nprojeto_SQLite (103 .c): Solo 14.2371s/14.2494s (14.2432s) vs Dist 6.6544s/6.7757s (6.7150s) -> Speedup 2.12x | Energia: 593.47 vs 500.83 mWh\nprojeto_Kernel_Linux (904 .o): Solo 173.4631s/169.1517s (171.3074s) vs Dist 65.6213s/56.7788s (61.2001s) -> Speedup 2.80x | Energia: 7.14 Wh vs 4.56 Wh (-36.1%)\n\nAuditoria de logs distcc (parse_distcc_logs.py -> dados/distribuicao_hosts.csv - Caio Belom):\n1 servidor (-j2, 17 arqs .c remotos): Nó 1 = 17/17 (100,0% remoto; 94,44% total c/ linker ld local)\n2 servidores (-j4/-j8, 17 arqs .c remotos): Nó 1 (3632) = 9/17 (52,94%) | Nó 2 (3633) = 8/17 (47,06%)\n3 servidores (-j6, 17 arqs .c remotos): Nó 1 = 6/17 (35,29%) | Nó 2 = 6/17 (35,29%) | Nó 3 = 5/17 (29,41%)\n4 servidores (-j8, 17 arqs .c remotos): Nó 1 = 5/17 (29,41%) | Nó 2 = 4/17 (23,53%) | Nó 3 = 4/17 (23,53%) | Nó 4 = 4/17 (23,53%)\nPortes 8 / 24 / 48 arqs .c (2 nós): 55,56%/44,44% (8 .c) | 52,00%/48,00% (24 .c) | 51,02%/48,98% (48 .c)",
    "surpreendeu": "Nos testes de contenção de CPU em segundo plano, até 50% de ocupação (8 threads do stress-ng) o tempo de compilação subiu apenas 27% (de 0,75s para 0,95s) porque o escalonador CFS do Linux alocou os 8 threads livres do Ryzen 7 5700X3D (SMT); porém em 100% (16 threads) o tempo disparou +247% (2,60s) por trocas de contexto. Também surpreendeu que 2 máquinas (268,5W) gastam até 36,8% menos energia total (Wh) do que 1 máquina (150W) quando o speedup supera 1,79x (race-to-idle).",
    "muda": "Desativamos o log detalhado por arquivo (DISTCC_VERBOSE=1) durante a compilação do Kernel Linux (904 objetos), pois a contenção de escrita em /tmp/distcc-client.log adicionava ~65s de atraso artificial, e isolamos o controle de banda (tc qdisc tbf) em par veth com network namespace.",
-   "v": 4,
+   "v": 5,
    "jev": {
     "linhas": 1,
     "surpreendeu": 1
    }
   },
-  "M3_por": "vinicius rampazi",
-  "M3_hora": "21:50",
+  "M3_por": "Vinicius Rampazi de Oliveira",
+  "M3_hora": "11:55",
   "frentes2": [
    {
     "nome": "Gabriel Coelho",
@@ -951,7 +1098,22 @@
    {
     "nome": "Caroline Lee",
     "minha": false,
-    "coleta": null,
+    "coleta": {
+     "metrica": "Tempo total de compilação (s)",
+     "onde": "Processador AMD Ryzen 7 5700X3D, Windows 11 e WSL 2 (Ubuntu). Os servidores distcc foram configurados no mesmo ambiente.",
+     "ambiente": "pronto",
+     "falta": "",
+     "quando": "19/11",
+     "itens": [
+      {
+       "metrica": "Tempo total de compilação (s)",
+       "onde": "Processador AMD Ryzen 7 5700X3D, Windows 11 e WSL 2 (Ubuntu). Os servidores distcc foram configurados no mesmo ambiente.",
+       "ambiente": "pronto",
+       "falta": "",
+       "quando": "19/11"
+      }
+     ]
+    },
     "hipotese": {
      "metrica": "Tempo total de compilação (s (segundos))",
      "espera": "Espero qeu a compilacao coletiva utilizando dois servidores seja mais rapida do que a compilacao realizada individualmente por cada servidor, mantendo o mesmo projeto e a mesma carga de trabalho.",
@@ -1007,14 +1169,29 @@
    {
     "nome": "Caio Belom",
     "minha": false,
-    "coleta": null,
-    "hipotese": {
+    "coleta": {
      "metrica": "Percentual de tarefas de compilação por servidor (%)",
-     "espera": "Espero que os dois servidores tenham uma participação proxima de 50% cada na compilação, já que possuem a mesma capacidade de processamento e o mesmo limite de tarefas simultâneas.",
+     "onde": "No computador utilizado pelo grupo, equipado com processador AMD Ryzen 7 5700X3D, Windows 11 e WSL 2 (Ubuntu), utilizando dois servidores distccd locais.",
+     "ambiente": "pronto",
+     "falta": "",
+     "quando": "19/11",
      "itens": [
       {
        "metrica": "Percentual de tarefas de compilação por servidor (%)",
-       "espera": "Espero que os dois servidores tenham uma participação proxima de 50% cada na compilação, já que possuem a mesma capacidade de processamento e o mesmo limite de tarefas simultâneas."
+       "onde": "No computador utilizado pelo grupo, equipado com processador AMD Ryzen 7 5700X3D, Windows 11 e WSL 2 (Ubuntu), utilizando dois servidores distccd locais.",
+       "ambiente": "pronto",
+       "falta": "",
+       "quando": "19/11"
+      }
+     ]
+    },
+    "hipotese": {
+     "metrica": "Percentual de tarefas de compilação por servidor (%)",
+     "espera": "Esperamos que, ao aumentar o número de tarefas simultâneas de compilação (make -j1 até -j8), o percentual de tarefas executadas pelo segundo servidor aumente, enquanto o percentual do primeiro diminua, aproximando a distribuição de 50% para cada servidor.",
+     "itens": [
+      {
+       "metrica": "Percentual de tarefas de compilação por servidor (%)",
+       "espera": "Esperamos que, ao aumentar o número de tarefas simultâneas de compilação (make -j1 até -j8), o percentual de tarefas executadas pelo segundo servidor aumente, enquanto o percentual do primeiro diminua, aproximando a distribuição de 50% para cada servidor."
       }
      ]
     }
@@ -1074,20 +1251,32 @@
    "jev": {
     "publico": 1
    },
-   "v": 1
+   "v": 2
   },
-  "F4R_por": "Vinicius Rampazi",
-  "F4R_hora": "11:04",
+  "F4R_por": "Fernando Paiva",
+  "F4R_hora": "22:15",
   "vereditos": [
    {
     "nome": "Gabriel Coelho",
     "minha": false,
-    "itens": []
+    "itens": [
+     {
+      "metrica": "Redução percentual do tempo de compilação (%)",
+      "veredito": "sustentam",
+      "numeros": "Speedup de -52.9% para SQLite e -64.3% para o kernel."
+     }
+    ]
    },
    {
     "nome": "Caroline Lee",
     "minha": false,
-    "itens": []
+    "itens": [
+     {
+      "metrica": "Tempo total de compilação (s (segundos))",
+      "veredito": "sustentam",
+      "numeros": "A compilação individual na Máquina 1 levou em média 1,24s enquanto na Máquina 2 levou 1,21s. Já a compilação coletiva utilizando os dois servidores com distcc levou 0,80s representando uma redução de aproximadamente 35,5% no tempo em relação à Máquina 1, com speedup de 1,55x."
+     }
+    ]
    },
    {
     "nome": "Vinicius Rampazi de Oliveira",
@@ -1108,12 +1297,24 @@
    {
     "nome": "Caio Belom",
     "minha": false,
-    "itens": []
+    "itens": [
+     {
+      "metrica": "Percentual de tarefas de compilação por servidor (%)",
+      "veredito": "sustentam",
+      "numeros": "Com 1 servidor, o primeiro servidor executou 100% das tarefas remotas. Com 2 servidores, o Nó 1 executou 52,94% e o Nó 2 executou 47,06%. Com 3 servidores, a distribuição ficou em 35,29%, 35,29% e 29,41%. Com 4 servidores, ficou em 29,41%, 23,53%, 23,53% e 23,53%."
+     }
+    ]
    },
    {
     "nome": "Fernando Paiva",
     "minha": false,
-    "itens": []
+    "itens": [
+     {
+      "metrica": "Tempo de compilação sob limitação de banda de rede (s)",
+      "veredito": "sustentam",
+      "numeros": "1 Mbit/s: 19,24 s. 5 Mbit/s: 4,12 s. 10 Mbit/s: 2,25 s. 50 Mbit/s: 0,80 s. 100 Mbit/s: 0,61 s. 500 Mbit/s: 0,45 s. 1000 Mbit/s: 0,45 s."
+     }
+    ]
    }
   ]
  }
