@@ -3,17 +3,19 @@
 **Grupo:** Kernel Panic (`KPE-V7L` · Turma 4P — 2026.2 · Prof. Lucas Figueiredo)  
 **Integrantes:** Gabriel Coelho · Caroline Lee · Vinicius Rampazi de Oliveira (RA 10426499) · Caio Belom · Fernando Paiva
 
-Este repositório contém o **Relatório Final em PDF** ([`Relatorio_Projeto2_Kernel_Panic.pdf`](Relatorio_Projeto2_Kernel_Panic.pdf)), a página interativa do **Gráfico do Grupo** ([`grafico_grupo.html`](grafico_grupo.html)), os **dados brutos coletados** ([`dados/`](dados/)) e toda a infraestrutura de scripts, configurações de rede, automação de benchmarks e geração de gráficos para avaliar o **`distcc`** no Windows 11 + WSL 2 (Ubuntu 26.04 LTS, AMD Ryzen 7 5700X3D).
+Este repositório contém o **Relatório Final em PDF** ([`Relatorio_Projeto2_Kernel_Panic.pdf`](Relatorio_Projeto2_Kernel_Panic.pdf)), os **Slides da Apresentação em Sala** ([`Apresentacao_GTA6_distcc_Animado.pptx`](Apresentacao_GTA6_distcc_Animado.pptx) e [`Apresentacao_GTA6_distcc.pdf`](Apresentacao_GTA6_distcc.pdf)), a página interativa do **Gráfico do Grupo** ([`grafico_grupo.html`](grafico_grupo.html)), os **dados brutos coletados** ([`dados/`](dados/)) e toda a infraestrutura de scripts, configurações de rede, automação de benchmarks e geração de gráficos para avaliar o **`distcc`** no Windows 11 + WSL 2 (Ubuntu 26.04 LTS, AMD Ryzen 7 5700X3D).
 
 ---
 
 ## Estrutura do Projeto
 
 ```text
-e:\Faculdade\SistemasOperacionais\
-├── Relatorio_Projeto2_Kernel_Panic.pdf  # Relatório final em PDF (9 seções da Ficha 4, 8 páginas)
-├── Relatorio_Experimentos_distcc.pdf    # Cópia do relatório final em PDF
-├── grafico_grupo.html                   # Gráfico interativo do grupo (HTML único com todas as condições e rodadas)
+Projeto/
+├── Relatorio_Projeto2_Kernel_Panic.pdf    # Relatório final em PDF (9 seções da Ficha 4, 8 páginas)
+├── Relatorio_Experimentos_distcc.pdf      # Cópia do relatório final em PDF
+├── Apresentacao_GTA6_distcc_Animado.pptx  # Apresentação editável em PowerPoint (18 slides, 4K + animações)
+├── Apresentacao_GTA6_distcc.pdf           # Apresentação exportada em PDF (18 slides)
+├── grafico_grupo.html                     # Gráfico interativo do grupo (HTML único com todas as condições e rodadas)
 ├── dados/                               # Dados brutos coletados nos experimentos (CSVs)
 │   ├── hardware_specs.csv
 │   ├── tempos_compilacao.csv
