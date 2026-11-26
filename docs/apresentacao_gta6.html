@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Apresentação GTA 6 — Compilação Distribuída com distcc</title>
+<style>
+  @page {
+    size: 297mm 167mm;
+    margin: 0;
+  }
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: "DejaVu Sans", "Segoe UI", Arial, sans-serif;
+    background: #0a0c14;
+    color: #ffffff;
+    font-size: 8.8pt;
+    line-height: 1.28;
+  }
+  .slide {
+    width: 297mm;
+    height: 166.5mm;
+    position: relative;
+    page-break-after: always;
+    break-after: page;
+    page-break-inside: avoid;
+    break-inside: avoid;
+    overflow: hidden;
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  .slide:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+  /* GTA Pause Menu Top Navigation Bar */
+  .gta-topbar {
+    width: 100%;
+    height: 12mm;
+    background: rgba(5, 7, 12, 0.94);
+    border-bottom: 1.2px solid #2d374b;
+    text-align: right;
+    padding: 2.2mm 11mm 0 11mm;
+  }
+  .gta-tab {
+    display: inline-block;
+    width: 22.5mm;
+    padding: 1.4mm 0;
+    margin-left: 1.5mm;
+    background: #080a10;
+    color: #ffffff;
+    border: 1px solid #465064;
+    font-weight: 900;
+    font-size: 7.4pt;
+    text-align: center;
+    letter-spacing: 0.04em;
+  }
+  .gta-tab.active {
+    background: #ffffff;
+    color: #080a10;
+    border-color: #ffffff;
+  }
+  /* Main Dark HUD Panel */
+  .hud-panel {
+    margin: 5mm 11mm 0 11mm;
+    height: 144mm;
+    background: rgba(14, 18, 32, 0.88);
+    border: 1.4px solid #d2d7e6;
+    padding: 6mm 7mm;
+    position: relative;
+  }
+  .row {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+  .col-l, .col-r {
+    display: table-cell;
+    vertical-align: top;
+  }
+  .col-l { width: 51%; padding-right: 4mm; }
+  .col-r { width: 49%; padding-left: 4mm; }
+  /* GTA Typography */
+  .gta-title {
+    font-size: 20pt;
+    font-weight: 900;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    line-height: 1.08;
+  }
+  .gta-sub {
+    font-size: 10.5pt;
+    font-weight: 800;
+    color: #b388ff;
+    margin-top: 0.8mm;
+    margin-bottom: 3.5mm;
+    letter-spacing: 0.02em;
+  }
+  ul.gta-list {
+    list-style: none;
+    margin-bottom: 3.5mm;
+  }
+  ul.gta-list li {
+    margin-bottom: 1.8mm;
+    font-size: 8.8pt;
+    color: #e6eaf2;
+  }
+  ul.gta-list li b {
+    color: #38bdf8;
+  }
+  /* Dark HUD Table */
+  table.gta-tab-data {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 8.1pt;
+    margin-top: 1.5mm;
+  }
+  table.gta-tab-data th {
+    background: #1e294b;
+    color: #38bdf8;
+    font-weight: 800;
+    text-align: left;
+    padding: 1.4mm 2mm;
+    border: 1px solid #334155;
+  }
+  table.gta-tab-data td {
+    background: #111727;
+    color: #ffffff;
+    padding: 1.25mm 2mm;
+    border: 1px solid #263147;
+  }
+  table.gta-tab-data tr:nth-child(even) td {
+    background: #182036;
+  }
+  table.gta-tab-data tr.best td {
+    background: #103e30;
+    color: #00ff9d;
+    font-weight: 800;
+  }
+  table.gta-tab-data tr.warn td {
+    background: #4c1624;
+    color: #ff4da6;
+    font-weight: 800;
+  }
+  .num {
+    text-align: right;
+    font-family: "DejaVu Sans Mono", Consolas, monospace;
+    white-space: nowrap;
+  }
+  /* Chart Frame */
+  .chart-frame {
+    background: #0d111f;
+    border: 1.3px solid #d2d7e6;
+    padding: 1.8mm;
+    text-align: center;
+  }
+  .chart-frame img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+  }
+  /* KPI Grid */
+  .kpi-grid {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+    margin-top: 4mm;
+  }
+  .kpi-box {
+    display: table-cell;
+    background: #0d111f;
+    border: 1.5px solid #38bdf8;
+    padding: 3.5mm 2mm;
+    text-align: center;
+  }
+  .kpi-val {
+    font-size: 16pt;
+    font-weight: 900;
+    display: block;
+  }
+  .kpi-lbl {
+    font-size: 7.8pt;
+    font-weight: 700;
+    color: #ffffff;
+    margin-top: 1mm;
+    display: block;
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: INICIO PS5 -->
+<div class="slide" style="background-image: url('file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/bg_intro_ps5.jpg');">
+  <div style="position: absolute; top: 4.5mm; left: 152mm; background: rgba(15,20,35,0.95); border: 1.5px solid #ff4da6; border-radius: 6px; padding: 1.8mm 5mm; font-weight: 900; font-size: 10pt; letter-spacing: 0.05em;">
+    SISTEMAS OPERACIONAIS · DISTCC
+  </div>
+</div>
+
+<!-- SLIDE 2: INICIO ROCKSTAR + ESTRELAS -->
+<div class="slide" style="background-image: url('file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/bg_intro_rockstar.jpg');">
+  <div style="position: absolute; top: 7mm; right: 12mm; font-size: 20pt; font-weight: 900; color: #ffffff; letter-spacing: 0.12em;">
+    ★ ★ ★ ★ ★
+  </div>
+  <div style="position: absolute; bottom: 14mm; left: 0; right: 0; text-align: center;">
+    <div style="font-size: 27pt; font-weight: 900; color: #ffffff; letter-spacing: 0.04em; text-shadow: 0 3px 10px #000;">
+      COMPILAÇÃO DISTRIBUÍDA EM C
+    </div>
+    <div style="font-size: 13.5pt; font-weight: 800; color: #fbbf24; letter-spacing: 0.06em; margin-top: 1.5mm;">
+      DESEMPENHO · ESCALABILIDADE · CONTENÇÃO · ENERGIA
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: CAPA PRINCIPAL VI -->
+<div class="slide" style="background-image: url('file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/bg_cover_vi.jpg');">
+  <div style="position: absolute; top: 58mm; left: 0; right: 0; text-align: center;">
+    <div style="font-size: 28pt; font-weight: 900; color: #ffffff; letter-spacing: 0.04em; text-shadow: 0 4px 14px rgba(0,0,0,0.85);">
+      COMPILAÇÃO DISTRIBUÍDA
+    </div>
+    <div style="font-size: 56pt; font-weight: 900; color: #ffffff; letter-spacing: 0.05em; line-height: 1.0; text-shadow: 0 5px 18px rgba(0,0,0,0.9);">
+      DISTCC
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4 (SLIDE 01): AMBIENTE & METODOLOGIA -->
+<div class="slide" style="background-image: url('file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/bg_content_dark.jpg');">
+  <div class="gta-topbar"><span class="gta-tab active">SLIDE 01</span><span class="gta-tab">SLIDE 02</span><span class="gta-tab">SLIDE 03</span><span class="gta-tab">SLIDE 04</span><span class="gta-tab">SLIDE 05</span><span class="gta-tab">SLIDE 06</span><span class="gta-tab">SLIDE 07</span><span class="gta-tab">SLIDE 08</span></div>
+  <div class="hud-panel">
+    <div class="row">
+      <div class="col-l">
+        <div class="gta-title">AMBIENTE &amp; METODOLOGIA</div>
+        <div class="gta-sub">hardware real, ferramentas e controle experimental</div>
+        <ul class="gta-list">
+          <li><b>▸ Pergunta Central:</b> Quanto acelera a compilação limpa em C ao distribuir processos entre múltiplos nós, e onde estão os limites de rede, CPU e energia?</li>
+          <li><b>▸ Mecanismos do SO:</b> Escalonador CFS do Linux, trocas de contexto (<i>context switch</i>), paralelismo SMT, shaping TCP (<code>tc qdisc tbf</code>) e estados de energia (<i>race-to-idle</i>).</li>
+          <li><b>▸ Rigor de Medição:</b> <code>make clean</code> antes de cada rodada + 1 <i>warm-up</i> descartado + repetições cronometradas via <code>date +%s.%N</code> com GCC 15.2.0 (<code>-O2 -Wall</code>).</li>
+        </ul>
+      </div>
+      <div class="col-r">
+        <table class="gta-tab-data">
+          <thead><tr><th>Componente / Parâmetro</th><th class="num">Especificação Real Medida</th></tr></thead>
+          <tbody>
+            <tr class="best"><td>Processador (CPU)</td><td class="num">AMD Ryzen 7 5700X3D (8C / 16T)</td></tr>
+            <tr><td>Envelope Térmico</td><td class="num">105 W TDP · 45 W Repouso (Idle)</td></tr>
+            <tr><td>Memória &amp; Sistema</td><td class="num">15 GB DDR4 · Ubuntu 26.04 (WSL 2)</td></tr>
+            <tr><td>Kernel Linux</td><td class="num">6.18.58.1-microsoft-standard-WSL2</td></tr>
+            <tr><td>Compilador &amp; Cluster</td><td class="num">GCC 15.2.0 (-O2) + distcc 3.4</td></tr>
+            <tr class="best"><td>Projetos Reais Testados</td><td class="num">SQLite 3.47.2 (103 .c) e Linux 6.6.72</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-box" style="border-color: #38bdf8;"><span class="kpi-val" style="color: #38bdf8;">1,55x a 2,83x</span><span class="kpi-lbl">SPEEDUP ALCANÇADO</span></div>
+      <div class="kpi-box" style="border-color: #00ff9d;"><span class="kpi-val" style="color: #00ff9d;">61,2s vs 171,3s</span><span class="kpi-lbl">KERNEL LINUX (904 .o)</span></div>
+      <div class="kpi-box" style="border-color: #fbbf24;"><span class="kpi-val" style="color: #fbbf24;">50 Mbps</span><span class="kpi-lbl">JOELHO DA REDE</span></div>
+      <div class="kpi-box" style="border-color: #ff4da6;"><span class="kpi-val" style="color: #ff4da6;">-36,8% Wh</span><span class="kpi-lbl">ECONOMIA DE ENERGIA</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 5 (SLIDE 02): INDIVIDUAL VS COLETIVO -->
+<div class="slide" style="background-image: url('file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/bg_content_dark.jpg');">
+  <div class="gta-topbar"><span class="gta-tab">SLIDE 01</span><span class="gta-tab active">SLIDE 02</span><span class="gta-tab">SLIDE 03</span><span class="gta-tab">SLIDE 04</span><span class="gta-tab">SLIDE 05</span><span class="gta-tab">SLIDE 06</span><span class="gta-tab">SLIDE 07</span><span class="gta-tab">SLIDE 08</span></div>
+  <div class="hud-panel">
+    <div class="row">
+      <div class="col-l">
+        <div class="gta-title">INDIVIDUAL VS. COLETIVO</div>
+        <div class="gta-sub">ganho de paralelismo e balanceamento nos logs</div>
+        <ul class="gta-list">
+          <li><b>▸ Aceleração Coletiva:</b> Unir os 2 servidores reduziu o tempo de <b>1,24 s para 0,80 s</b> (Speedup de <b>1,55x</b> e redução de 35,5% no tempo).</li>
+          <li><b>▸ Divisão Simétrica:</b> Nos logs (<code>/tmp/distcc-client.log</code>), o Nó 1 compilou <b>9 arquivos (52,94%)</b> e o Nó 2 compilou <b>8 arquivos (47,06%)</b>.</li>
+          <li><b>▸ Limite Serial (Amdahl):</b> A linkedição final do binário (<code>ld</code>) ocorre sempre na máquina cliente local.</li>
+        </ul>
+        <table class="gta-tab-data">
+          <thead><tr><th>Cenário / Servidor</th><th class="num">Jobs</th><th class="num">R1 (s)</th><th class="num">R2 (s)</th><th class="num">Média / Fração</th></tr></thead>
+          <tbody>
+            <tr><td>Máquina 1 Individual (:3632)</td><td class="num">-j4</td><td class="num">1,235</td><td class="num">1,242</td><td class="num">1,24 s (1,00x)</td></tr>
+            <tr><td>Máquina 2 Individual (:3633)</td><td class="num">-j4</td><td class="num">1,183</td><td class="num">1,233</td><td class="num">1,21 s (1,02x)</td></tr>
+            <tr class="best"><td>Coletivo (Máq. 1 + Máq. 2)</td><td class="num">-j8</td><td class="num">0,802</td><td class="num">0,796</td><td class="num">0,80 s (1,55x)</td></tr>
+            <tr><td>Log Nó 1 (127.0.0.1:3632)</td><td class="num">cc1</td><td class="num">9 arqs</td><td class="num">9 arqs</td><td class="num">52,94% dos .c</td></tr>
+            <tr><td>Log Nó 2 (127.0.0.1:3633)</td><td class="num">cc1</td><td class="num">8 arqs</td><td class="num">8 arqs</td><td class="num">47,06% dos .c</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-r">
+        <div class="chart-frame" style="margin-bottom: 2.5mm;"><img src="file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/gta_01_ind_coletivo.png" style="max-height: 58mm;"></div>
+        <div class="chart-frame"><img src="file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/gta_02_distribuicao.png" style="max-height: 58mm;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6 (SLIDE 03): SQLITE VS KERNEL LINUX -->
+<div class="slide" style="background-image: url('file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/bg_content_dark.jpg');">
+  <div class="gta-topbar"><span class="gta-tab">SLIDE 01</span><span class="gta-tab">SLIDE 02</span><span class="gta-tab active">SLIDE 03</span><span class="gta-tab">SLIDE 04</span><span class="gta-tab">SLIDE 05</span><span class="gta-tab">SLIDE 06</span><span class="gta-tab">SLIDE 07</span><span class="gta-tab">SLIDE 08</span></div>
+  <div class="hud-panel">
+    <div class="row">
+      <div class="col-l">
+        <div class="gta-title">SQLITE VS. KERNEL LINUX</div>
+        <div class="gta-sub">cargas reais de código aberto de diferentes portes</div>
+        <ul class="gta-list">
+          <li><b>▸ SQLite 3.47.2 (103 .c):</b> Compilado de forma desmembrada (<code>USE_AMALGAMATION=0</code>); o tempo caiu de <b>14,24 s para 6,72 s</b> (Speedup de <b>2,12x / -52,9%</b>).</li>
+          <li><b>▸ Kernel Linux 6.6.72 (904 .o):</b> Compilação completa do <code>vmlinux</code>; o tempo caiu de <b>171,31 s (~2m51s) para 61,20 s (~1m01s)</b>, economizando <b>110 segundos (2,80x)</b>.</li>
+          <li><b>▸ Por que o Kernel escala mais?</b> Os 904 objetos mantêm todos os workers 100% ocupados e diluem o custo fixo de rede e linkedição.</li>
+        </ul>
+        <table class="gta-tab-data">
+          <thead><tr><th>Projeto Real</th><th class="num">Porte</th><th class="num">Modo</th><th class="num">R1 (s)</th><th class="num">R2 (s)</th><th class="num">Média (Speedup)</th></tr></thead>
+          <tbody>
+            <tr><td>SQLite 3.47.2</td><td class="num">103 .c</td><td class="num">Solo (-j2)</td><td class="num">14,24</td><td class="num">14,25</td><td class="num">14,24 s (1,00x)</td></tr>
+            <tr class="best"><td>SQLite 3.47.2</td><td class="num">103 .c</td><td class="num">Dist (-j12)</td><td class="num">6,65</td><td class="num">6,78</td><td class="num">6,72 s (2,12x)</td></tr>
+            <tr><td>Linux 6.6.72</td><td class="num">904 .o</td><td class="num">Solo (-j2)</td><td class="num">173,46</td><td class="num">169,15</td><td class="num">171,31 s (1,00x)</td></tr>
+            <tr class="best"><td>Linux 6.6.72</td><td class="num">904 .o</td><td class="num">Dist (-j12)</td><td class="num">65,62</td><td class="num">56,78</td><td class="num">61,20 s (2,80x)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-r">
+        <div class="chart-frame"><img src="file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/gta_03_projetos.png" style="max-height: 118mm;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 7 (SLIDE 04): VELOCIDADE DA REDE (Quadro à esquerda) -->
+<div class="slide" style="background-image: url('file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/bg_content_dark.jpg');">
+  <div class="gta-topbar"><span class="gta-tab">SLIDE 01</span><span class="gta-tab">SLIDE 02</span><span class="gta-tab">SLIDE 03</span><span class="gta-tab active">SLIDE 04</span><span class="gta-tab">SLIDE 05</span><span class="gta-tab">SLIDE 06</span><span class="gta-tab">SLIDE 07</span><span class="gta-tab">SLIDE 08</span></div>
+  <div class="hud-panel">
+    <div class="row">
+      <div class="col-l" style="width: 47%;">
+        <div class="chart-frame"><img src="file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/gta_04_rede.png" style="max-height: 118mm;"></div>
+      </div>
+      <div class="col-r" style="width: 53%;">
+        <div class="gta-title">VELOCIDADE DA REDE</div>
+        <div class="gta-sub">controle de tráfego real via tc qdisc tbf (1 a 1000 mbps)</div>
+        <ul class="gta-list">
+          <li><b>▸ Isolamento em Namespace:</b> Par virtual <code>veth_host &lt;-&gt; veth_ns</code> em <code>ip netns</code> limitando 100% dos bytes TCP dos arquivos <code>.i</code> e <code>.o</code>.</li>
+          <li><b>▸ Gargalo Severo (&le; 10 Mbps):</b> Em 1 Mbps o build leva <b>19,24 s</b> (42x mais lento que em 1 Gbps) devido ao bloqueio nos sockets TCP.</li>
+          <li><b>▸ Joelho da Curva (50 Mbps):</b> A partir de <b>50 Mbps (0,80 s)</b>, a rede deixa de travar os compiladores e o processo torna-se CPU-bound.</li>
+        </ul>
+        <table class="gta-tab-data">
+          <thead><tr><th>Banda Limitada</th><th class="num">R1 (s)</th><th class="num">R2 (s)</th><th class="num">Média</th><th class="num">Regime de Operação</th></tr></thead>
+          <tbody>
+            <tr class="warn"><td>1 Mbit/s</td><td class="num">19,242</td><td class="num">19,234</td><td class="num">19,24 s</td><td class="num">Gargalo severo (42x lento)</td></tr>
+            <tr class="warn"><td>5 Mbit/s</td><td class="num">4,120</td><td class="num">4,122</td><td class="num">4,12 s</td><td class="num">Rede saturada (pior que solo)</td></tr>
+            <tr><td>10 Mbit/s</td><td class="num">2,267</td><td class="num">2,241</td><td class="num">2,25 s</td><td class="num">Transição (limitado por I/O)</td></tr>
+            <tr class="best"><td>50 Mbit/s</td><td class="num">0,818</td><td class="num">0,781</td><td class="num">0,80 s</td><td class="num">JOELHO DA CURVA (Ideal)</td></tr>
+            <tr><td>100 Mbit/s</td><td class="num">0,643</td><td class="num">0,576</td><td class="num">0,61 s</td><td class="num">Fast Ethernet — ganho pleno</td></tr>
+            <tr class="best"><td>500 / 1000 Mbps</td><td class="num">0,442</td><td class="num">0,451</td><td class="num">0,45 s</td><td class="num">Platô de saturação da CPU</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8 (SLIDE 05): ESCALA DE SERVIDORES (1 A 4 NOS) -->
+<div class="slide" style="background-image: url('file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/bg_content_dark.jpg');">
+  <div class="gta-topbar"><span class="gta-tab">SLIDE 01</span><span class="gta-tab">SLIDE 02</span><span class="gta-tab">SLIDE 03</span><span class="gta-tab">SLIDE 04</span><span class="gta-tab active">SLIDE 05</span><span class="gta-tab">SLIDE 06</span><span class="gta-tab">SLIDE 07</span><span class="gta-tab">SLIDE 08</span></div>
+  <div class="hud-panel">
+    <div class="row">
+      <div class="col-l">
+        <div class="gta-title">ESCALA DE SERVIDORES</div>
+        <div class="gta-sub">variação de 1 a 4 máquinas disponíveis (lei de amdahl)</div>
+        <ul class="gta-list">
+          <li><b>▸ Escala Horizontal (2 jobs/nó):</b> O tempo cai continuamente de <b>1,97 s</b> (1 nó) para <b>1,12 s</b> (2 nós), <b>0,89 s</b> (3 nós) e <b>0,73 s</b> (4 nós).</li>
+          <li><b>▸ Speedup vs. Eficiência:</b> Em 4 máquinas o Speedup chega a <b>2,69x</b>, porém a eficiência por nó recua de <b>100% para 67,3%</b>.</li>
+          <li><b>▸ Explicação no SO:</b> A fração não-paralelizável (~12% do tempo gasta no pré-processador <code>cpp</code>, envio TCP e linker <code>ld</code>) impõe o teto sublinear da Lei de Amdahl.</li>
+        </ul>
+        <table class="gta-tab-data">
+          <thead><tr><th>Servidores distccd</th><th class="num">Jobs</th><th class="num">R1 (s)</th><th class="num">R2 (s)</th><th class="num">Média</th><th class="num">Speedup (Efic.)</th></tr></thead>
+          <tbody>
+            <tr><td>1 Máquina (:3632)</td><td class="num">-j2</td><td class="num">1,986</td><td class="num">1,964</td><td class="num">1,97 s</td><td class="num">1,00x (100,0%)</td></tr>
+            <tr><td>2 Máquinas (:3632..33)</td><td class="num">-j4</td><td class="num">1,131</td><td class="num">1,119</td><td class="num">1,12 s</td><td class="num">1,76x (87,8%)</td></tr>
+            <tr><td>3 Máquinas (:3632..34)</td><td class="num">-j6</td><td class="num">0,912</td><td class="num">0,870</td><td class="num">0,89 s</td><td class="num">2,22x (73,9%)</td></tr>
+            <tr class="best"><td>4 Máquinas (:3632..35)</td><td class="num">-j8</td><td class="num">0,730</td><td class="num">0,738</td><td class="num">0,73 s</td><td class="num">2,69x (67,3%)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-r">
+        <div class="chart-frame"><img src="file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/gta_05a_escala.png" style="max-height: 118mm;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 9 (SLIDE 06): CONTENCAO DE CPU (Quadro à esquerda) -->
+<div class="slide" style="background-image: url('file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/bg_content_dark.jpg');">
+  <div class="gta-topbar"><span class="gta-tab">SLIDE 01</span><span class="gta-tab">SLIDE 02</span><span class="gta-tab">SLIDE 03</span><span class="gta-tab">SLIDE 04</span><span class="gta-tab">SLIDE 05</span><span class="gta-tab active">SLIDE 06</span><span class="gta-tab">SLIDE 07</span><span class="gta-tab">SLIDE 08</span></div>
+  <div class="hud-panel">
+    <div class="row">
+      <div class="col-l" style="width: 47%;">
+        <div class="chart-frame"><img src="file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/gta_05b_contencao.png" style="max-height: 118mm;"></div>
+      </div>
+      <div class="col-r" style="width: 53%;">
+        <div class="gta-title">CONTENÇÃO DE CPU</div>
+        <div class="gta-sub">processos concorrentes em segundo plano (stress-ng)</div>
+        <ul class="gta-list">
+          <li><b>▸ Regime Tolerante (0% a 50%):</b> Com 4 threads (25%) e 8 threads (50%) do <code>stress-ng</code>, o tempo sobe apenas de <b>0,75 s para 0,82 s (+9%) e 0,95 s (+27%)</b>.</li>
+          <li><b>▸ Atuação do Escalonador CFS:</b> Como o Ryzen 7 5700X3D possui 16 threads lógicos (SMT), o CFS aloca os processos <code>cc1</code> do GCC nos 8 threads ainda ociosos.</li>
+          <li><b>▸ Colapso em 100% (16 threads):</b> Com todos os 16 threads saturados, a disputa na <i>runqueue</i> gera trocas de contexto (<i>context switches</i>) em massa e o tempo salta <b>+247% (2,60 s)</b>.</li>
+        </ul>
+        <table class="gta-tab-data">
+          <thead><tr><th>Carga Concorrente</th><th class="num">Threads</th><th class="num">R1 (s)</th><th class="num">R2 (s)</th><th class="num">Média</th><th class="num">Impacto</th></tr></thead>
+          <tbody>
+            <tr class="best"><td>0% (CPU Livre)</td><td class="num">0 / 16</td><td class="num">0,733</td><td class="num">0,764</td><td class="num">0,75 s</td><td class="num">Baseline (0%)</td></tr>
+            <tr><td>25% (stress-ng)</td><td class="num">4 / 16</td><td class="num">0,825</td><td class="num">0,810</td><td class="num">0,82 s</td><td class="num">+9,2% (1,09x)</td></tr>
+            <tr><td>50% (stress-ng)</td><td class="num">8 / 16</td><td class="num">0,953</td><td class="num">0,953</td><td class="num">0,95 s</td><td class="num">+27,3% (1,27x)</td></tr>
+            <tr class="warn"><td>100% (stress-ng)</td><td class="num">16 / 16</td><td class="num">2,216</td><td class="num">2,980</td><td class="num">2,60 s</td><td class="num">+247,0% (3,47x)</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 10 (SLIDE 07): PORTE (.C) & ENERGIA -->
+<div class="slide" style="background-image: url('file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/bg_content_dark.jpg');">
+  <div class="gta-topbar"><span class="gta-tab">SLIDE 01</span><span class="gta-tab">SLIDE 02</span><span class="gta-tab">SLIDE 03</span><span class="gta-tab">SLIDE 04</span><span class="gta-tab">SLIDE 05</span><span class="gta-tab">SLIDE 06</span><span class="gta-tab active">SLIDE 07</span><span class="gta-tab">SLIDE 08</span></div>
+  <div class="hud-panel">
+    <div class="row">
+      <div class="col-l">
+        <div class="gta-title">PORTE (.C) &amp; ENERGIA</div>
+        <div class="gta-sub">quantidade de arquivos, consumo em mwh e race-to-idle</div>
+        <ul class="gta-list">
+          <li><b>▸ Complexidade (8 &rarr; 24 &rarr; 48 .c):</b> Quanto mais arquivos <code>.c</code>, maior o Speedup (<b>1,98x &rarr; 2,59x &rarr; 2,83x</b>), mantendo a fila paralela cheia.</li>
+          <li><b>▸ Modelo Energético Real:</b> 1 Máquina Solo = <b>150,0 W</b> (45W Idle + 105W TDP) vs. 2 Máquinas = <b>268,5 W</b> (2 &times; [45W + 0,85 &times; 105W]).</li>
+          <li><b>▸ Limiar Race-to-Idle (1,79x):</b> Como <code>268,5W / 150W = 1,79x</code>, sempre que o Speedup supera <b>1,79x</b> as CPUs voltam ao repouso (<i>C-states</i>) antes, economizando até <b>36,8% de energia</b>.</li>
+        </ul>
+        <table class="gta-tab-data">
+          <thead><tr><th>Carga Compilada</th><th class="num">Speedup</th><th class="num">Solo (150W)</th><th class="num">Dist (268,5W)</th><th class="num">Economia (EDP)</th></tr></thead>
+          <tbody>
+            <tr><td>Projeto C (8 arqs)</td><td class="num">1,98x</td><td class="num">37,94 mWh</td><td class="num">34,28 mWh</td><td class="num">-9,6% (2,19x EDP)</td></tr>
+            <tr><td>Projeto C (24 arqs)</td><td class="num">2,59x</td><td class="num">98,95 mWh</td><td class="num">68,48 mWh</td><td class="num">-30,8% (3,74x EDP)</td></tr>
+            <tr class="best"><td>Projeto C (48 arqs)</td><td class="num">2,83x</td><td class="num">192,24 mWh</td><td class="num">121,56 mWh</td><td class="num">-36,8% (4,48x EDP)</td></tr>
+            <tr><td>SQLite (103 .c)</td><td class="num">2,12x</td><td class="num">593,47 mWh</td><td class="num">500,83 mWh</td><td class="num">-15,6% (2,51x EDP)</td></tr>
+            <tr class="best"><td>Kernel Linux (904 .o)</td><td class="num">2,80x</td><td class="num">7,14 Wh</td><td class="num">4,56 Wh</td><td class="num">-36,1% (4,38x EDP)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="col-r">
+        <div class="chart-frame"><img src="file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/gta_06_porte_energia.png" style="max-height: 118mm;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 11 (SLIDE 08): SINTESE DOS RESULTADOS -->
+<div class="slide" style="background-image: url('file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/bg_content_dark.jpg');">
+  <div class="gta-topbar"><span class="gta-tab">SLIDE 01</span><span class="gta-tab">SLIDE 02</span><span class="gta-tab">SLIDE 03</span><span class="gta-tab">SLIDE 04</span><span class="gta-tab">SLIDE 05</span><span class="gta-tab">SLIDE 06</span><span class="gta-tab">SLIDE 07</span><span class="gta-tab active">SLIDE 08</span></div>
+  <div class="hud-panel">
+    <div class="gta-title">SÍNTESE DOS RESULTADOS</div>
+    <div class="gta-sub">visão geral consolidada e limites de viabilidade do distcc</div>
+    <ul class="gta-list" style="margin-bottom: 2.5mm;">
+      <li><b>▸ Quando Vale a Pena Distribuir:</b> Projetos com &ge; 24 arquivos <code>.c</code> (SQLite, Kernel Linux), rede &ge; 50 Mbps e servidores com &le; 50% de ocupação de CPU (ganhos de <b>2,12x a 2,83x</b> e <b>-36,8% de energia</b>).</li>
+      <li><b>▸ Quando Não Vale a Pena:</b> Redes lentas &le; 10 Mbps (bloqueio TCP de até 19,24 s), servidores com 100% da CPU ocupada (+247% por <i>context switch</i>) ou projetos com Speedup &lt; 1,79x.</li>
+    </ul>
+    <table class="gta-tab-data">
+      <thead>
+        <tr>
+          <th>Frente Experimental</th>
+          <th>Condições Comparadas</th>
+          <th>Resultado Medido Real</th>
+          <th>Mecanismo do Sistema Operacional</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Individual vs. Coletivo</td><td>1 Nó (-j4) vs. 2 Nós (-j8)</td><td>1,24 s &rarr; 0,80 s (Speedup 1,55x, -35,5%)</td><td>Paralelismo cc1 limitado pelo linker ld local</td></tr>
+        <tr><td>Balanceamento (Logs)</td><td>Contagem por host no distcc.log</td><td>52,94% (9 arqs) Nó 1 vs. 47,06% (8 arqs) Nó 2</td><td>Distribuição simétrica por slots TCP livres</td></tr>
+        <tr class="best"><td>SQLite vs. Kernel Linux</td><td>103 arqs .c vs. 904 objetos .o</td><td>SQLite: 2,12x (6,72s) · Kernel: 2,80x (61,20s)</td><td>Centenas de arquivos diluem overhead de rede</td></tr>
+        <tr><td>Largura de Banda</td><td>1 Mbps a 1000 Mbps (tc tbf)</td><td>1 Mbps: 19,24 s &rarr; 50 Mbps: 0,80 s &rarr; 1G: 0,45 s</td><td>Joelho em 50 Mbps; abaixo de 10 Mbps trava em I/O</td></tr>
+        <tr><td>Escala de Servidores</td><td>1, 2, 3 e 4 Máquinas (-j2 a -j8)</td><td>1,97 s &rarr; 1,12 s &rarr; 0,89 s &rarr; 0,73 s (2,69x)</td><td>Lei de Amdahl: eficiência cai de 100% a 67,3%</td></tr>
+        <tr class="warn"><td>Contenção de CPU</td><td>0%, 25%, 50% e 100% (stress-ng)</td><td>0%: 0,75s &rarr; 50%: 0,95s (+27%) &rarr; 100%: 2,60s (+247%)</td><td>CFS usa threads SMT até 50%; colapsa em 100%</td></tr>
+        <tr class="best"><td>Porte &amp; Energia (Wh)</td><td>8 a 904 arqs (150W vs. 268,5W)</td><td>48 arqs: -36,8% Wh · Kernel: 7,14 &rarr; 4,56 Wh (-36,1%)</td><td>Race-to-Idle (ACPI C-states) quando Speedup &gt; 1,79x</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SLIDE 12: ENCERRAMENTO APRESENTACAO CONCLUIDA -->
+<div class="slide" style="background-image: url('file:///mnt/e/Faculdade/SistemasOperacionais/plots_gta6/bg_end_concluida.jpg');">
+</div>
+
+</body>
+</html>

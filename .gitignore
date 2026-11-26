@@ -1,0 +1,6 @@
+# Ignorar roteiros de falas da apresentação
+Roteiro_Falas*
+docs/Roteiro_Falas*
+
+# Ignorar arquivos temporários do Microsoft Office
+~$*
