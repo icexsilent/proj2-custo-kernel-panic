@@ -896,17 +896,16 @@ hb15 = add_gta_header_and_bullets(
     font_size=12.0
 )
 tbl15 = add_gta_table(
-    s15, 6.65, 3.95, 5.75, 2.65,
+    s15, 6.65, 3.95, 5.75, 2.30,
     ["Carga Compilada", "Solo (150W)", "Dist (268,5W)", "Economia (EDP)"],
     [
         ["Projeto C (8 .c)", "37,94 mWh", "34,28 mWh", "-9,6% (2,19x EDP)"],
         ["Projeto C (24 .c)", "98,95 mWh", "68,48 mWh", "-30,8% (3,74x EDP)"],
         ["Projeto C (48 .c)", "192,24 mWh", "121,56 mWh", "-36,8% (4,48x EDP)"],
         ["SQLite (103 .c)", "593,47 mWh", "500,83 mWh", "-15,6% (2,51x EDP)"],
-        ["Linux (904 .o)", "7,14 Wh", "4,56 Wh", "-36,1% (4,38x EDP)"],
     ],
-    highlight_rows={2, 4},
-    font_size=10.5
+    highlight_rows={2},
+    font_size=11.0
 )
 set_slide_transition_and_timing(s15, kind="cover", dur_ms=500, shape_specs=[
     (fr15, "fade", 100, 350, True),
